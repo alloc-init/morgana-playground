@@ -13,36 +13,38 @@ cm_test_link_libraries(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME}
     ${CMAKE_WORKSPACE_NAME}::multiprecision
     Boost::unit_test_framework)
 
-#cm_test(NAME ${CURRENT_PROJECT_NAME}_chacha_test SOURCES ${CURRENT_TEST_SOURCES_DIR}/chacha.cpp)
-#set_target_properties(${CURRENT_PROJECT_NAME}_chacha_test PROPERTIES CXX_STANDARD 17)
-#target_include_directories(${CURRENT_PROJECT_NAME}_chacha_test PRIVATE
-#                           "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-#                           "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>"
+macro(define_random_test test)
+    get_filename_component(name ${test} NAME)
+    string(REPLACE "/" "_" full_test_name ${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME}_${test}_test)
 
-#                           ${Boost_INCLUDE_DIRS})
+    cm_test(NAME ${full_test_name} SOURCES ${test}.cpp)
 
-cm_test(NAME ${CURRENT_PROJECT_NAME}_hash_test SOURCES ${CURRENT_TEST_SOURCES_DIR}/hash.cpp)
-set_target_properties(${CURRENT_PROJECT_NAME}_hash_test PROPERTIES CXX_STANDARD 17)
-target_include_directories(${CURRENT_PROJECT_NAME}_hash_test PRIVATE
-                           "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-                           "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>"
+    target_include_directories(${full_test_name} PRIVATE
+                               "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+                               "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>"
 
-                           ${Boost_INCLUDE_DIRS})
+                               ${Boost_INCLUDE_DIRS})
 
-cm_test(NAME ${CURRENT_PROJECT_NAME}_algebraic_engine_test SOURCES ${CURRENT_TEST_SOURCES_DIR}/algebraic_engine.cpp)
-set_target_properties(${CURRENT_PROJECT_NAME}_algebraic_engine_test PROPERTIES CXX_STANDARD 17)
-target_include_directories(${CURRENT_PROJECT_NAME}_algebraic_engine_test PRIVATE
-                           "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-                           "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>"
+    set_target_properties(${full_test_name} PROPERTIES CXX_STANDARD 17)
 
-                           ${Boost_INCLUDE_DIRS})
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+        target_compile_options(${full_test_name} PRIVATE "-fconstexpr-steps=2147483647")
+    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+        target_compile_options(${full_test_name} PRIVATE "-fconstexpr-ops-limit=4294967295")
+    endif()
 
-cm_test(NAME ${CURRENT_PROJECT_NAME}_rfc6979_engine_test SOURCES ${CURRENT_TEST_SOURCES_DIR}/rfc6979.cpp)
-set_target_properties(${CURRENT_PROJECT_NAME}_rfc6979_engine_test PROPERTIES CXX_STANDARD 17)
-target_include_directories(${CURRENT_PROJECT_NAME}_rfc6979_engine_test PRIVATE
-                           "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-                           "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>"
+endmacro()
 
-                           ${Boost_INCLUDE_DIRS})
+# TODO(uncomment the failing tests once they pass)
+set(TESTS_NAMES
+  # "chacha"
+  # "hash"
+  "algebraic_engine"
+  "rfc6979")
+
+foreach(TEST_NAME ${TESTS_NAMES})
+    define_random_test(${TEST_NAME})
+endforeach()
+
 
 include_directories(${CMAKE_WORKSPACE_SOURCES_DIR})

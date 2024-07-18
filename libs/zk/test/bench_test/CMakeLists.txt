@@ -8,11 +8,11 @@
 
 include(CMTest)
 
-add_custom_target(algebra_runtime_bench_tests)
+add_custom_target(zk_runtime_bench_tests)
 
-macro(define_runtime_algebra_test name)
-    set(test_name "algebra_${name}_bench_test")
-    add_dependencies(algebra_runtime_bench_tests ${test_name})
+macro(define_runtime_zk_test name)
+    set(test_name "zk_${name}_bench_test")
+    add_dependencies(zk_runtime_bench_tests ${test_name})
 
     cm_test(NAME ${test_name} SOURCES ${name}.cpp)
 
@@ -35,12 +35,11 @@ macro(define_runtime_algebra_test name)
 endmacro()
 
 set(RUNTIME_TESTS_NAMES
-    "bench_curves"
-    "bench_fields"
-    "bench_multiexp"
+    "pedersen"
+    "lpc"
     )
 
 foreach(TEST_NAME ${RUNTIME_TESTS_NAMES})
-    define_runtime_algebra_test(${TEST_NAME})
+    define_runtime_zk_test(${TEST_NAME})
 endforeach()
 
