@@ -39,7 +39,10 @@ namespace nil {
                      */
 
                     struct affine;
+                    struct extended;
                     struct extended_with_a_minus_1;
+                    struct inverted;
+                    struct projective;
 
                 }    // namespace coordinates
             }        // namespace curves

@@ -38,6 +38,7 @@ namespace nil {
                      * Description: https://hyperelliptic.org/EFD/g1p/auto-montgom.html
                      */
                     struct affine;
+                    struct xz;
 
                 }    // namespace coordinates
             }        // namespace curves
