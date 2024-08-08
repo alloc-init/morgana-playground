@@ -1,8 +1,5 @@
-# =nil; Foundation's Cryptography Suite
-[![Build docs](https://github.com/NilFoundation/crypto3/actions/workflows/build_docs.yaml/badge.svg)](https://github.com/NilFoundation/crypto3/actions/workflows/build_docs.yaml) 
-[![Discord](https://img.shields.io/discord/969303013749579846.svg?logo=discord&style=flat-square)](https://discord.gg/KmTAEjbmM3)
-[![Telegram](https://img.shields.io/badge/Telegram-2CA5E0?style=flat-square&logo=telegram&logoColor=dark)](https://t.me/nilfoundation)
-[![Twitter](https://img.shields.io/twitter/follow/nil_foundation)](https://twitter.com/nil_foundation)
+# [[alloc] init] C++ Cryptography Suite
+[![Twitter](https://img.shields.io/twitter/follow/alloc_init_)](https://twitter.com/alloc_init_)
 
 Crypto3 cryptography suite's purpose is:
 1. To provide a secure, fast and architecturally clean C++ generic cryptography schemes implementation.
@@ -14,9 +11,9 @@ Libraries are designed to be state of the art, highly performant and providing a
 all cryptographic operations. They are supported on all operating systems (*nix, windows, macOS)
 and architectures(x86/ARM).
 
-Developed by [=nil; Crypto3](https://crypto3.nil.foundation) and supported by [=nil; Foundation](https://nil.foundation).
+Initially developed by [=nil; Crypto3](https://crypto3.nil.foundation), part of [=nil; Foundation](https://nil.foundation) and now supported by [[[alloc] init]](https://allocin.it).
 
-Rationale, tutorials and references are available [here](https://crypto3.nil.foundation/projects/crypto3)
+Rationale, tutorials and references are available [here](https://docs.allocin.it/crypto3)
  
 ## Contents
 1. [Repository Structure](#repository-structure)
@@ -27,7 +24,7 @@ Rationale, tutorials and references are available [here](https://crypto3.nil.fou
 
 ## Repository Structure
 This repository is an umbrella-repository for the whole suite. Single-purposed libraries repositories (e.g. [block
-](https://github.com/nilfoundation/block) or [hash](https://github.com/nilfoundation/hash)) are not advised to be
+](https://github.com/alloc-init/block) or [hash](https://github.com/alloc-init/hash)) are not advised to be
 used outside this suite or properly constructed CMake project and should be handled with great care.
 ```
 root
@@ -115,7 +112,7 @@ Generic usage of cryptography suite consists of all modules available at
 [GitHub =nil; Crypto3 Team Repositories](https://github.com/orgs/NilFoundation/teams/nil-crypto3/repositories).
 This is an umbrella-repository where  Modules
 are added as submodules emplaced in `libs` directory. A developer can thus add this  
-project as a submodule and would not need to resolve dependencies. See [crypto3-scaffold](https://github.com/NilFoundation/crypto3-scaffold) as an example of usage.
+project as a submodule and would not need to resolve dependencies. See [crypto3-template](https://github.com/alloc-init/crypto3-template) as an example of usage.
 
 The generic module can be added to your c++ project as follows
 
