@@ -236,8 +236,8 @@ BOOST_AUTO_TEST_SUITE(kimchi_proof_struct_test_suite)
 
         i = 0;
         ver_index.fr_sponge_params.round_constants.resize(
-                const_root.get_child("verify_index.fr_sponge_params.round_constants").size());
-        for (auto &row: const_root.get_child("verify_index.fr_sponge_params.round_constants")) {
+                const_root.get_child("verify_index.fr_sponge_params.constants").size());
+        for (auto &row: const_root.get_child("verify_index.fr_sponge_params.constants")) {
             size_t j = 0;
             for (auto cell: row.second) {
                 ver_index.fr_sponge_params.round_constants[i].emplace_back(get_cppui_modular256(&cell));
@@ -258,8 +258,8 @@ BOOST_AUTO_TEST_SUITE(kimchi_proof_struct_test_suite)
 
         i = 0;
         ver_index.fq_sponge_params.round_constants.resize(
-                const_root.get_child("verify_index.fq_sponge_params.round_constants").size());
-        for (auto &row: const_root.get_child("verify_index.fq_sponge_params.round_constants")) {
+                const_root.get_child("verify_index.fq_sponge_params.constants").size());
+        for (auto &row: const_root.get_child("verify_index.fq_sponge_params.constants")) {
             size_t j = 0;
             for (auto cell: row.second) {
                 ver_index.fq_sponge_params.round_constants[i].emplace_back(get_cppui_modular256(&cell));
@@ -289,7 +289,7 @@ BOOST_AUTO_TEST_SUITE(kimchi_proof_struct_test_suite)
         boost::property_tree::ptree root;
         boost::property_tree::ptree const_root;
         // Load the json file in this ptree
-        std::string test_data = TEST_DATA;
+        std::string test_data;
         boost::property_tree::read_json(test_data + ".json", root);
         boost::property_tree::read_json(test_data + "_const.json", const_root);
 

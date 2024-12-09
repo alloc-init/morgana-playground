@@ -44,10 +44,10 @@ namespace nil {
          * @tparam Scheme
          * @tparam Hash
          */
-        template<typename Scheme, typename Hash>
+        template<typename SchemeType, typename HashType>
         struct emsa {
-            typedef Hash hash_type;
-            typedef Scheme scheme_type;
+            typedef HashType hash_type;
+            typedef SchemeType scheme_type;
         };
     }    // namespace crypto3
 }    // namespace nil

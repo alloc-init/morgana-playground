@@ -10,8 +10,8 @@
 include(CMTest)
 
 cm_test_link_libraries(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME}
-    ${CMAKE_WORKSPACE_NAME}::multiprecision
-    Boost::unit_test_framework)
+        ${CMAKE_WORKSPACE_NAME}::multiprecision
+        Boost::unit_test_framework)
 
 macro(define_random_test test)
     get_filename_component(name ${test} NAME)
@@ -20,12 +20,12 @@ macro(define_random_test test)
     cm_test(NAME ${full_test_name} SOURCES ${test}.cpp)
 
     target_include_directories(${full_test_name} PRIVATE
-                               "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-                               "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>"
+            "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+            "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>"
 
-                               ${Boost_INCLUDE_DIRS})
+            ${Boost_INCLUDE_DIRS})
 
-    set_target_properties(${full_test_name} PROPERTIES CXX_STANDARD 17)
+    set_target_properties(${full_test_name} PROPERTIES CXX_STANDARD 20)
 
     if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
         target_compile_options(${full_test_name} PRIVATE "-fconstexpr-steps=2147483647")
@@ -37,10 +37,11 @@ endmacro()
 
 # TODO(uncomment the failing tests once they pass)
 set(TESTS_NAMES
-  # "chacha"
-  # "hash"
-  "algebraic_engine"
-  "rfc6979")
+        "chacha"
+        "hash"
+        "algebraic_engine"
+        "ct_random_device"
+        "rfc6979")
 
 foreach(TEST_NAME ${TESTS_NAMES})
     define_random_test(${TEST_NAME})

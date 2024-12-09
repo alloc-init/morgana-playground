@@ -93,14 +93,14 @@ namespace nil {
                 std::vector<std::string>
                 get_tables_ordered_by_rows_number(const std::map<std::string, std::shared_ptr<lookup_table_definition<FieldType>>> &tables){
                     std::vector<std::pair<std::size_t, std::string>> before;
-                    for(const auto& [k,table]:tables){
-                        before.push_back(std::make_pair(table->get_rows_number(), k));
+                    for(const auto& [K,table]:tables){
+                        before.push_back(std::make_pair(table->get_rows_number(), K));
                     }
                     std::sort(before.begin(), before.end(), [](const std::pair<std::size_t, std::string> &lhs, const std::pair<std::size_t, std::string> &rhs) {
                         return lhs.first < rhs.first;
                     });
                     std::vector<std::string> result;
-                    for(const auto& [k,table_name]:before){
+                    for(const auto& [K,table_name]:before){
                         result.push_back(table_name);
                     }
                     return result;
@@ -155,7 +155,7 @@ namespace nil {
 
                     std::size_t start_row = 1;
                     std::vector<plonk_lookup_table<FieldType>> bp_lookup_tables(lookup_table_ids.size());
-                    for( const auto&[k, table]:lookup_tables ){
+                    for( const auto&[K, table]:lookup_tables ){
                         // std::cout << "Packing table " << table->table_name << std::endl;
                         // Place table into constant_columns.
                         for( std::size_t i = 0; i < table->get_table().size(); i++ ){
@@ -175,8 +175,8 @@ namespace nil {
                             // std::cout << "Packing subtable " << subtable_name << std::endl;
                             // Create selector
                             plonk_column<FieldType> selector_column(usable_rows_after, FieldType::value_type::zero());
-                            for(std::size_t k = subtable.begin; k <= subtable.end; k++){
-                                selector_column[start_row + k] = FieldType::value_type::one();
+                            for(std::size_t K = subtable.begin; K <= subtable.end; K++){
+                                selector_column[start_row + K] = FieldType::value_type::one();
                             }
 
                             std::string full_table_name = table->table_name + "/" + subtable_name;
@@ -197,9 +197,9 @@ namespace nil {
                         }
                         start_row += table->get_rows_number();
                     }
-                    for( const auto&[k, table]:dynamic_tables ){
+                    for( const auto&[K, table]:dynamic_tables ){
                         BOOST_ASSERT(table->is_defined());
-                        bp_lookup_tables[lookup_table_ids.at(k) - 1] = table->lookup_table;
+                        bp_lookup_tables[lookup_table_ids.at(K) - 1] = table->lookup_table;
                     }
                     for(std::size_t i = 0; i < bp_lookup_tables.size(); i++){
                         bp.add_lookup_table(std::move(bp_lookup_tables[i]));
@@ -265,11 +265,11 @@ namespace nil {
                             std::size_t cur = 0;
                             for(std::size_t i = 0; i < options_number; i++){
                                 for(std::size_t start_row = 1; start_row < max_usable_rows; start_row++, cur++){
-                                    for(std::size_t k = 0; k < table->get_columns_number(); k++){
+                                    for(std::size_t K = 0; K < table->get_columns_number(); K++){
                                         if(cur < table->get_rows_number())
-                                            constant_columns[cur_constant_column + k][start_row] = table->get_table()[k][cur];
+                                            constant_columns[cur_constant_column + K][start_row] = table->get_table()[K][cur];
                                         else
-                                            constant_columns[cur_constant_column + k][start_row] = table->get_table()[k][table->get_rows_number()-1];
+                                            constant_columns[cur_constant_column + K][start_row] = table->get_table()[K][table->get_rows_number()-1];
                                     }
                                 }
                                 cur_constant_column += table->get_columns_number();
@@ -333,8 +333,8 @@ namespace nil {
                             // Create selector
                             plonk_column<FieldType> selector_column(usable_rows_after, FieldType::value_type::zero());
                             // std::cout  << "selector for " << subtable_name << " from " << start_row + subtable.begin << " to " << start_row + subtable.end << std::endl;
-                            for(std::size_t k = subtable.begin; k <= subtable.end; k++){
-                                selector_column[start_row + k] = FieldType::value_type::one();
+                            for(std::size_t K = subtable.begin; K <= subtable.end; K++){
+                                selector_column[start_row + K] = FieldType::value_type::one();
                             }
 
                             std::string full_table_name = table->table_name + "/" + subtable_name;
@@ -356,9 +356,9 @@ namespace nil {
                         }
                         start_row += table->get_rows_number();
                     }
-                    for( const auto&[k, table]:dynamic_tables ){
+                    for( const auto&[K, table]:dynamic_tables ){
                         BOOST_ASSERT(table->is_defined());
-                        bp_lookup_tables[lookup_table_ids.at(k) - 1] = table->lookup_table;
+                        bp_lookup_tables[lookup_table_ids.at(K) - 1] = table->lookup_table;
                     }
                     for(std::size_t i = 0; i < bp_lookup_tables.size(); i++){
                         bp.add_lookup_table(std::move(bp_lookup_tables[i]));

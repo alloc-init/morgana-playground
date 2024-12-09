@@ -428,13 +428,13 @@ DOCSET_BUNDLE_ID       = foundation.nil.crypto3
 # The default value is: org.doxygen.Publisher.
 # This tag requires that the tag GENERATE_DOCSET is set to YES.
 
-DOCSET_PUBLISHER_ID    = foundation.nil.crypto3.documentation
+DOCSET_PUBLISHER_ID    = foundation.alloc.init.crypto3.documentation
 
 # The DOCSET_PUBLISHER_NAME tag identifies the documentation publisher.
 # The default value is: Publisher.
 # This tag requires that the tag GENERATE_DOCSET is set to YES.
 
-DOCSET_PUBLISHER_NAME  = =nil;Foundation
+DOCSET_PUBLISHER_NAME  = [[alloc] init]
 
 #---------------------------------------------------------------------------
 # Build related configuration options

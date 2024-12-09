@@ -52,16 +52,17 @@ namespace nil {
             //  https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-90Ar1.pdf
             //
             // TODO: fix reseed
-            template<typename ResultType, typename Hash, typename = void>
+            template<typename ResultType, typename HashType, typename = void>
             struct rfc6979;
 
-            template<typename ResultType, typename Hash>
+            template<typename ResultType, typename HashType>
             struct rfc6979<
-                ResultType,
-                Hash,
-                typename std::enable_if<algebra::is_field<typename ResultType::field_type>::value &&
-                                        !algebra::is_extended_field<typename ResultType::field_type>::value>::type> {
-                typedef Hash hash_type;
+                    ResultType,
+                    HashType,
+                    typename std::enable_if<algebra::is_field<typename ResultType::field_type>::value &&
+                                            !algebra::is_extended_field<typename
+                                            ResultType::field_type>::value>::type> {
+                typedef HashType hash_type;
                 typedef mac::hmac<hash_type> hmac_policy;
                 typedef mac::mac_key<hmac_policy> key_type;
                 typedef ResultType result_type;
@@ -70,50 +71,45 @@ namespace nil {
                 typedef typename field_type::modular_type modular_type;
                 typedef typename field_type::integral_type integral_type;
                 typedef typename hash_type::digest_type digest_type;
-                typedef mac::computation_accumulator_set<mac::computation_policy<hmac_policy>>
-                    internal_accumulator_type;
+                typedef mac::computation_accumulator_set<mac::computation_policy<hmac_policy>> accumulator_type;
 
-                typedef ::nil::crypto3::marshalling::types::
-                    integral<::nil::marshalling::field_type<::nil::marshalling::option::big_endian>, integral_type>
-                        marshalling_integral_value_be_type;
-                typedef ::nil::crypto3::marshalling::types::
-                    integral<::nil::marshalling::field_type<::nil::marshalling::option::little_endian>, integral_type>
-                        marshalling_integral_value_le_type;
+                typedef marshalling::types::integral<nil::marshalling::field_type<nil::marshalling::option::big_endian>, integral_type> marshalling_integral_value_be_type;
+                typedef marshalling::types::integral<nil::marshalling::field_type<nil::marshalling::option::little_endian>, integral_type> marshalling_integral_value_le_type;
 
                 constexpr static std::size_t modulus_bits = field_type::modulus_bits;
                 constexpr static std::size_t modulus_octets =
-                    modulus_bits / 8 + static_cast<std::size_t>(modulus_bits % 8 != 0);
+                        modulus_bits / 8 + static_cast<std::size_t>(modulus_bits % 8 != 0);
                 constexpr static std::size_t digest_bits = hmac_policy::digest_bits;
                 constexpr static std::size_t digest_octets =
-                    digest_bits / 8 + static_cast<std::size_t>(digest_bits % 8 != 0);
+                        digest_bits / 8 + static_cast<std::size_t>(digest_bits % 8 != 0);
                 constexpr static std::size_t digest_chunks =
-                    modulus_bits / digest_bits + static_cast<std::size_t>(modulus_bits % digest_bits != 0);
+                        modulus_bits / digest_bits + static_cast<std::size_t>(modulus_bits % digest_bits != 0);
 
                 typedef std::array<std::uint8_t, modulus_octets> modulus_octets_container_type;
 
                 static_assert(
-                    std::is_same<std::uint8_t,
-                                 typename std::iterator_traits<typename digest_type::iterator>::value_type>::value,
-                    "Hash output value type is not uint8_t");
+                        std::is_same<std::uint8_t,
+                                typename std::iterator_traits<typename digest_type::iterator>::value_type>::value,
+                        "HashType output value type is not uint8_t");
 
-                explicit rfc6979(const result_type& x, const digest_type& h1) {
+                explicit rfc6979(const result_type &x, const digest_type &h1) {
                     seed(x, h1);
                 }
 
                 // TODO: move to marshalling
                 // TODO: creating of new vector is a bottleneck
                 template<typename InputRange,
-                         typename ValueType = typename std::iterator_traits<typename InputRange::iterator>::value_type,
-                         typename std::enable_if<std::is_unsigned<ValueType>::value, bool>::type = true>
-                static inline std::vector<ValueType> adjust_bitstring(InputRange& range) {
+                        typename ValueType = typename std::iterator_traits<typename InputRange::iterator>::value_type,
+                        typename std::enable_if<std::is_unsigned<ValueType>::value, bool>::type = true>
+                static inline std::vector<ValueType> adjust_bitstring(InputRange &range) {
                     // TODO: local_char_bits is supposed to equal chunk_size from import_bits call in marshalling
                     constexpr std::size_t local_char_bits = 8;
                     constexpr std::size_t adjustment_shift = modulus_octets * local_char_bits - modulus_bits;
                     constexpr std::size_t chunk_size = std::numeric_limits<ValueType>::digits;
                     using bitset_repr_type = std::bitset<chunk_size>;
 
-                    auto carry_bits = [&](bitset_repr_type& current_bits,
-                                          const bitset_repr_type& carried_bits) -> bitset_repr_type {
+                    auto carry_bits = [&](bitset_repr_type &current_bits,
+                                          const bitset_repr_type &carried_bits) -> bitset_repr_type {
                         bitset_repr_type new_carried_bits;
 
                         for (auto i = 0; i < adjustment_shift; ++i) {
@@ -130,7 +126,7 @@ namespace nil {
                     std::vector<ValueType> result;
                     bitset_repr_type carried_bits;
 
-                    for (const auto v : range) {
+                    for (const auto v: range) {
                         bitset_repr_type v_bitset_repr(v);
                         carried_bits = carry_bits(v_bitset_repr, carried_bits);
                         result.template emplace_back(static_cast<ValueType>(v_bitset_repr.to_ullong()));
@@ -143,9 +139,9 @@ namespace nil {
                 }
 
                 template<typename InputRange,
-                         typename ValueType = typename std::iterator_traits<typename InputRange::iterator>::value_type,
-                         typename std::enable_if<std::is_same<std::uint8_t, ValueType>::value, bool>::type = true>
-                static inline integral_type bits2int(const InputRange& range) {
+                        typename ValueType = typename std::iterator_traits<typename InputRange::iterator>::value_type,
+                        typename std::enable_if<std::is_same<std::uint8_t, ValueType>::value, bool>::type = true>
+                static inline integral_type bits2int(const InputRange &range) {
                     integral_type result;
                     if (modulus_bits < range.size() * 8) {
                         auto adjusted_range = adjust_bitstring(range);
@@ -170,13 +166,13 @@ namespace nil {
                 }
 
                 template<typename InputRange>
-                static inline modulus_octets_container_type bits2octets(const InputRange& range) {
+                static inline modulus_octets_container_type bits2octets(const InputRange &range) {
                     nil::marshalling::status_type status;
                     return ::nil::marshalling::pack<::nil::marshalling::option::big_endian>(
-                        field_value_type(bits2int(range)), status);
+                            field_value_type(bits2int(range)), status);
                 }
 
-                inline void seed(const result_type& x, const digest_type& h1) {
+                inline void seed(const result_type &x, const digest_type &h1) {
                     // b.
                     std::fill(V.begin(), V.end(), 1);
 
@@ -185,30 +181,30 @@ namespace nil {
                     key_type Key(K);
 
                     // d.
-                    internal_accumulator_type acc_d(Key);
-                    
+                    accumulator_type acc_d(Key);
+
                     nil::marshalling::status_type status;
                     modulus_octets_container_type int2octets_x =
-                        ::nil::marshalling::pack<::nil::marshalling::option::big_endian>(x, status);
+                            ::nil::marshalling::pack<::nil::marshalling::option::big_endian>(x, status);
 
                     auto bits2octets_h1 = bits2octets(h1);
                     compute<hmac_policy>(V, acc_d);
-                    compute<hmac_policy>(std::array<std::uint8_t, 1> {0}, acc_d);
+                    compute<hmac_policy>(std::array<std::uint8_t, 1>{0}, acc_d);
                     compute<hmac_policy>(int2octets_x, acc_d);
                     compute<hmac_policy>(bits2octets_h1, acc_d);
                     Key = key_type(
-                        ::nil::crypto3::accumulators::extract::mac<mac::computation_policy<hmac_policy>>(acc_d));
+                            accumulators::extract::mac<mac::computation_policy<hmac_policy>>(acc_d));
 
                     // e.
                     V = compute<hmac_policy>(V, Key);
 
                     // f.
-                    internal_accumulator_type acc_f(Key);
+                    accumulator_type acc_f(Key);
                     compute<hmac_policy>(V, acc_f);
-                    compute<hmac_policy>(std::array<std::uint8_t, 1> {1}, acc_f);
+                    compute<hmac_policy>(std::array<std::uint8_t, 1>{1}, acc_f);
                     compute<hmac_policy>(int2octets_x, acc_f);
                     compute<hmac_policy>(bits2octets_h1, acc_f);
-                    K = ::nil::crypto3::accumulators::extract::mac<mac::computation_policy<hmac_policy>>(acc_f);
+                    K = accumulators::extract::mac<mac::computation_policy<hmac_policy>>(acc_f);
                     Key = key_type(K);
 
                     // g.
@@ -233,10 +229,10 @@ namespace nil {
                             return k;
                         }
 
-                        internal_accumulator_type acc_h3(Key);
+                        accumulator_type acc_h3(Key);
                         compute<hmac_policy>(V, acc_h3);
-                        compute<hmac_policy>(std::array<std::uint8_t, 1> {0}, acc_h3);
-                        K = ::nil::crypto3::accumulators::extract::mac<mac::computation_policy<hmac_policy>>(acc_h3);
+                        compute<hmac_policy>(std::array<std::uint8_t, 1>{0}, acc_h3);
+                        K = accumulators::extract::mac<mac::computation_policy<hmac_policy>>(acc_h3);
 
                         Key = key_type(K);
                         V = compute<hmac_policy>(V, Key);
@@ -247,8 +243,8 @@ namespace nil {
                 digest_type V;
                 digest_type K;
             };
-        }    // namespace random
-    }        // namespace crypto3
-}    // namespace nil
+        } // namespace random
+    } // namespace crypto3
+} // namespace nil
 
 #endif    // CRYPTO3_RANDOM_HMAC_DRBG_HPP

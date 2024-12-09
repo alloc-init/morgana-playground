@@ -49,10 +49,10 @@ namespace nil {
              * @tparam Hash
              * @ingroup kdf
              */
-            template<typename Hash>
-            class sp800_56a<Hash, typename std::enable_if<is_hash<Hash>::value>::type> {
+            template<typename HashType>
+            class sp800_56a<HashType, typename std::enable_if<is_hash<HashType>::value>::type> {
             public:
-                typedef Hash hash_type;
+                typedef HashType hash_type;
             };
 
             /*!
@@ -116,9 +116,9 @@ namespace nil {
              * @tparam Hash
              * @ingroup kdf
              */
-            template<typename Hash>
-            class sp800_56a<mac::hmac<Hash>, typename std::enable_if<is_mac<mac::hmac<Hash>>::value>::type> {
-                typedef detail::sp800_56a_policy<mac::hmac<Hash>> policy_type;
+            template<typename HashType>
+            class sp800_56a<mac::hmac<HashType>, typename std::enable_if<is_mac<mac::hmac<HashType>>::value>::type> {
+                typedef detail::sp800_56a_policy<mac::hmac<HashType>> policy_type;
 
             public:
                 typedef typename policy_type::hash_type hash_type;

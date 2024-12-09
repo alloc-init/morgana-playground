@@ -53,14 +53,16 @@
 namespace nil {
     namespace crypto3 {
         namespace pubkey {
-            enum class eddsa_type { basic, ctx, ph };
+            enum class eddsa_type {
+                basic, ctx, ph
+            };
 
-            template<eddsa_type, typename Params, typename = void>
+            template<eddsa_type, typename ParamsType, typename = void>
             struct eddsa_policy;
 
-            template<typename Params>
-            struct eddsa_policy<eddsa_type::basic, Params> {
-                typedef Params params_type;
+            template<typename ParamsType>
+            struct eddsa_policy<eddsa_type::basic, ParamsType> {
+                typedef ParamsType params_type;
                 typedef std::vector<std::uint8_t> domain_type;
                 typedef hashes::sha2<512> hash_type;
                 typedef padding::emsa_raw<std::uint8_t> padding_policy;
@@ -70,14 +72,15 @@ namespace nil {
                 }
             };
 
-            template<typename Params>
+            template<typename ParamsType>
             struct eddsa_policy<
-                eddsa_type::ctx, Params,
-                typename std::enable_if<
-                    is_eddsa_params<Params>::value &&
-                    std::is_same<std::uint8_t, typename std::iterator_traits<typename Params::context_type::iterator>::
-                                                   value_type>::value>::type> {
-                typedef Params params_type;
+                        eddsa_type::ctx, ParamsType,
+                        typename std::enable_if<
+                            is_eddsa_params<ParamsType>::value &&
+                            std::is_same<std::uint8_t, typename std::iterator_traits<typename
+                                    ParamsType::context_type::iterator>::
+                                value_type>::value>::type> {
+                typedef ParamsType params_type;
                 typedef std::vector<std::uint8_t> domain_type;
                 typedef hashes::sha2<512> hash_type;
                 typedef padding::emsa_raw<std::uint8_t> padding_policy;
@@ -86,7 +89,7 @@ namespace nil {
 
                 static inline domain_type domain() {
                     std::size_t context_len =
-                        std::distance(std::cbegin(params_type::context), std::cend(params_type::context));
+                            std::distance(std::cbegin(params_type::context), std::cend(params_type::context));
                     BOOST_ASSERT(0 < context_len && context_len <= 255);
 
                     std::string dom_prefix = "SigEd25519 no Ed25519 collisions";
@@ -100,14 +103,15 @@ namespace nil {
                 }
             };
 
-            template<typename Params>
+            template<typename ParamsType>
             struct eddsa_policy<
-                eddsa_type::ph, Params,
-                typename std::enable_if<
-                    is_eddsa_params<Params>::value &&
-                    std::is_same<std::uint8_t, typename std::iterator_traits<typename Params::context_type::iterator>::
-                                                   value_type>::value>::type> {
-                typedef Params params_type;
+                        eddsa_type::ph, ParamsType,
+                        typename std::enable_if<
+                            is_eddsa_params<ParamsType>::value &&
+                            std::is_same<std::uint8_t, typename std::iterator_traits<typename
+                                    ParamsType::context_type::iterator>::
+                                value_type>::value>::type> {
+                typedef ParamsType params_type;
                 typedef std::vector<std::uint8_t> domain_type;
                 typedef hashes::sha2<512> hash_type;
                 typedef padding::emsa1<typename hash_type::digest_type, hash_type> padding_policy;
@@ -116,7 +120,7 @@ namespace nil {
 
                 static inline domain_type domain() {
                     std::size_t context_len =
-                        std::distance(std::cbegin(params_type::context), std::cend(params_type::context));
+                            std::distance(std::cbegin(params_type::context), std::cend(params_type::context));
                     BOOST_ASSERT(0 <= context_len && context_len <= 255);
 
                     std::string dom_prefix = "SigEd25519 no Ed25519 collisions";
@@ -130,26 +134,27 @@ namespace nil {
                 }
             };
 
-            template<typename CurveGroup, eddsa_type eddsa_variant, typename Params>
+            template<typename CurveGroup, eddsa_type EddsaVariant, typename ParamsType>
             struct eddsa;
 
-            template<typename Coordinates, eddsa_type eddsa_variant, typename Params>
+            template<typename Coordinates, eddsa_type EddsaVariant, typename ParamsType>
             struct eddsa<
-                typename algebra::curves::ed25519::g1_type<Coordinates, algebra::curves::forms::twisted_edwards>,
-                eddsa_variant, Params> {
+                        typename algebra::curves::ed25519::g1_type<Coordinates, algebra::curves::forms::twisted_edwards>
+                        ,
+                        EddsaVariant, ParamsType> {
                 typedef
-                    typename algebra::curves::ed25519::g1_type<Coordinates, algebra::curves::forms::twisted_edwards>
-                        group_type;
-                typedef eddsa_policy<eddsa_variant, Params> policy_type;
+                typename algebra::curves::ed25519::g1_type<Coordinates, algebra::curves::forms::twisted_edwards>
+                group_type;
+                typedef eddsa_policy<EddsaVariant, ParamsType> policy_type;
             };
 
-            template<typename CurveGroup, eddsa_type eddsa_variant, typename Params>
-            struct public_key<eddsa<CurveGroup, eddsa_variant, Params>> {
-                typedef eddsa<CurveGroup, eddsa_variant, Params> scheme_type;
+            template<typename CurveGroup, eddsa_type EddsaVariant, typename ParamsType>
+            struct public_key<eddsa<CurveGroup, EddsaVariant, ParamsType>> {
+                typedef eddsa<CurveGroup, EddsaVariant, ParamsType> scheme_type;
                 typedef typename scheme_type::policy_type policy_type;
                 typedef typename policy_type::hash_type hash_type;
                 typedef typename policy_type::padding_policy padding_policy;
-                typedef padding::encoding_accumulator_set<padding_policy> internal_accumulator_type;
+                typedef padding::encoding_accumulator_set<padding_policy> accumulator_type;
 
                 typedef typename scheme_type::group_type group_type;
                 typedef typename group_type::value_type group_value_type;
@@ -161,49 +166,51 @@ namespace nil {
                 typedef typename scalar_field_type::integral_type scalar_integral_type;
 
                 typedef nil::marshalling::option::little_endian endianness;
-                typedef nil::crypto3::marshalling::types::curve_element<nil::marshalling::field_type<endianness>,
-                                                                        group_type>
-                    marshalling_group_value_type;
-                typedef nil::crypto3::marshalling::types::field_element<nil::marshalling::field_type<endianness>,
-                                                                        scalar_field_value_type>
-                    marshalling_scalar_field_value_type;
-                typedef nil::crypto3::marshalling::types::integral<nil::marshalling::field_type<endianness>,
-                                                                   base_integral_type>
-                    marshalling_base_integral_type;
-                typedef nil::crypto3::marshalling::types::integral<nil::marshalling::field_type<endianness>,
-                                                                   boost::multiprecision::uint512_t>
-                    marshalling_uint512_t_type;
+                typedef marshalling::types::curve_element<nil::marshalling::field_type<endianness>,
+                    group_type>
+                marshalling_group_value_type;
+                typedef marshalling::types::field_element<nil::marshalling::field_type<endianness>,
+                    scalar_field_value_type>
+                marshalling_scalar_field_value_type;
+                typedef marshalling::types::integral<nil::marshalling::field_type<endianness>,
+                    base_integral_type>
+                marshalling_base_integral_type;
+                typedef marshalling::types::integral<nil::marshalling::field_type<endianness>,
+                    boost::multiprecision::uint512_t>
+                marshalling_uint512_t_type;
 
                 constexpr static const std::size_t public_key_bits = base_field_type::modulus_bits;
                 static_assert(32 * std::numeric_limits<std::uint8_t>::digits - 1 == public_key_bits,
                               "wrong octet length of public key");
                 typedef static_digest<public_key_bits +
-                                      (base_field_type::modulus_bits % std::numeric_limits<std::uint8_t>::digits ? 1 :
-                                                                                                                   0)>
-                    public_key_type;
+                                      (base_field_type::modulus_bits % std::numeric_limits<std::uint8_t>::digits ?
+                                           1 :
+                                           0)>
+                schedule_type;
 
                 constexpr static const std::size_t signature_bits = 64 * std::numeric_limits<std::uint8_t>::digits;
                 typedef static_digest<signature_bits> signature_type;
 
                 public_key() = delete;
-                public_key(const public_key_type &key) : pubkey_point(read_pubkey(key)), pubkey(key) {
+
+                public_key(const schedule_type &key) : pubkey_point(read_pubkey(key)), pubkey(key) {
                 }
 
-                static inline void init_accumulator(internal_accumulator_type &acc) {
+                static inline void init_accumulator(accumulator_type &acc) {
                 }
 
                 template<typename InputRange>
-                inline void update(internal_accumulator_type &acc, const InputRange &range) const {
+                inline void update(accumulator_type &acc, const InputRange &range) const {
                     encode<padding_policy>(range, acc);
                 }
 
                 template<typename InputIterator>
-                inline void update(internal_accumulator_type &acc, InputIterator first, InputIterator last) const {
+                inline void update(accumulator_type &acc, InputIterator first, InputIterator last) const {
                     encode<padding_policy>(first, last, acc);
                 }
 
                 // https://datatracker.ietf.org/doc/html/rfc8032#section-5.1.7
-                inline bool verify(internal_accumulator_type &acc, const signature_type &signature) const {
+                inline bool verify(accumulator_type &acc, const signature_type &signature) const {
                     // 1.
                     marshalling_group_value_type marshalling_group_value_1;
                     auto R_iter_1 = std::cbegin(signature);
@@ -226,17 +233,16 @@ namespace nil {
 
                     // 2.
                     auto ph_m = padding::accumulators::extract::encode<padding::encoding_policy<padding_policy>>(acc);
-                    accumulator_set<hash_type> hash_acc_2;
-                    hash<hash_type>(policy_type::domain(), hash_acc_2);
-                    hash<hash_type>(
-                        std::cbegin(signature),
-                        std::cbegin(signature) + public_key_bits / std::numeric_limits<std::uint8_t>::digits +
-                            (base_field_type::modulus_bits % std::numeric_limits<std::uint8_t>::digits ? 1 : 0),
-                        hash_acc_2);
-                    hash<hash_type>(this->pubkey, hash_acc_2);
-                    hash<hash_type>(ph_m, hash_acc_2);
-                    typename hash_type::digest_type h_2 =
-                        nil::crypto3::accumulators::extract::hash<hash_type>(hash_acc_2);
+                    typename hash_type::digest_type h_2 = hash<hash_type>(policy_type::domain())
+                                                          .then(std::cbegin(signature),
+                                                                std::cbegin(signature) + public_key_bits /
+                                                                std::numeric_limits<std::uint8_t>::digits +
+                                                                (base_field_type::modulus_bits % std::numeric_limits<
+                                                                     std::uint8_t>::digits ?
+                                                                     1 :
+                                                                     0))
+                                                          .then(this->pubkey)
+                                                          .then(ph_m);
                     marshalling_uint512_t_type marshalling_uint512_t_2;
                     auto h_2_iter = std::cbegin(h_2);
 
@@ -249,42 +255,43 @@ namespace nil {
                     // Reduce the size of r to the needed number of bits.
                     // This can be done more effective later. Also we can make it easier to convert, but we want the conversion
                     // to be explicit.
-                    boost::multiprecision::uint512_modular_t k_modular = boost::multiprecision::uint512_modular_t::backend_type(
-                        k.backend());
+                    boost::multiprecision::uint512_modular_t k_modular =
+                            boost::multiprecision::uint512_modular_t::backend_type(
+                                k.backend());
                     scalar_field_value_type k_reduced(k_modular);
 
                     // 3.
                     return (S * group_value_type::one()) == (R + k_reduced * this->pubkey_point);
                 }
 
-                inline public_key_type public_key_data() const {
+                inline schedule_type public_key_data() const {
                     return pubkey;
                 }
 
-            // protected:
-                static inline group_value_type read_pubkey(const public_key_type &pubkey) {
+                // protected:
+                static inline group_value_type read_pubkey(const schedule_type &pubkey) {
                     marshalling_group_value_type marshalling_group_value_1;
                     auto pubkey_iter = std::cbegin(pubkey);
                     // TODO: process status
                     nil::marshalling::status_type status =
-                        marshalling_group_value_1.read(pubkey_iter, marshalling_group_value_type::bit_length());
+                            marshalling_group_value_1.read(pubkey_iter, marshalling_group_value_type::bit_length());
                     return marshalling_group_value_1.value();
                 }
 
                 group_value_type pubkey_point;
-                public_key_type pubkey;
+                schedule_type pubkey;
             };
 
-            template<typename CurveGroup, eddsa_type eddsa_variant, typename Params>
-            struct private_key<eddsa<CurveGroup, eddsa_variant, Params>>
-                : public public_key<eddsa<CurveGroup, eddsa_variant, Params>> {
-                typedef eddsa<CurveGroup, eddsa_variant, Params> scheme_type;
+            template<typename CurveGroup, eddsa_type EddsaVariant, typename ParamsType>
+            struct private_key<eddsa<CurveGroup, EddsaVariant, ParamsType>>
+                    : public public_key<eddsa<CurveGroup, EddsaVariant, ParamsType>> {
+                typedef eddsa<CurveGroup, EddsaVariant, ParamsType> scheme_type;
                 typedef public_key<scheme_type> scheme_public_key_type;
 
                 typedef typename scheme_public_key_type::policy_type policy_type;
                 typedef typename scheme_public_key_type::hash_type hash_type;
                 typedef typename scheme_public_key_type::padding_policy padding_policy;
-                typedef typename scheme_public_key_type::internal_accumulator_type internal_accumulator_type;
+                typedef typename scheme_public_key_type::accumulator_type accumulator_type;
 
                 typedef typename scheme_public_key_type::group_value_type group_value_type;
                 typedef typename scheme_public_key_type::scalar_field_type scalar_field_type;
@@ -296,7 +303,7 @@ namespace nil {
                 typedef typename scheme_public_key_type::endianness endianness;
                 typedef typename scheme_public_key_type::marshalling_group_value_type marshalling_group_value_type;
                 typedef typename scheme_public_key_type::marshalling_scalar_field_value_type
-                    marshalling_scalar_field_value_type;
+                marshalling_scalar_field_value_type;
                 typedef typename scheme_public_key_type::marshalling_base_integral_type marshalling_base_integral_type;
                 typedef typename scheme_public_key_type::marshalling_uint512_t_type marshalling_uint512_t_type;
 
@@ -304,20 +311,22 @@ namespace nil {
                 static_assert(32 * std::numeric_limits<std::uint8_t>::digits - 1 == private_key_bits,
                               "wrong octet length of private key");
                 typedef static_digest<private_key_bits +
-                                      (base_field_type::modulus_bits % std::numeric_limits<std::uint8_t>::digits ? 1 :
-                                                                                                                   0)>
-                    private_key_type;
+                                      (base_field_type::modulus_bits % std::numeric_limits<std::uint8_t>::digits ?
+                                           1 :
+                                           0)>
+                private_key_type;
 
                 constexpr static const std::size_t public_key_bits = scheme_public_key_type::public_key_bits;
-                typedef typename scheme_public_key_type::public_key_type public_key_type;
+                typedef typename scheme_public_key_type::schedule_type public_key_type;
 
                 constexpr static const std::size_t signature_bits = scheme_public_key_type::signature_bits;
                 typedef typename scheme_public_key_type::signature_type signature_type;
 
                 private_key() = delete;
-                private_key(const private_key_type &key) :
-                    privkey(key), h_privkey(hash<hash_type>(key)), s_reduced(construct_scalar(h_privkey)),
-                    scheme_public_key_type(generate_public_key(key)) {
+
+                private_key(const private_key_type &key) : privkey(key), h_privkey(hash<hash_type>(key)),
+                                                           s_reduced(construct_scalar(h_privkey)),
+                                                           scheme_public_key_type(generate_public_key(key)) {
                 }
 
                 // https://datatracker.ietf.org/doc/html/rfc8032#section-5.1.5
@@ -343,32 +352,32 @@ namespace nil {
                     return public_key;
                 }
 
-                static inline void init_accumulator(internal_accumulator_type &acc) {
+                static inline void init_accumulator(accumulator_type &acc) {
                 }
 
                 template<typename InputRange>
-                inline void update(internal_accumulator_type &acc, const InputRange &range) const {
+                inline void update(accumulator_type &acc, const InputRange &range) const {
                     encode<padding_policy>(range, acc);
                 }
 
                 template<typename InputIterator>
-                inline void update(internal_accumulator_type &acc, InputIterator first, InputIterator last) const {
+                inline void update(accumulator_type &acc, InputIterator first, InputIterator last) const {
                     encode<padding_policy>(first, last, acc);
                 }
 
                 // https://datatracker.ietf.org/doc/html/rfc8032#section-5.1.6
-                inline signature_type sign(internal_accumulator_type &acc) const {
+                inline signature_type sign(accumulator_type &acc) const {
                     // 2.
                     auto ph_m = padding::accumulators::extract::encode<padding::encoding_policy<padding_policy>>(acc);
-                    accumulator_set<hash_type> hash_acc_2;
-                    hash<hash_type>(policy_type::domain(), hash_acc_2);
-                    hash<hash_type>(
-                        std::cbegin(h_privkey) + private_key_bits / std::numeric_limits<std::uint8_t>::digits +
-                            (base_field_type::modulus_bits % std::numeric_limits<std::uint8_t>::digits ? 1 : 0),
-                        std::cend(h_privkey), hash_acc_2);
-                    hash<hash_type>(ph_m, hash_acc_2);
-                    typename hash_type::digest_type h_2 =
-                        nil::crypto3::accumulators::extract::hash<hash_type>(hash_acc_2);
+                    typename hash_type::digest_type h_2 = hash<hash_type>(policy_type::domain())
+                                                          .then(std::cbegin(h_privkey) + private_key_bits /
+                                                                std::numeric_limits<std::uint8_t>::digits +
+                                                                (base_field_type::modulus_bits % std::numeric_limits<
+                                                                     std::uint8_t>::digits ?
+                                                                     1 :
+                                                                     0),
+                                                                std::cend(h_privkey))
+                                                          .then(ph_m);
                     marshalling_uint512_t_type marshalling_uint512_t_2;
                     auto h_2_it = std::cbegin(h_2);
                     // TODO: process status
@@ -381,8 +390,9 @@ namespace nil {
                     // Reduce the size of r to the needed number of bits.
                     // This can be done more effective later. Also we can make it easier to convert, but we want the conversion
                     // to be explicit.
-                    boost::multiprecision::uint512_modular_t r_modular = boost::multiprecision::uint512_modular_t::backend_type(
-                        r.backend());
+                    boost::multiprecision::uint512_modular_t r_modular =
+                            boost::multiprecision::uint512_modular_t::backend_type(
+                                r.backend());
                     scalar_field_value_type r_reduced(r_modular);
 
                     // 3.
@@ -397,17 +407,16 @@ namespace nil {
                     }
 
                     // 4.
-                    accumulator_set<hash_type> hash_acc_4;
-                    hash<hash_type>(policy_type::domain(), hash_acc_4);
-                    hash<hash_type>(
-                        std::cbegin(signature),
-                        std::cbegin(signature) + public_key_bits / std::numeric_limits<std::uint8_t>::digits +
-                            (base_field_type::modulus_bits % std::numeric_limits<std::uint8_t>::digits ? 1 : 0),
-                        hash_acc_4);
-                    hash<hash_type>(this->pubkey, hash_acc_4);
-                    hash<hash_type>(ph_m, hash_acc_4);
-                    typename hash_type::digest_type h_4 =
-                        nil::crypto3::accumulators::extract::hash<hash_type>(hash_acc_4);
+                    typename hash_type::digest_type h_4 = hash<hash_type>(policy_type::domain())
+                                                          .then(std::cbegin(signature),
+                                                                std::cbegin(signature) + public_key_bits /
+                                                                std::numeric_limits<std::uint8_t>::digits +
+                                                                (base_field_type::modulus_bits % std::numeric_limits<
+                                                                     std::uint8_t>::digits ?
+                                                                     1 :
+                                                                     0))
+                                                          .then(this->pubkey)
+                                                          .then(ph_m);
                     marshalling_uint512_t_type marshalling_uint512_t_4;
                     auto h_4_it = std::cbegin(h_4);
                     if (marshalling_uint512_t_4.read(h_4_it, hash_type::digest_bits) !=
@@ -419,8 +428,9 @@ namespace nil {
                     // Reduce the size of r to the needed number of bits.
                     // This can be done more effective later. Also we can make it easier to convert, but we want the conversion
                     // to be explicit.
-                    boost::multiprecision::uint512_modular_t k_modular = boost::multiprecision::uint512_modular_t::backend_type(
-                        k.backend());
+                    boost::multiprecision::uint512_modular_t k_modular =
+                            boost::multiprecision::uint512_modular_t::backend_type(
+                                k.backend());
                     scalar_field_value_type k_reduced(k_modular);
 
                     // 5.
@@ -429,8 +439,8 @@ namespace nil {
                     // 6.
                     marshalling_scalar_field_value_type marshalling_scalar_field_value_6(S);
                     std::size_t offset_6 =
-                        public_key_bits / std::numeric_limits<std::uint8_t>::digits +
-                        (base_field_type::modulus_bits % std::numeric_limits<std::uint8_t>::digits ? 1 : 0);
+                            public_key_bits / std::numeric_limits<std::uint8_t>::digits +
+                            (base_field_type::modulus_bits % std::numeric_limits<std::uint8_t>::digits ? 1 : 0);
                     auto sig_iter_6 = std::begin(signature) + offset_6;
                     std::size_t remaining_bytes_6 = signature.size() - offset_6;
                     if (marshalling_scalar_field_value_6.write(sig_iter_6, remaining_bytes_6) !=
@@ -441,7 +451,7 @@ namespace nil {
                     return signature;
                 }
 
-            // protected:
+                // protected:
                 // https://datatracker.ietf.org/doc/html/rfc8032#section-5.1.5
                 static inline base_integral_type construct_scalar(const typename hash_type::digest_type &h) {
                     // 3.
@@ -462,8 +472,8 @@ namespace nil {
                 typename hash_type::digest_type h_privkey;
                 scalar_field_value_type s_reduced;
             };
-        }    // namespace pubkey
-    }        // namespace crypto3
-}    // namespace nil
+        } // namespace pubkey
+    } // namespace crypto3
+} // namespace nil
 
 #endif    // CRYPTO3_PUBKEY_EDDSA_HPP

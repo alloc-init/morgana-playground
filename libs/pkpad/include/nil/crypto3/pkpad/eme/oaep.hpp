@@ -41,10 +41,10 @@ namespace nil {
                  * @tparam Hash Hash function type used for optional label hashing
                  * @tparam SequenceContainer Hashed optional label storage container
                  */
-                template<typename Scheme, typename Hash>
-                class oaep : public eme<Scheme, Hash> {
+                template<typename SchemeType, typename HashType>
+                class oaep : public eme<SchemeType, HashType> {
                 public:
-                    typedef Hash hash_type;
+                    typedef HashType hash_type;
 
                     /*!
                      * @brief
@@ -134,9 +134,9 @@ namespace nil {
                      *   creates a message as follows:
                      *      i. Concatenate a single octet with hexadecimal value 0x00,
                      *         maskedSeed, and maskedDB to form an encoded message EM of
-                     *         length k octets as
+                     *         length K octets as
                      *            EM = 0x00 || maskedSeed || maskedDB.
-                     *   where k is the length of the modulus N.
+                     *   where K is the length of the modulus N.
                      *   Therefore, the first byte can always be skipped safely.
                      */
                     template<typename InputIterator, typename OutputIterator>

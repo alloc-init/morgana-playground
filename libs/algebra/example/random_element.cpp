@@ -69,14 +69,14 @@ using namespace nil::crypto3::algebra;
 
 
 template<typename FieldType>
-void random_field_element_example(){
+void random_field_element_example() {
     typename FieldType::value_type v = random_element<FieldType>();
 
     std::cout << "Got random value:" << v << std::endl;
 }
 
 template<typename CurveGroupType>
-void random_group_element_example(){
+void random_group_element_example() {
     typename CurveGroupType::value_type v = random_element<CurveGroupType>();
 
     std::cout << "Got random value:" << v << std::endl;
@@ -90,7 +90,7 @@ int main() {
     random_field_element_example<typename curves::bls12<381>::gt_type>();
 
     std::cout << "BLS12-381 G1 random element choice:" << std::endl;
-    random_group_element_example<typename curves::bls12<381>::g1_type>();
+    random_group_element_example<typename curves::bls12<381>::g1_type<>>();
 
     return 0;
 }

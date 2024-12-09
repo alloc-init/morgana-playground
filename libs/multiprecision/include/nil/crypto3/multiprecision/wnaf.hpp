@@ -15,7 +15,7 @@ namespace boost {
     namespace multiprecision {
 
         template<typename Backend>
-        std::vector<long> eval_find_wnaf(const size_t window_size, const Backend& scalar) {
+        std::vector<long> eval_find_wnaf(const size_t window_size, const Backend &scalar) {
             using ui_type = typename std::tuple_element<0, typename Backend::unsigned_types>::type;
 
             using default_ops::eval_add;
@@ -54,12 +54,12 @@ namespace boost {
         }
 
         template<typename Backend, expression_template_option ExpressionTemplates>
-        std::vector<long> find_wnaf(const size_t window_size, const number<Backend, ExpressionTemplates>& scalar) {
+        std::vector<long> find_wnaf(const size_t window_size, const number<Backend, ExpressionTemplates> &scalar) {
             return eval_find_wnaf(window_size, scalar.backend());
         }
 
         template<typename Backend>
-        constexpr auto eval_find_wnaf_a(const size_t window_size, const Backend& scalar) {
+        constexpr auto eval_find_wnaf_a(const size_t window_size, const Backend &scalar) {
             using ui_type = typename std::tuple_element<0, typename Backend::unsigned_types>::type;
 
             using default_ops::eval_add;
@@ -67,9 +67,9 @@ namespace boost {
             using default_ops::eval_subtract;
 
             // upper bound
-            constexpr std::size_t length =  Backend::internal_limb_count * std::numeric_limits<ui_type>::digits;
+            constexpr std::size_t length = Backend::internal_limb_count * std::numeric_limits<ui_type>::digits;
 
-            std::array<long, length+1> res {0};
+            std::array<long, length + 1> res{0};
 
             Backend c(scalar);
             ui_type j = 0;
@@ -98,11 +98,9 @@ namespace boost {
         }
 
         template<typename Backend, expression_template_option ExpressionTemplates>
-        constexpr auto find_wnaf_a(const size_t window_size, const number<Backend, ExpressionTemplates>& scalar) {
+        constexpr auto find_wnaf_a(const size_t window_size, const number<Backend, ExpressionTemplates> &scalar) {
             return eval_find_wnaf_a(window_size, scalar.backend());
         }
-
-
     }   // namespace multiprecision
 }   // namespace boost
 

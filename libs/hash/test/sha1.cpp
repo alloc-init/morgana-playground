@@ -59,7 +59,7 @@ BOOST_TEST_DONT_PRINT_LOG_VALUE(hashes::sha1::construction::type::digest_type)
 class fixture {
 public:
     accumulator_set<hashes::sha1> acc;
-    typedef hashes::sha1 hash_t;
+    typedef hashes::sha1 hash_type;
 
     virtual ~fixture() {
     }
@@ -133,12 +133,12 @@ BOOST_AUTO_TEST_SUITE(sha1_accumulator_test_suite)
 
 BOOST_FIXTURE_TEST_CASE(sha1_accumulator1, fixture) {
     // echo -n "a" | sha1sum
-    hash_t::construction::type::block_type m = {{}};
+    hash_type::construction::type::block_type m = {{}};
 
     m[0] = 0x61000000;
     acc(m, accumulators::bits = 8);
 
-    hash_t::digest_type s = extract::hash<hash_t>(acc);
+    hash_type::digest_type s = extract::hash<hash_type>(acc);
 
 #ifdef CRYPTO3_HASH_SHOW_PROGRESS
     std::printf("%s\n", std::to_string(s).data());
@@ -149,12 +149,12 @@ BOOST_FIXTURE_TEST_CASE(sha1_accumulator1, fixture) {
 
 BOOST_FIXTURE_TEST_CASE(sha1_accumulator2, fixture) {
     // echo -n "abc" | sha1sum
-    hash_t::construction::type::block_type m = {{}};
+    hash_type::construction::type::block_type m = {{}};
 
     m[0] = 0x61626300;
     acc(m, accumulators::bits = 24);
 
-    hash_t::digest_type s = extract::hash<hash_t>(acc);
+    hash_type::digest_type s = extract::hash<hash_type>(acc);
 
 #ifdef CRYPTO3_HASH_SHOW_PROGRESS
     std::printf("%s\n", std::to_string(s).data());
@@ -165,22 +165,22 @@ BOOST_FIXTURE_TEST_CASE(sha1_accumulator2, fixture) {
 
 BOOST_FIXTURE_TEST_CASE(sha1_accumulator3, fixture) {
     // echo -n "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq" | sha1sum
-    hash_t::construction::type::block_type m1 = {
+    hash_type::construction::type::block_type m1 = {
         {0x61626364, 0x62636465, 0x63646566, 0x64656667, 0x65666768, 0x66676869, 0x6768696a, 0x68696a6b, 0x696a6b6c,
          0x6a6b6c6d, 0x6b6c6d6e, 0x6c6d6e6f, 0x6d010101, 0x01010101, 0x80000000, 0x00000000}};
     acc(m1, accumulators::bits = 512 - 64 - 64 + 8);
 
-    hash_t::digest_type s = extract::hash<hash_t>(acc);
+    hash_type::digest_type s = extract::hash<hash_type>(acc);
 
     BOOST_CHECK_EQUAL("9d47791975c530645ad3568e80f88d7da4c52c3b", std::to_string(s).data());
 
-    hash_t::construction::type::block_type m2 = {
+    hash_type::construction::type::block_type m2 = {
         {0x6e6f706e, 0x6f707100, 0x6d6e6f70, 0x6e6f7071, 0x6d6e6f70, 0x6e6f7071, 0x0168696a, 0x68696a6b, 0x696a6b6c,
          0x6a6b6c6d, 0x6b6c6d6e, 0x6c6d6e6f, 0x6d010170, 0x6e6f7071, 0x80080000, 0x00000000}};
 
     acc(m2, accumulators::bits = 64 - 8);
 
-    s = extract::hash<hash_t>(acc);
+    s = extract::hash<hash_type>(acc);
 
 #ifdef CRYPTO3_HASH_SHOW_PROGRESS
     std::printf("%s\n", std::to_string(s).data());
@@ -192,22 +192,22 @@ BOOST_FIXTURE_TEST_CASE(sha1_accumulator3, fixture) {
 BOOST_FIXTURE_TEST_CASE(sha1_accumulator4, fixture) {
     // echo -n "abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmn (continues)
     //          hijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu" | sha1sum
-    hash_t::construction::type::block_type m1 = {
+    hash_type::construction::type::block_type m1 = {
         {0x61626364, 0x65666768, 0x62636465, 0x66676869, 0x63646566, 0x6768696a, 0x64656667, 0x68696a6b, 0x65666768,
          0x696a6b6c, 0x66676869, 0x6a6b6c6d, 0x6768696a, 0x6b6c6d6e, 0x68696a6b, 0x6c6d6e6f}};
     acc(m1, accumulators::bits = 512);
 
-    hash_t::digest_type s = extract::hash<hash_t>(acc);
+    hash_type::digest_type s = extract::hash<hash_type>(acc);
 
     BOOST_CHECK_EQUAL("b85d6468bd3a73794bceaf812239cc1fe460ab95", std::to_string(s).data());
 
-    hash_t::construction::type::block_type m2 = {
+    hash_type::construction::type::block_type m2 = {
         {0x696a6b6c, 0x6d6e6f70, 0x6a6b6c6d, 0x6e6f7071, 0x6b6c6d6e, 0x6f707172, 0x6c6d6e6f, 0x70717273, 0x6d6e6f70,
          0x71727374, 0x6e6f7071, 0x72737475, 0x6d010170, 0x6e6f7071, 0x80080000, 0x00000000}};
 
     acc(m2, accumulators::bits = 64 * 6);
 
-    s = extract::hash<hash_t>(acc);
+    s = extract::hash<hash_type>(acc);
 
 #ifdef CRYPTO3_HASH_SHOW_PROGRESS
     std::printf("%s\n", std::to_string(s).data());

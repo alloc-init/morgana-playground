@@ -31,9 +31,9 @@ namespace nil {
             namespace detail {
 
                 enum class stream_processor_type {
-                    Block,
-                    Raw,
-                    RawDelegating
+                    block,
+                    raw,
+                    raw_delegating
                 };
 
             }    // namespace detail

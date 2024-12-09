@@ -164,11 +164,14 @@ BOOST_AUTO_TEST_SUITE(threshold_self_test_suite)
         using sss_public_key_group_type = typename pubkey_type::sss_public_key_group_type;
         using shares_dealing_processing_mode = typename modes::isomorphic<sss_public_key_group_type>::template bind<
                 shares_dealing_policy<sss_public_key_group_type>>::type;
-        using signing_processing_mode_type = typename mode_type::template bind<typename mode_type::signing_policy>::type;
+        using signing_processing_mode_type = typename mode_type::
+        template bind<typename mode_type::signing_policy>::type;
         using verification_processing_mode_type =
-                typename mode_type::template bind<typename mode_type::verification_policy>::type;
+                typename mode_type::
+                template bind<typename mode_type::verification_policy>::type;
         using aggregation_processing_mode_type =
-                typename mode_type::template bind<typename mode_type::aggregation_policy>::type;
+                typename mode_type::
+                template bind<typename mode_type::aggregation_policy>::type;
 
         std::size_t n = 20;
         std::size_t t = 10;
@@ -248,13 +251,17 @@ BOOST_AUTO_TEST_SUITE(threshold_self_test_suite)
         using sss_public_key_group_type = typename pubkey_type::sss_public_key_group_type;
         using shares_dealing_processing_mode = typename modes::isomorphic<sss_public_key_group_type>::template bind<
                 shares_dealing_policy<sss_public_key_group_type>>::type;
-        using share_dealing_processing_mode = typename modes::isomorphic<sss_public_key_group_type>::template bind<
+        using share_dealing_processing_mode = typename modes::isomorphic<sss_public_key_group_type>::
+        template bind<
                 share_dealing_policy<sss_public_key_group_type>>::type;
-        using signing_processing_mode_type = typename mode_type::template bind<typename mode_type::signing_policy>::type;
+        using signing_processing_mode_type = typename mode_type::
+        template bind<typename mode_type::signing_policy>::type;
         using verification_processing_mode_type =
-                typename mode_type::template bind<typename mode_type::verification_policy>::type;
+                typename mode_type::
+                template bind<typename mode_type::verification_policy>::type;
         using aggregation_processing_mode_type =
-                typename mode_type::template bind<typename mode_type::aggregation_policy>::type;
+                typename mode_type::
+                template bind<typename mode_type::aggregation_policy>::type;
 
         std::size_t n = 20;
         std::size_t t = 10;
@@ -356,11 +363,14 @@ BOOST_AUTO_TEST_SUITE(threshold_self_test_suite)
         using sss_public_key_group_type = typename pubkey_type::sss_public_key_group_type;
         using shares_dealing_processing_mode = typename modes::isomorphic<sss_public_key_group_type>::template bind<
                 shares_dealing_policy<sss_public_key_group_type>>::type;
-        using signing_processing_mode_type = typename mode_type::template bind<typename mode_type::signing_policy>::type;
+        using signing_processing_mode_type = typename mode_type::
+        template bind<typename mode_type::signing_policy>::type;
         using verification_processing_mode_type =
-                typename mode_type::template bind<typename mode_type::verification_policy>::type;
+                typename mode_type::
+                template bind<typename mode_type::verification_policy>::type;
         using aggregation_processing_mode_type =
-                typename mode_type::template bind<typename mode_type::aggregation_policy>::type;
+                typename mode_type::
+                template bind<typename mode_type::aggregation_policy>::type;
 
         std::size_t n = 20;
         std::size_t t = 10;

@@ -46,12 +46,12 @@
 namespace nil {
     namespace crypto3 {
         namespace block {
-            template<typename Mode, typename StateAccumulator, typename Params>
+            template<typename Mode, typename StateAccumulator, typename ParamsType>
             struct block_stream_processor {
             private:
                 typedef Mode mode_type;
                 typedef StateAccumulator accumulator_type;
-                typedef Params params_type;
+                typedef ParamsType params_type;
 
                 typedef typename mode_type::block_type block_type;
                 constexpr static const std::size_t block_bits = mode_type::block_bits;
@@ -73,11 +73,11 @@ namespace nil {
                 constexpr static const std::size_t length_bits = params_type::length_bits;
                 // FIXME: do something more intelligent than capping at sizeof(boost::uintmax_t) * CHAR_BIT
                 constexpr static const std::size_t length_type_bits = length_bits < word_bits ?
-                                                                          word_bits :
-                                                                          length_bits >
-                                                                                  sizeof(boost::uintmax_t) * CHAR_BIT ?
-                                                                          sizeof(boost::uintmax_t) * CHAR_BIT :
-                                                                          length_bits;
+                                                                      word_bits :
+                                                                      length_bits >
+                                                                      sizeof(boost::uintmax_t) * CHAR_BIT ?
+                                                                      sizeof(boost::uintmax_t) * CHAR_BIT :
+                                                                      length_bits;
                 typedef typename boost::uint_t<length_type_bits>::least length_type;
 
                 BOOST_STATIC_ASSERT(!length_bits || length_bits % word_bits == 0);

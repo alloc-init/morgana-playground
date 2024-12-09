@@ -52,40 +52,40 @@
 namespace nil {
     namespace crypto3 {
         namespace pubkey {
-            template<typename Curve, std::size_t BlockBits = 4>
+            template<typename CurveType, std::size_t BlockBits = 4>
             class elgamal_verifiable {
-                typedef elgamal_verifiable<Curve, BlockBits> self_type;
+                typedef elgamal_verifiable<CurveType, BlockBits> self_type;
                 static_assert(BlockBits > 0);
 
             public:
-                typedef Curve curve_type;
+                typedef CurveType curve_type;
                 static constexpr std::size_t block_bits = BlockBits;
 
-                typedef public_key<self_type> public_key_type;
+                typedef public_key<self_type> schedule_type;
                 typedef private_key<self_type> private_key_type;
                 typedef verification_key<self_type> verification_key_type;
-                typedef std::tuple<public_key_type, private_key_type, verification_key_type> keypair_type;
+                typedef std::tuple<schedule_type, private_key_type, verification_key_type> keypair_type;
 
                 typedef zk::snark::r1cs_gg_ppzksnark<
-                    Curve, zk::snark::r1cs_gg_ppzksnark_generator<Curve, zk::snark::proving_mode::encrypted_input>,
-                    zk::snark::r1cs_gg_ppzksnark_prover<Curve, zk::snark::proving_mode::encrypted_input>,
+                    CurveType, zk::snark::r1cs_gg_ppzksnark_generator<CurveType, zk::snark::proving_mode::encrypted_input>,
+                    zk::snark::r1cs_gg_ppzksnark_prover<CurveType, zk::snark::proving_mode::encrypted_input>,
                     zk::snark::r1cs_gg_ppzksnark_verifier_strong_input_consistency<
-                        Curve, zk::snark::proving_mode::encrypted_input>,
+                        CurveType, zk::snark::proving_mode::encrypted_input>,
                     zk::snark::proving_mode::encrypted_input>
                     proof_system_type;
 
-                typedef std::pair<std::vector<typename Curve::template g1_type<>::value_type>,
+                typedef std::pair<std::vector<typename CurveType::template g1_type<>::value_type>,
                                   typename proof_system_type::proof_type>
                     cipher_type;
-                typedef std::pair<std::vector<typename Curve::scalar_field_type::value_type>,
-                                  typename Curve::template g1_type<>::value_type>
+                typedef std::pair<std::vector<typename CurveType::scalar_field_type::value_type>,
+                                  typename CurveType::template g1_type<>::value_type>
                     decipher_type;
             };
 
-            template<typename Curve, std::size_t BlockBits>
-            struct verification_key<elgamal_verifiable<Curve, BlockBits>> {
-                typedef elgamal_verifiable<Curve, BlockBits> scheme_type;
-                typedef typename Curve::template g2_type<> g2_type;
+            template<typename CurveType, std::size_t BlockBits>
+            struct verification_key<elgamal_verifiable<CurveType, BlockBits>> {
+                typedef elgamal_verifiable<CurveType, BlockBits> scheme_type;
+                typedef typename CurveType::template g2_type<> g2_type;
 
                 friend class decrypt_op<scheme_type>;
                 friend class verify_decryption_op<scheme_type>;
@@ -110,12 +110,12 @@ namespace nil {
                 std::vector<typename g2_type::value_type> rho_rhov_g2;
             };
 
-            template<typename Curve, std::size_t BlockBits>
-            struct public_key<elgamal_verifiable<Curve, BlockBits>> {
-                typedef elgamal_verifiable<Curve, BlockBits> scheme_type;
+            template<typename CurveType, std::size_t BlockBits>
+            struct public_key<elgamal_verifiable<CurveType, BlockBits>> {
+                typedef elgamal_verifiable<CurveType, BlockBits> scheme_type;
 
-                typedef typename Curve::template g1_type<> g1_type;
-                typedef typename Curve::template g2_type<> g2_type;
+                typedef typename CurveType::template g1_type<> g1_type;
+                typedef typename CurveType::template g2_type<> g2_type;
 
                 public_key() = default;
                 public_key &operator=(const public_key &other) = default;
@@ -157,10 +157,10 @@ namespace nil {
                 typename g1_type::value_type gamma_inverse_sum_s_g1;
             };
 
-            template<typename Curve, std::size_t BlockBits>
-            struct private_key<elgamal_verifiable<Curve, BlockBits>> {
-                typedef elgamal_verifiable<Curve, BlockBits> scheme_type;
-                typedef typename Curve::scalar_field_type scalar_field_type;
+            template<typename CurveType, std::size_t BlockBits>
+            struct private_key<elgamal_verifiable<CurveType, BlockBits>> {
+                typedef elgamal_verifiable<CurveType, BlockBits> scheme_type;
+                typedef typename CurveType::scalar_field_type scalar_field_type;
 
                 friend class decrypt_op<scheme_type>;
 
@@ -172,32 +172,32 @@ namespace nil {
                 typename scalar_field_type::value_type rho;
             };
 
-            template<typename Curve, std::size_t BlockBits>
-            struct generate_keypair_op<elgamal_verifiable<Curve, BlockBits>> {
-                typedef elgamal_verifiable<Curve, BlockBits> scheme_type;
+            template<typename CurveType, std::size_t BlockBits>
+            struct generate_keypair_op<elgamal_verifiable<CurveType, BlockBits>> {
+                typedef elgamal_verifiable<CurveType, BlockBits> scheme_type;
                 typedef typename scheme_type::proof_system_type proof_system_type;
 
-                typedef typename scheme_type::public_key_type public_key_type;
+                typedef typename scheme_type::schedule_type schedule_type;
                 typedef typename scheme_type::private_key_type private_key_type;
                 typedef typename scheme_type::verification_key_type verification_key_type;
                 typedef typename scheme_type::keypair_type keypair_type;
 
-                typedef typename Curve::scalar_field_type scalar_field_type;
-                typedef typename Curve::template g1_type<> g1_type;
-                typedef typename Curve::template g2_type<> g2_type;
+                typedef typename CurveType::scalar_field_type scalar_field_type;
+                typedef typename CurveType::template g1_type<> g1_type;
+                typedef typename CurveType::template g2_type<> g2_type;
 
                 struct init_params_type {
                     const typename proof_system_type::keypair_type &gg_keypair;
                     std::size_t msg_size;
                 };
-                struct internal_accumulator_type {
+                struct accumulator_type {
                     const typename proof_system_type::keypair_type &gg_keypair;
                     std::size_t msg_size;
                     std::vector<typename scalar_field_type::value_type> rnd;
                 };
                 typedef keypair_type result_type;
 
-                static inline internal_accumulator_type init_accumulator(const init_params_type &init_params) {
+                static inline accumulator_type init_accumulator(const init_params_type &init_params) {
                     // TODO: check
                     BOOST_ASSERT_MSG(init_params.gg_keypair.second.gamma_ABC_g1.rest.size() > init_params.msg_size,
                                      "Array of gammas in vk should be longer than the message.");
@@ -206,16 +206,16 @@ namespace nil {
                 }
 
                 template<typename InputIterator>
-                static inline void update(internal_accumulator_type &acc, InputIterator first, InputIterator last) {
+                static inline void update(accumulator_type &acc, InputIterator first, InputIterator last) {
                     std::move(first, last, std::back_inserter(acc.rnd));
                 }
 
                 template<typename InputRange>
-                static inline void update(internal_accumulator_type &acc, InputRange range) {
+                static inline void update(accumulator_type &acc, InputRange range) {
                     update(acc, std::cbegin(range), std::cend(range));
                 }
 
-                static inline result_type process(internal_accumulator_type &acc) {
+                static inline result_type process(accumulator_type &acc) {
                     // TODO: check
                     BOOST_ASSERT_MSG(acc.rnd.size() >= 3 * acc.msg_size + 2,
                                      "Too few numbers in the source of randomness.");
@@ -262,7 +262,7 @@ namespace nil {
                     }
                     gamma_inverse_sum_s_g1 = -gamma_inverse_sum_s_g1;
 
-                    public_key_type pk(acc.gg_keypair.second.delta_g1, delta_s_g1, t_g1, t_g2, delta_sum_s_g1,
+                    schedule_type pk(acc.gg_keypair.second.delta_g1, delta_s_g1, t_g1, t_g2, delta_sum_s_g1,
                                        gamma_inverse_sum_s_g1);
                     private_key_type sk(rho);
                     verification_key_type vk(rho_g2, rho_sv_g2, rho_rhov_g2);
@@ -271,34 +271,34 @@ namespace nil {
                 }
             };
 
-            template<typename Curve, std::size_t BlockBits>
-            struct encrypt_op<elgamal_verifiable<Curve, BlockBits>> {
-                typedef elgamal_verifiable<Curve, BlockBits> scheme_type;
+            template<typename CurveType, std::size_t BlockBits>
+            struct encrypt_op<elgamal_verifiable<CurveType, BlockBits>> {
+                typedef elgamal_verifiable<CurveType, BlockBits> scheme_type;
                 typedef typename scheme_type::proof_system_type proof_system_type;
-                typedef typename scheme_type::public_key_type public_key_type;
+                typedef typename scheme_type::schedule_type schedule_type;
 
-                typedef typename Curve::scalar_field_type scalar_field_type;
-                typedef typename Curve::template g1_type<> g1_type;
+                typedef typename CurveType::scalar_field_type scalar_field_type;
+                typedef typename CurveType::template g1_type<> g1_type;
 
                 struct init_params_type {
                     typename scalar_field_type::value_type r;
-                    const public_key_type &pubkey;
+                    const schedule_type &pubkey;
                     const typename proof_system_type::keypair_type &gg_keypair;
                     // TODO: accumulate primary_input and auxiliary_input
                     const typename proof_system_type::primary_input_type &primary_input;
                     const typename proof_system_type::auxiliary_input_type &auxiliary_input;
                 };
-                struct internal_accumulator_type {
+                struct accumulator_type {
                     std::vector<typename scalar_field_type::value_type> plain_text;
                     typename scalar_field_type::value_type r;
-                    const public_key_type &pubkey;
+                    const schedule_type &pubkey;
                     const typename proof_system_type::keypair_type &gg_keypair;
                     const typename proof_system_type::primary_input_type &primary_input;
                     const typename proof_system_type::auxiliary_input_type &auxiliary_input;
                 };
                 typedef typename scheme_type::cipher_type result_type;
 
-                static inline internal_accumulator_type init_accumulator(const init_params_type &init_params) {
+                static inline accumulator_type init_accumulator(const init_params_type &init_params) {
                     return {std::vector<typename scalar_field_type::value_type> {},
                             std::move(init_params.r),
                             init_params.pubkey,
@@ -310,16 +310,16 @@ namespace nil {
                 // TODO: process input data in place
                 // TODO: use marshalling module instead of custom marshalling to process input data
                 template<typename InputIterator>
-                static inline void update(internal_accumulator_type &acc, InputIterator first, InputIterator last) {
+                static inline void update(accumulator_type &acc, InputIterator first, InputIterator last) {
                     std::copy(first, last, std::back_inserter(acc.plain_text));
                 }
 
                 template<typename InputRange>
-                static inline void update(internal_accumulator_type &acc, InputRange range) {
+                static inline void update(accumulator_type &acc, InputRange range) {
                     update(acc, std::cbegin(range), std::cend(range));
                 }
 
-                static inline result_type process(internal_accumulator_type &acc) {
+                static inline result_type process(accumulator_type &acc) {
                     // TODO: check
                     BOOST_ASSERT_MSG(acc.gg_keypair.second.gamma_ABC_g1.rest.size() > acc.plain_text.size(),
                                      "Array of gammas in vk should be longer than the plain text.");
@@ -357,23 +357,23 @@ namespace nil {
                 }
             };
 
-            template<typename Curve, std::size_t BlockBits>
-            struct decrypt_op<elgamal_verifiable<Curve, BlockBits>> {
-                typedef elgamal_verifiable<Curve, BlockBits> scheme_type;
+            template<typename CurveType, std::size_t BlockBits>
+            struct decrypt_op<elgamal_verifiable<CurveType, BlockBits>> {
+                typedef elgamal_verifiable<CurveType, BlockBits> scheme_type;
                 typedef typename scheme_type::proof_system_type proof_system_type;
                 typedef typename scheme_type::private_key_type private_key_type;
                 typedef typename scheme_type::verification_key_type verification_key_type;
 
-                typedef typename Curve::scalar_field_type scalar_field_type;
-                typedef typename Curve::template g1_type<> g1_type;
-                typedef typename Curve::gt_type gt_type;
+                typedef typename CurveType::scalar_field_type scalar_field_type;
+                typedef typename CurveType::template g1_type<> g1_type;
+                typedef typename CurveType::gt_type gt_type;
 
                 struct init_params_type {
                     const private_key_type &privkey;
                     const verification_key_type &vk;
                     const typename proof_system_type::keypair_type &gg_keypair;
                 };
-                struct internal_accumulator_type {
+                struct accumulator_type {
                     std::vector<typename g1_type::value_type> cipher_text;
                     const private_key_type &privkey;
                     const verification_key_type &vk;
@@ -381,24 +381,24 @@ namespace nil {
                 };
                 typedef typename scheme_type::decipher_type result_type;
 
-                static inline internal_accumulator_type init_accumulator(const init_params_type &init_params) {
-                    return internal_accumulator_type {std::vector<typename g1_type::value_type> {}, init_params.privkey,
+                static inline accumulator_type init_accumulator(const init_params_type &init_params) {
+                    return accumulator_type {std::vector<typename g1_type::value_type> {}, init_params.privkey,
                                                       init_params.vk, init_params.gg_keypair};
                 }
 
                 // TODO: process input data in place
                 // TODO: use marshalling module instead of custom marshalling to process input data
                 template<typename InputIterator>
-                static inline void update(internal_accumulator_type &acc, InputIterator first, InputIterator last) {
+                static inline void update(accumulator_type &acc, InputIterator first, InputIterator last) {
                     std::copy(first, last, std::back_inserter(acc.cipher_text));
                 }
 
                 template<typename InputRange>
-                static inline void update(internal_accumulator_type &acc, InputRange range) {
+                static inline void update(accumulator_type &acc, InputRange range) {
                     update(acc, std::cbegin(range), std::cend(range));
                 }
 
-                static inline result_type process(internal_accumulator_type &acc) {
+                static inline result_type process(accumulator_type &acc) {
                     // TODO: check
                     BOOST_ASSERT_MSG(
                         acc.gg_keypair.second.gamma_ABC_g1.rest.size() > acc.cipher_text.size() - 2,
@@ -414,13 +414,13 @@ namespace nil {
 
                     for (size_t j = 1; j < acc.cipher_text.size() - 1; ++j) {
                         typename gt_type::value_type ci_sk_i =
-                            algebra::pair_reduced<Curve>(acc.cipher_text[j], acc.vk.rho_rhov_g2[j - 1]);
+                            algebra::pair_reduced<CurveType>(acc.cipher_text[j], acc.vk.rho_rhov_g2[j - 1]);
                         typename gt_type::value_type c0_sk_0 =
-                            algebra::pair_reduced<Curve>(acc.cipher_text[0], acc.vk.rho_sv_g2[j - 1])
+                            algebra::pair_reduced<CurveType>(acc.cipher_text[0], acc.vk.rho_sv_g2[j - 1])
                                 .pow(acc.privkey.rho.data);
                         typename gt_type::value_type dec_tmp = ci_sk_i * c0_sk_0.inversed();
                         auto discrete_log = gt_type::value_type::one();
-                        typename gt_type::value_type bruteforce = algebra::pair_reduced<Curve>(
+                        typename gt_type::value_type bruteforce = algebra::pair_reduced<CurveType>(
                             acc.gg_keypair.second.gamma_ABC_g1.rest[j - 1], acc.vk.rho_rhov_g2[j - 1]);
                         std::size_t exp = 0;
                         bool deciphered = false;
@@ -441,23 +441,23 @@ namespace nil {
                 }
             };
 
-            template<typename Curve, std::size_t BlockBits>
-            struct verify_encryption_op<elgamal_verifiable<Curve, BlockBits>> {
-                typedef elgamal_verifiable<Curve, BlockBits> scheme_type;
+            template<typename CurveType, std::size_t BlockBits>
+            struct verify_encryption_op<elgamal_verifiable<CurveType, BlockBits>> {
+                typedef elgamal_verifiable<CurveType, BlockBits> scheme_type;
                 typedef typename scheme_type::proof_system_type proof_system_type;
-                typedef typename scheme_type::public_key_type public_key_type;
+                typedef typename scheme_type::schedule_type schedule_type;
 
-                typedef typename Curve::scalar_field_type scalar_field_type;
-                typedef typename Curve::template g1_type<> g1_type;
+                typedef typename CurveType::scalar_field_type scalar_field_type;
+                typedef typename CurveType::template g1_type<> g1_type;
 
                 struct init_params_type {
-                    const public_key_type &pubkey;
+                    const schedule_type &pubkey;
                     const typename proof_system_type::verification_key_type &gg_vk;
                     const typename proof_system_type::proof_type &proof;
                     const typename proof_system_type::primary_input_type &unencrypted_primary_input;
                 };
-                struct internal_accumulator_type {
-                    const public_key_type &pubkey;
+                struct accumulator_type {
+                    const schedule_type &pubkey;
                     const typename proof_system_type::verification_key_type &gg_vk;
                     const typename proof_system_type::proof_type &proof;
                     const typename proof_system_type::primary_input_type &unencrypted_primary_input;
@@ -465,8 +465,8 @@ namespace nil {
                 };
                 typedef bool result_type;
 
-                static inline internal_accumulator_type init_accumulator(const init_params_type &init_params) {
-                    return internal_accumulator_type {init_params.pubkey, init_params.gg_vk, init_params.proof,
+                static inline accumulator_type init_accumulator(const init_params_type &init_params) {
+                    return accumulator_type {init_params.pubkey, init_params.gg_vk, init_params.proof,
                                                       init_params.unencrypted_primary_input,
                                                       std::vector<typename g1_type::value_type> {}};
                 }
@@ -474,40 +474,40 @@ namespace nil {
                 // TODO: process input data in place
                 // TODO: use marshalling module instead of custom marshalling to process input data
                 template<typename InputIterator>
-                static inline void update(internal_accumulator_type &acc, InputIterator first, InputIterator last) {
+                static inline void update(accumulator_type &acc, InputIterator first, InputIterator last) {
                     std::copy(first, last, std::back_inserter(acc.cipher_text));
                 }
 
                 template<typename InputRange>
-                static inline void update(internal_accumulator_type &acc, InputRange range) {
+                static inline void update(accumulator_type &acc, InputRange range) {
                     update(acc, std::cbegin(range), std::cend(range));
                 }
 
-                static inline result_type process(internal_accumulator_type &acc) {
+                static inline result_type process(accumulator_type &acc) {
                     return zk::verify<proof_system_type>(std::cbegin(acc.cipher_text), std::cend(acc.cipher_text),
                                                          acc.gg_vk, acc.pubkey, acc.unencrypted_primary_input,
                                                          acc.proof);
                 }
             };
 
-            template<typename Curve, std::size_t BlockBits>
-            struct verify_decryption_op<elgamal_verifiable<Curve, BlockBits>> {
-                typedef elgamal_verifiable<Curve, BlockBits> scheme_type;
+            template<typename CurveType, std::size_t BlockBits>
+            struct verify_decryption_op<elgamal_verifiable<CurveType, BlockBits>> {
+                typedef elgamal_verifiable<CurveType, BlockBits> scheme_type;
                 typedef typename scheme_type::proof_system_type proof_system_type;
-                typedef typename scheme_type::public_key_type public_key_type;
+                typedef typename scheme_type::schedule_type schedule_type;
                 typedef typename scheme_type::verification_key_type verification_key_type;
 
-                typedef typename Curve::scalar_field_type scalar_field_type;
-                typedef typename Curve::template g1_type<> g1_type;
-                typedef typename Curve::template g2_type<> g2_type;
-                typedef typename Curve::gt_type gt_type;
+                typedef typename CurveType::scalar_field_type scalar_field_type;
+                typedef typename CurveType::template g1_type<> g1_type;
+                typedef typename CurveType::template g2_type<> g2_type;
+                typedef typename CurveType::gt_type gt_type;
 
                 struct init_params_type {
                     const verification_key_type &vk;
                     const typename proof_system_type::keypair_type &gg_keypair;
                     const typename g1_type::value_type &proof;
                 };
-                struct internal_accumulator_type {
+                struct accumulator_type {
                     const verification_key_type &vk;
                     const typename proof_system_type::keypair_type &gg_keypair;
                     const typename g1_type::value_type &proof;
@@ -516,8 +516,8 @@ namespace nil {
                 };
                 typedef bool result_type;
 
-                static inline internal_accumulator_type init_accumulator(const init_params_type &init_params) {
-                    return internal_accumulator_type {init_params.vk, init_params.gg_keypair, init_params.proof,
+                static inline accumulator_type init_accumulator(const init_params_type &init_params) {
+                    return accumulator_type {init_params.vk, init_params.gg_keypair, init_params.proof,
                                                       std::vector<typename scalar_field_type::value_type> {},
                                                       std::vector<typename g1_type::value_type> {}};
                 }
@@ -528,7 +528,7 @@ namespace nil {
                 static inline typename std::enable_if<
                     std::is_same<typename scalar_field_type::value_type,
                                  typename std::iterator_traits<InputIterator>::value_type>::value>::type
-                    update(internal_accumulator_type &acc, InputIterator first, InputIterator last) {
+                    update(accumulator_type &acc, InputIterator first, InputIterator last) {
                     std::copy(first, last, std::back_inserter(acc.plain_text));
                 }
 
@@ -536,35 +536,35 @@ namespace nil {
                 static inline typename std::enable_if<
                     std::is_same<typename g1_type::value_type,
                                  typename std::iterator_traits<InputIterator>::value_type>::value>::type
-                    update(internal_accumulator_type &acc, InputIterator first, InputIterator last) {
+                    update(accumulator_type &acc, InputIterator first, InputIterator last) {
                     std::copy(first, last, std::back_inserter(acc.cipher_text));
                 }
 
                 template<typename InputRange>
-                static inline void update(internal_accumulator_type &acc, InputRange range) {
+                static inline void update(accumulator_type &acc, InputRange range) {
                     update(acc, std::cbegin(range), std::cend(range));
                 }
 
-                static inline result_type process(internal_accumulator_type &acc) {
+                static inline result_type process(accumulator_type &acc) {
                     BOOST_ASSERT_MSG(
                         acc.plain_text.size() + 2 == acc.cipher_text.size(),
                         "Cipher text size should be equal to the plain text size (exclusive of 2 element in CT).");
                     BOOST_ASSERT_MSG(acc.gg_keypair.second.gamma_ABC_g1.rest.size() > acc.plain_text.size(),
                                      "Array of gammas in vk should be longer than the plain text.");
                     typename gt_type::value_type vm_gt =
-                        algebra::pair_reduced<Curve>(acc.proof, g2_type::value_type::one());
+                        algebra::pair_reduced<CurveType>(acc.proof, g2_type::value_type::one());
                     typename gt_type::value_type new_c0_v0_gt =
-                        algebra::pair_reduced<Curve>(acc.cipher_text[0], acc.vk.rho_g2);
+                        algebra::pair_reduced<CurveType>(acc.cipher_text[0], acc.vk.rho_g2);
                     bool ans = (vm_gt == new_c0_v0_gt);
 
                     for (size_t i = 1; i < acc.cipher_text.size() - 1; ++i) {
                         typename gt_type::value_type ci_v_nj_gt =
-                            algebra::pair_reduced<Curve>(acc.cipher_text[i], acc.vk.rho_rhov_g2[i - 1]);
+                            algebra::pair_reduced<CurveType>(acc.cipher_text[i], acc.vk.rho_rhov_g2[i - 1]);
                         typename gt_type::value_type v_vj_gt =
-                            algebra::pair_reduced<Curve>(acc.proof, acc.vk.rho_sv_g2[i - 1]);
+                            algebra::pair_reduced<CurveType>(acc.proof, acc.vk.rho_sv_g2[i - 1]);
                         typename gt_type::value_type verify_tmp = ci_v_nj_gt * v_vj_gt.inversed();
                         typename gt_type::value_type verify_msg =
-                            algebra::pair_reduced<Curve>(acc.gg_keypair.second.gamma_ABC_g1.rest[i - 1],
+                            algebra::pair_reduced<CurveType>(acc.gg_keypair.second.gamma_ABC_g1.rest[i - 1],
                                                          acc.vk.rho_rhov_g2[i - 1])
                                 .pow(acc.plain_text[i - 1].data);
                         bool ans_m = (verify_tmp == verify_msg);
@@ -575,24 +575,24 @@ namespace nil {
                 }
             };
 
-            template<typename Curve, std::size_t BlockBits>
-            struct rerandomize_op<elgamal_verifiable<Curve, BlockBits>> {
-                typedef elgamal_verifiable<Curve, BlockBits> scheme_type;
+            template<typename CurveType, std::size_t BlockBits>
+            struct rerandomize_op<elgamal_verifiable<CurveType, BlockBits>> {
+                typedef elgamal_verifiable<CurveType, BlockBits> scheme_type;
                 typedef typename scheme_type::proof_system_type proof_system_type;
-                typedef typename scheme_type::public_key_type public_key_type;
+                typedef typename scheme_type::schedule_type schedule_type;
 
-                typedef typename Curve::scalar_field_type scalar_field_type;
-                typedef typename Curve::template g1_type<> g1_type;
-                typedef typename Curve::template g2_type<> g2_type;
-                typedef typename Curve::gt_type gt_type;
+                typedef typename CurveType::scalar_field_type scalar_field_type;
+                typedef typename CurveType::template g1_type<> g1_type;
+                typedef typename CurveType::template g2_type<> g2_type;
+                typedef typename CurveType::gt_type gt_type;
 
                 struct init_params_type {
-                    const public_key_type &pubkey;
+                    const schedule_type &pubkey;
                     const typename proof_system_type::keypair_type &gg_keypair;
                     const typename proof_system_type::proof_type &proof;
                 };
-                struct internal_accumulator_type {
-                    const public_key_type &pubkey;
+                struct accumulator_type {
+                    const schedule_type &pubkey;
                     const typename proof_system_type::keypair_type &gg_keypair;
                     const typename proof_system_type::proof_type &proof;
                     std::vector<typename scalar_field_type::value_type> rnd;
@@ -600,8 +600,8 @@ namespace nil {
                 };
                 typedef typename scheme_type::cipher_type result_type;
 
-                static inline internal_accumulator_type init_accumulator(const init_params_type &init_params) {
-                    return internal_accumulator_type {init_params.pubkey, init_params.gg_keypair, init_params.proof,
+                static inline accumulator_type init_accumulator(const init_params_type &init_params) {
+                    return accumulator_type {init_params.pubkey, init_params.gg_keypair, init_params.proof,
                                                       std::vector<typename scalar_field_type::value_type> {},
                                                       std::vector<typename g1_type::value_type> {}};
                 }
@@ -612,7 +612,7 @@ namespace nil {
                 static inline typename std::enable_if<
                     std::is_same<typename scalar_field_type::value_type,
                                  typename std::iterator_traits<InputIterator>::value_type>::value>::type
-                    update(internal_accumulator_type &acc, InputIterator first, InputIterator last) {
+                    update(accumulator_type &acc, InputIterator first, InputIterator last) {
                     std::copy(first, last, std::back_inserter(acc.rnd));
                 }
 
@@ -620,16 +620,16 @@ namespace nil {
                 static inline typename std::enable_if<
                     std::is_same<typename g1_type::value_type,
                                  typename std::iterator_traits<InputIterator>::value_type>::value>::type
-                    update(internal_accumulator_type &acc, InputIterator first, InputIterator last) {
+                    update(accumulator_type &acc, InputIterator first, InputIterator last) {
                     std::copy(first, last, std::back_inserter(acc.cipher_text));
                 }
 
                 template<typename InputRange>
-                static inline void update(internal_accumulator_type &acc, InputRange range) {
+                static inline void update(accumulator_type &acc, InputRange range) {
                     update(acc, std::cbegin(range), std::cend(range));
                 }
 
-                static inline result_type process(internal_accumulator_type &acc) {
+                static inline result_type process(accumulator_type &acc) {
                     BOOST_ASSERT_MSG(acc.rnd.size() >= 3, "Too few numbers in the source of randomness (at least 3).");
                     BOOST_ASSERT_MSG(acc.pubkey.delta_s_g1.size() == acc.cipher_text.size() - 2,
                                      "Cipher text size should be equal to the delta_s_g1 array size from pk (exclusive "

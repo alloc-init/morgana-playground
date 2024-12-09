@@ -41,12 +41,12 @@
 namespace nil {
     namespace crypto3 {
         namespace codec {
-            template<typename Mode, typename StateAccumulator, typename Params>
+            template<typename Mode, typename StateAccumulator, typename ParamsType>
             struct varlength_block_stream_processor {
             private:
                 typedef Mode mode_type;
                 typedef StateAccumulator accumulator_type;
-                typedef Params params_type;
+                typedef ParamsType params_type;
 
                 constexpr static const std::size_t input_block_bits = mode_type::input_block_bits;
                 typedef typename mode_type::input_block_type input_block_type;

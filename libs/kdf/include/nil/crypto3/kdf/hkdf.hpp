@@ -32,7 +32,7 @@
 namespace nil {
     namespace crypto3 {
         namespace mac {
-            template<typename Hash>
+            template<typename HashType>
             struct hmac;
         }
         namespace kdf {
@@ -42,13 +42,13 @@ namespace nil {
              * @tparam MessageAuthenticationCode
              * @ingroup kdf
              */
-            template<typename Hash, typename MessageAuthenticationCode = mac::hmac<Hash>>
+            template<typename HashType, typename MessageAuthenticationCode = mac::hmac<HashType>>
             class hkdf {
                 typedef detail::hkdf_functions<MessageAuthenticationCode> policy_type;
 
             public:
                 typedef MessageAuthenticationCode mac_type;
-                typedef Hash hash_type;
+                typedef HashType hash_type;
 
                 constexpr static const std::size_t min_key_bits = policy_type::min_key_bits;
                 constexpr static const std::size_t max_key_bits = policy_type::max_key_bits;

@@ -47,7 +47,7 @@ namespace nil {
     namespace crypto3 {
         namespace vdf {
 #ifdef CRYPTO3_VDF_BOOST
-            using namespace nil::crypto3::multiprecision;
+            using namespace boost::multiprecision;
 #endif
 
             /*!

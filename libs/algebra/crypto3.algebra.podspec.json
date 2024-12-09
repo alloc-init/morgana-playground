@@ -14,7 +14,7 @@
     "osx": "10.7"
   },
   "source": {
-    "git": "https://github.com/nilfoundation/algebra.git",
+    "git": "https://github.com/alloc-init/algebra.git",
     "branch": "master"
   },
   "xcconfig": {

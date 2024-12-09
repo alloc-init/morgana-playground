@@ -129,7 +129,7 @@ BOOST_AUTO_TEST_SUITE(mpc_generator_test_suite)
         using powers_of_tau_scheme_type = powers_of_tau<curve_type, 32>;
         using proving_scheme_type = r1cs_gg_ppzksnark<curve_type>;
         using crs_mpc_type = r1cs_gg_ppzksnark_mpc<curve_type>;
-        using public_key_type = crs_mpc_type::public_key_type;
+        using schedule_type = crs_mpc_type::public_key_type;
 
         auto acc = powers_of_tau_scheme_type::accumulator_type();
         auto pot_sk = powers_of_tau_scheme_type::generate_private_key();
@@ -143,7 +143,7 @@ BOOST_AUTO_TEST_SUITE(mpc_generator_test_suite)
                 commitments::detail::make_r1cs_gg_ppzksnark_keypair_from_powers_of_tau(r1cs_example.constraint_system,
                                                                                        result);
 
-        std::vector<public_key_type> pks;
+        std::vector<schedule_type> pks;
 
         auto mpc_sk1 = crs_mpc_type::generate_private_key();
         pks.emplace_back(crs_mpc_type::proof_eval(mpc_sk1, boost::none, mpc_kp));

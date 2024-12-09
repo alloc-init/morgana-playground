@@ -35,20 +35,20 @@ namespace nil {
     namespace crypto3 {
         namespace pubkey {
             namespace detail {
-                template<typename Scheme>
+                template<typename SchemeType>
                 struct threshold_policy {
                     typedef std::size_t size_type;
 
-                    typedef Scheme scheme_type;
+                    typedef SchemeType scheme_type;
                 };
 
-                template<typename Scheme>
-                struct threshold_signing_policy : public threshold_policy<Scheme> {
-                    typedef typename threshold_policy<Scheme>::scheme_type scheme_type;
+                template<typename SchemeType>
+                struct threshold_signing_policy : public threshold_policy<SchemeType> {
+                    typedef typename threshold_policy<SchemeType>::scheme_type scheme_type;
 
                     typedef private_key<scheme_type> key_type;
                     typedef void op_type;
-                    typedef typename key_type::internal_accumulator_type internal_accumulator_type;
+                    typedef typename key_type::accumulator_type accumulator_type;
                     typedef typename key_type::part_signature_type result_type;
 
                     template<typename... Args>
@@ -67,13 +67,13 @@ namespace nil {
                     }
                 };
 
-                template<typename Scheme>
-                struct threshold_verification_policy : public threshold_policy<Scheme> {
-                    typedef typename threshold_policy<Scheme>::scheme_type scheme_type;
+                template<typename SchemeType>
+                struct threshold_verification_policy : public threshold_policy<SchemeType> {
+                    typedef typename threshold_policy<SchemeType>::scheme_type scheme_type;
 
                     typedef public_key<scheme_type> key_type;
                     typedef void op_type;
-                    typedef typename key_type::internal_accumulator_type internal_accumulator_type;
+                    typedef typename key_type::accumulator_type accumulator_type;
                     typedef bool result_type;
 
                     template<typename... Args>
@@ -92,13 +92,13 @@ namespace nil {
                     }
                 };
 
-                template<typename Scheme>
-                struct threshold_part_verification_policy : public threshold_policy<Scheme> {
-                    typedef typename threshold_policy<Scheme>::scheme_type scheme_type;
+                template<typename SchemeType>
+                struct threshold_part_verification_policy : public threshold_policy<SchemeType> {
+                    typedef typename threshold_policy<SchemeType>::scheme_type scheme_type;
 
                     typedef part_public_key<scheme_type> key_type;
                     typedef void op_type;
-                    typedef typename key_type::internal_accumulator_type internal_accumulator_type;
+                    typedef typename key_type::accumulator_type accumulator_type;
                     typedef bool result_type;
 
                     template<typename... Args>
@@ -117,13 +117,13 @@ namespace nil {
                     }
                 };
 
-                template<typename Scheme>
-                struct threshold_aggregation_policy : public threshold_policy<Scheme> {
-                    typedef typename threshold_policy<Scheme>::scheme_type scheme_type;
+                template<typename SchemeType>
+                struct threshold_aggregation_policy : public threshold_policy<SchemeType> {
+                    typedef typename threshold_policy<SchemeType>::scheme_type scheme_type;
 
                     typedef void key_type;
                     typedef aggregate_op<scheme_type> op_type;
-                    typedef typename op_type::internal_accumulator_type internal_accumulator_type;
+                    typedef typename op_type::accumulator_type accumulator_type;
                     typedef typename op_type::signature_type result_type;
 
                     template<typename... Args>
@@ -142,15 +142,15 @@ namespace nil {
                     }
                 };
 
-                template<typename Policy>
+                template<typename PolicyType>
                 class threshold {
-                    typedef Policy policy_type;
+                    typedef PolicyType policy_type;
 
                 public:
                     typedef typename policy_type::scheme_type scheme_type;
                     typedef typename policy_type::key_type key_type;
                     typedef typename policy_type::op_type op_type;
-                    typedef typename policy_type::internal_accumulator_type internal_accumulator_type;
+                    typedef typename policy_type::accumulator_type accumulator_type;
                     typedef typename policy_type::result_type result_type;
 
                     template<typename... Args>
@@ -193,9 +193,9 @@ namespace nil {
                     typedef detail::threshold_part_verification_policy<scheme_type> part_verification_policy;
                     typedef detail::threshold_aggregation_policy<scheme_type> aggregation_policy;
 
-                    template<typename Policy>
+                    template<typename PolicyType>
                     struct bind {
-                        typedef detail::threshold<Policy> type;
+                        typedef detail::threshold<PolicyType> type;
                     };
                 };
             }    // namespace modes

@@ -164,7 +164,7 @@ namespace boost {
 
             template<unsigned Bits>
             BOOST_MP_CXX14_CONSTEXPR cpp_int_modular_backend<Bits>
-                eval_ressol(const cpp_int_modular_backend<Bits> &a, const cpp_int_modular_backend<Bits> &p) {
+            eval_ressol(const cpp_int_modular_backend<Bits> &a, const cpp_int_modular_backend<Bits> &p) {
 
                 using Backend = cpp_int_modular_backend<Bits>;
                 using Backend_padded = cpp_int_modular_backend<Bits + 1>;
@@ -311,8 +311,9 @@ namespace boost {
          *
          */
         template<typename Backend, expression_template_option ExpressionTemplates>
-        BOOST_MP_CXX14_CONSTEXPR number<Backend, ExpressionTemplates> ressol(const number<Backend, ExpressionTemplates> &a,
-                                                              const number<Backend, ExpressionTemplates> &p) {
+        BOOST_MP_CXX14_CONSTEXPR number<Backend, ExpressionTemplates>
+        ressol(const number<Backend, ExpressionTemplates> &a,
+               const number<Backend, ExpressionTemplates> &p) {
             return number<Backend, ExpressionTemplates>(backends::eval_ressol(a.backend(), p.backend()));
         }
 
@@ -326,10 +327,10 @@ namespace boost {
 
         template<typename Backend, typename StorageType, expression_template_option ExpressionTemplates>
         BOOST_MP_CXX14_CONSTEXPR number<backends::modular_adaptor<Backend, StorageType>, ExpressionTemplates>
-            ressol(const number<backends::modular_adaptor<Backend, StorageType>, ExpressionTemplates> &modular) {
+        ressol(const number<backends::modular_adaptor<Backend, StorageType>, ExpressionTemplates> &modular) {
 
             return number<backends::modular_adaptor<Backend, StorageType>, ExpressionTemplates>(
-                backends::eval_ressol(modular.backend()));
+                    backends::eval_ressol(modular.backend()));
         }
 
         /*

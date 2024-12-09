@@ -45,7 +45,7 @@ namespace nil {
              */
             template<typename ProcessingMode>
             using accumulator_set = boost::accumulators::accumulator_set<
-                digest<ProcessingMode::input_stream_bits>,
+                digest<ProcessingMode::block_bits>,
                 boost::accumulators::features<accumulators::tag::stream<ProcessingMode>>>;
         }    // namespace stream
     }        // namespace crypto3

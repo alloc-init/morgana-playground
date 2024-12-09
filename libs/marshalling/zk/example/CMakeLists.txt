@@ -16,27 +16,28 @@ macro(define_marshalling_example name)
 
     target_link_libraries(marshalling_${name}_example PRIVATE
 
-                          crypto3::multiprecision
-                          crypto3::algebra
-                          crypto3::zk
-                          ${CMAKE_WORKSPACE_NAME}::marshalling-multiprecision
-                          ${CMAKE_WORKSPACE_NAME}::marshalling-algebra
-                          ${CMAKE_WORKSPACE_NAME}::crypto3_zk
-                          ${CMAKE_WORKSPACE_NAME}::core
+            crypto3::multiprecision
+            crypto3::algebra
+            crypto3::zk
 
-                          Boost::container)
+            ${CMAKE_WORKSPACE_NAME}::marshalling-core
+            ${CMAKE_WORKSPACE_NAME}::marshalling-multiprecision
+            ${CMAKE_WORKSPACE_NAME}::marshalling-algebra
+            ${CMAKE_WORKSPACE_NAME}::marshalling-zk
+
+            Boost::container)
 
     target_include_directories(marshalling_${name}_example PRIVATE
-                               "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-                               "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>"
+            "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+            "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>"
 
-                               ${Boost_INCLUDE_DIRS})
+            ${Boost_INCLUDE_DIRS})
 
     set_target_properties(marshalling_${name}_example PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED TRUE)
 endmacro()
 
 set(EXAMPLES_NAMES
-    "r1cs_gg_ppzksnark")
+        "r1cs_gg_ppzksnark")
 
 foreach(EXAMPLE_NAME ${EXAMPLES_NAMES})
     define_marshalling_example(${EXAMPLE_NAME})

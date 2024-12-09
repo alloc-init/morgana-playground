@@ -278,9 +278,9 @@ namespace nil {
                         }
                     };
 
-                    template<typename Policy>
+                    template<typename PolicyType>
                     class ccm {
-                        typedef Policy policy_type;
+                        typedef PolicyType policy_type;
 
                     public:
                         typedef typename policy_type::cipher_type cipher_type;
@@ -376,10 +376,10 @@ namespace nil {
 
                     template<
                         template<typename, typename, std::size_t, std::size_t, std::size_t, template<typename> class>
-                        class Policy>
+                        class PolicyType>
                     struct bind {
                         typedef detail::ccm<
-                            Policy<cipher_type, padding_type, NonceBits, TagBits, LengthBits, Allocator>>
+                            PolicyType<cipher_type, padding_type, NonceBits, TagBits, LengthBits, Allocator>>
                             type;
                     };
                 };

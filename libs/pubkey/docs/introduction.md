@@ -14,9 +14,9 @@ Crypto3.Pubkey consists of several parts to review:
 
 Internal dependencies:
 
-1. [Crypto3.Algebra](https://github.com/NilFoundation/crypto3-algebra.git)
-2. [Crypto3.Pkpad](https://github.com/NilFoundation/crypto3-pkpad.git)
-2. [Crypto3.Random](https://github.com/NilFoundation/crypto3-random.git)
+1. [Crypto3.Algebra](https://github.com/alloc-init/crypto3-algebra.git)
+2. [Crypto3.Pkpad](https://github.com/alloc-init/crypto3-pkpad.git)
+2. [Crypto3.Random](https://github.com/alloc-init/crypto3-random.git)
 
 Outer dependencies:
 

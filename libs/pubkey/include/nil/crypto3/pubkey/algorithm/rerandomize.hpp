@@ -38,15 +38,15 @@
 namespace nil {
     namespace crypto3 {
         namespace pubkey {
-            template<typename Scheme>
-            using rerandomization_init_params_type = typename rerandomize_op<Scheme>::init_params_type;
+            template<typename SchemeType>
+            using rerandomization_init_params_type = typename rerandomize_op<SchemeType>::init_params_type;
         }
 
-        template<typename Scheme, typename Mode = pubkey::modes::verifiable_encryption<Scheme>,
+        template<typename SchemeType, typename Mode = pubkey::modes::verifiable_encryption<SchemeType>,
                  typename ProcessingMode = typename Mode::rerandomization_policy, typename InputIterator,
                  typename OutputIterator>
         OutputIterator rerandomize(InputIterator first, InputIterator last,
-                                   const pubkey::rerandomization_init_params_type<Scheme> &init_params,
+                                   const pubkey::rerandomization_init_params_type<SchemeType> &init_params,
                                    OutputIterator out) {
 
             typedef typename pubkey::pubkey_accumulator_set<ProcessingMode> PubkeyAccumulator;
@@ -57,11 +57,11 @@ namespace nil {
             return SchemeImpl(first, last, std::move(out), PubkeyAccumulator(init_params));
         }
 
-        template<typename Scheme, typename Mode = pubkey::modes::verifiable_encryption<Scheme>,
+        template<typename SchemeType, typename Mode = pubkey::modes::verifiable_encryption<SchemeType>,
                  typename ProcessingMode = typename Mode::rerandomization_policy, typename SinglePassRange,
                  typename OutputIterator>
         OutputIterator rerandomize(const SinglePassRange &range,
-                                   const pubkey::rerandomization_init_params_type<Scheme> &init_params,
+                                   const pubkey::rerandomization_init_params_type<SchemeType> &init_params,
                                    OutputIterator out) {
 
             typedef typename pubkey::pubkey_accumulator_set<ProcessingMode> PubkeyAccumulator;
@@ -72,7 +72,7 @@ namespace nil {
             return SchemeImpl(range, std::move(out), PubkeyAccumulator(init_params));
         }
 
-        template<typename Scheme, typename Mode = pubkey::modes::verifiable_encryption<Scheme>,
+        template<typename SchemeType, typename Mode = pubkey::modes::verifiable_encryption<SchemeType>,
                  typename ProcessingMode = typename Mode::rerandomization_policy, typename InputIterator,
                  typename OutputAccumulator = typename pubkey::pubkey_accumulator_set<ProcessingMode>>
         typename std::enable_if<boost::accumulators::detail::is_accumulator_set<OutputAccumulator>::value,
@@ -85,7 +85,7 @@ namespace nil {
             return SchemeImpl(first, last, std::forward<OutputAccumulator>(acc));
         }
 
-        template<typename Scheme, typename Mode = pubkey::modes::verifiable_encryption<Scheme>,
+        template<typename SchemeType, typename Mode = pubkey::modes::verifiable_encryption<SchemeType>,
                  typename ProcessingMode = typename Mode::rerandomization_policy, typename SinglePassRange,
                  typename OutputAccumulator = typename pubkey::pubkey_accumulator_set<ProcessingMode>>
         typename std::enable_if<boost::accumulators::detail::is_accumulator_set<OutputAccumulator>::value,
@@ -98,34 +98,34 @@ namespace nil {
             return SchemeImpl(range, std::forward<OutputAccumulator>(acc));
         }
 
-        template<typename Scheme, typename Mode = pubkey::modes::verifiable_encryption<Scheme>,
+        template<typename SchemeType, typename Mode = pubkey::modes::verifiable_encryption<SchemeType>,
                  typename ProcessingMode = typename Mode::rerandomization_policy, typename InputIterator,
                  typename PubkeyAccumulator = typename pubkey::pubkey_accumulator_set<ProcessingMode>,
                  typename StreamSchemeImpl = pubkey::detail::value_pubkey_impl<PubkeyAccumulator>,
                  typename SchemeImpl = pubkey::detail::range_pubkey_impl<StreamSchemeImpl>>
         SchemeImpl rerandomize(InputIterator first, InputIterator last,
-                               const pubkey::rerandomization_init_params_type<Scheme> &init_params) {
+                               const pubkey::rerandomization_init_params_type<SchemeType> &init_params) {
 
             return SchemeImpl(first, last, PubkeyAccumulator(init_params));
         }
 
-        template<typename Scheme, typename Mode = pubkey::modes::verifiable_encryption<Scheme>,
+        template<typename SchemeType, typename Mode = pubkey::modes::verifiable_encryption<SchemeType>,
                  typename ProcessingMode = typename Mode::rerandomization_policy, typename SinglePassRange,
                  typename PubkeyAccumulator = typename pubkey::pubkey_accumulator_set<ProcessingMode>,
                  typename StreamSchemeImpl = pubkey::detail::value_pubkey_impl<PubkeyAccumulator>,
                  typename SchemeImpl = pubkey::detail::range_pubkey_impl<StreamSchemeImpl>>
         SchemeImpl rerandomize(const SinglePassRange &range,
-                               const pubkey::rerandomization_init_params_type<Scheme> &init_params) {
+                               const pubkey::rerandomization_init_params_type<SchemeType> &init_params) {
 
             return SchemeImpl(range, PubkeyAccumulator(init_params));
         }
 
-        template<typename Scheme, typename Mode = pubkey::modes::verifiable_encryption<Scheme>,
+        template<typename SchemeType, typename Mode = pubkey::modes::verifiable_encryption<SchemeType>,
                  typename ProcessingMode = typename Mode::rerandomization_policy, typename InputIterator1,
                  typename InputIterator2, typename OutputIterator>
         OutputIterator
             rerandomize(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2, InputIterator2 last2,
-                        const pubkey::rerandomization_init_params_type<Scheme> &init_params, OutputIterator out) {
+                        const pubkey::rerandomization_init_params_type<SchemeType> &init_params, OutputIterator out) {
 
             typedef typename pubkey::pubkey_accumulator_set<ProcessingMode> PubkeyAccumulator;
 
@@ -135,11 +135,11 @@ namespace nil {
             return SchemeImpl(first1, last1, first2, last2, std::move(out), PubkeyAccumulator(init_params));
         }
 
-        template<typename Scheme, typename Mode = pubkey::modes::verifiable_encryption<Scheme>,
+        template<typename SchemeType, typename Mode = pubkey::modes::verifiable_encryption<SchemeType>,
                  typename ProcessingMode = typename Mode::rerandomization_policy, typename SinglePassRange1,
                  typename SinglePassRange2, typename OutputIterator>
         OutputIterator rerandomize(const SinglePassRange1 &range1, const SinglePassRange2 &range2,
-                                   const pubkey::rerandomization_init_params_type<Scheme> &init_params,
+                                   const pubkey::rerandomization_init_params_type<SchemeType> &init_params,
                                    OutputIterator out) {
 
             typedef typename pubkey::pubkey_accumulator_set<ProcessingMode> PubkeyAccumulator;
@@ -151,7 +151,7 @@ namespace nil {
                               std::move(out), PubkeyAccumulator(init_params));
         }
 
-        template<typename Scheme, typename Mode = pubkey::modes::verifiable_encryption<Scheme>,
+        template<typename SchemeType, typename Mode = pubkey::modes::verifiable_encryption<SchemeType>,
                  typename ProcessingMode = typename Mode::rerandomization_policy, typename InputIterator1,
                  typename InputIterator2,
                  typename OutputAccumulator = typename pubkey::pubkey_accumulator_set<ProcessingMode>>
@@ -166,7 +166,7 @@ namespace nil {
             return SchemeImpl(first1, last1, first2, last2, std::forward<OutputAccumulator>(acc));
         }
 
-        template<typename Scheme, typename Mode = pubkey::modes::verifiable_encryption<Scheme>,
+        template<typename SchemeType, typename Mode = pubkey::modes::verifiable_encryption<SchemeType>,
                  typename ProcessingMode = typename Mode::rerandomization_policy, typename SinglePassRange1,
                  typename SinglePassRange2,
                  typename OutputAccumulator = typename pubkey::pubkey_accumulator_set<ProcessingMode>>
@@ -181,26 +181,26 @@ namespace nil {
                               std::forward<OutputAccumulator>(acc));
         }
 
-        template<typename Scheme, typename Mode = pubkey::modes::verifiable_encryption<Scheme>,
+        template<typename SchemeType, typename Mode = pubkey::modes::verifiable_encryption<SchemeType>,
                  typename ProcessingMode = typename Mode::rerandomization_policy, typename InputIterator1,
                  typename InputIterator2,
                  typename PubkeyAccumulator = typename pubkey::pubkey_accumulator_set<ProcessingMode>,
                  typename StreamSchemeImpl = pubkey::detail::value_pubkey_impl<PubkeyAccumulator>,
                  typename SchemeImpl = pubkey::detail::range_pubkey_impl<StreamSchemeImpl>>
         SchemeImpl rerandomize(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2, InputIterator2 last2,
-                               const pubkey::rerandomization_init_params_type<Scheme> &init_params) {
+                               const pubkey::rerandomization_init_params_type<SchemeType> &init_params) {
 
             return SchemeImpl(first1, last1, first2, last2, PubkeyAccumulator(init_params));
         }
 
-        template<typename Scheme, typename Mode = pubkey::modes::verifiable_encryption<Scheme>,
+        template<typename SchemeType, typename Mode = pubkey::modes::verifiable_encryption<SchemeType>,
                  typename ProcessingMode = typename Mode::rerandomization_policy, typename SinglePassRange1,
                  typename SinglePassRange2,
                  typename PubkeyAccumulator = typename pubkey::pubkey_accumulator_set<ProcessingMode>,
                  typename StreamSchemeImpl = pubkey::detail::value_pubkey_impl<PubkeyAccumulator>,
                  typename SchemeImpl = pubkey::detail::range_pubkey_impl<StreamSchemeImpl>>
         SchemeImpl rerandomize(const SinglePassRange1 &range1, const SinglePassRange2 &range2,
-                               const pubkey::rerandomization_init_params_type<Scheme> &init_params) {
+                               const pubkey::rerandomization_init_params_type<SchemeType> &init_params) {
 
             return SchemeImpl(std::cbegin(range1), std::cend(range1), std::cbegin(range2), std::cend(range2),
                               PubkeyAccumulator(init_params));

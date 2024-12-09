@@ -19,29 +19,29 @@ include(PlatformConfiguration)
 include(CheckSSE)
 include(CheckAVX)
 include(CMTest)
-cm_add_test_subdirectory(test)
 
-option(CRYPTO3_HASH_BLAKE2B "Build with Blake2 hash support" TRUE)
-option(CRYPTO3_HASH_CHECKSUM_ADLER "Build with Adler checksum support" TRUE)
-option(CRYPTO3_HASH_CHECKSUM_CRC "Build with CRC checksum support" TRUE)
-option(CRYPTO3_HASH_CUBEHSAH "Build with Cubehash hash support" TRUE)
-option(CRYPTO3_HASH_COMB4P "Build with Comb4p hash support" TRUE)
-option(CRYPTO3_HASH_GOST_34_11 "Build with GOST.34.11 hash support" TRUE)
-option(CRYPTO3_HASH_KECCAK "Build with Keccak hash support" TRUE)
-option(CRYPTO3_HASH_MD4 "Build with MD4 hash support" TRUE)
-option(CRYPTO3_HASH_MD5 "Build with MD5 hash support" TRUE)
-option(CRYPTO3_HASH_RIPEMD "Build with Ripemd160 hash support" TRUE)
-option(CRYPTO3_HASH_SHA1 "Build with SHA1 hash support" TRUE)
-option(CRYPTO3_HASH_SHA2 "Build with SHA2 hash support" TRUE)
-option(CRYPTO3_HASH_SHA3 "Build with SHA3 hash support" TRUE)
-option(CRYPTO3_HASH_SKEIN "Build with Skein hash support" TRUE)
-option(CRYPTO3_HASH_SHAKE "Build with Shake hash support" TRUE)
-option(CRYPTO3_HASH_STREEBOG "Build with Streebog hash support" TRUE)
-option(CRYPTO3_HASH_TIGER "Build with Tiger hash support" TRUE)
-option(CRYPTO3_HASH_WHIRLPOOL "Build with Whirlpool hash support" TRUE)
-option(CRYPTO3_HASH_POSEIDON "Build with Poseidon hash support" TRUE)
-option(CRYPTO3_HASH_PEDERSEN "Build with Pedersen hash support" TRUE)
-option(CRYPTO3_HASH_REINFORCED_CONCRETE "Build with reinforced concrete hash support" TRUE)
+option(${CMAKE_UPPER_WORKSPACE_NAME}_HASH_BLAKE2B "Build with Blake2 hash support" TRUE)
+option(${CMAKE_UPPER_WORKSPACE_NAME}_HASH_CHECKSUM_ADLER "Build with Adler checksum support" TRUE)
+option(${CMAKE_UPPER_WORKSPACE_NAME}_HASH_CHECKSUM_CRC "Build with CRC checksum support" TRUE)
+option(${CMAKE_UPPER_WORKSPACE_NAME}_HASH_CUBEHSAH "Build with Cubehash hash support" TRUE)
+option(${CMAKE_UPPER_WORKSPACE_NAME}_HASH_COMB4P "Build with Comb4p hash support" TRUE)
+option(${CMAKE_UPPER_WORKSPACE_NAME}_HASH_GOST_34_11 "Build with GOST.34.11 hash support" TRUE)
+option(${CMAKE_UPPER_WORKSPACE_NAME}_HASH_KECCAK "Build with Keccak hash support" TRUE)
+option(${CMAKE_UPPER_WORKSPACE_NAME}_HASH_MD4 "Build with MD4 hash support" TRUE)
+option(${CMAKE_UPPER_WORKSPACE_NAME}_HASH_MD5 "Build with MD5 hash support" TRUE)
+option(${CMAKE_UPPER_WORKSPACE_NAME}_HASH_RIPEMD "Build with Ripemd160 hash support" TRUE)
+option(${CMAKE_UPPER_WORKSPACE_NAME}_HASH_SHA1 "Build with SHA1 hash support" TRUE)
+option(${CMAKE_UPPER_WORKSPACE_NAME}_HASH_SHA2 "Build with SHA2 hash support" TRUE)
+option(${CMAKE_UPPER_WORKSPACE_NAME}_HASH_SHA3 "Build with SHA3 hash support" TRUE)
+option(${CMAKE_UPPER_WORKSPACE_NAME}_HASH_SKEIN "Build with Skein hash support" TRUE)
+option(${CMAKE_UPPER_WORKSPACE_NAME}_HASH_SHAKE "Build with Shake hash support" TRUE)
+option(${CMAKE_UPPER_WORKSPACE_NAME}_HASH_STREEBOG "Build with Streebog hash support" TRUE)
+option(${CMAKE_UPPER_WORKSPACE_NAME}_HASH_TIGER "Build with Tiger hash support" TRUE)
+option(${CMAKE_UPPER_WORKSPACE_NAME}_HASH_WHIRLPOOL "Build with Whirlpool hash support" TRUE)
+option(${CMAKE_UPPER_WORKSPACE_NAME}_HASH_POSEIDON "Build with Poseidon hash support" TRUE)
+option(${CMAKE_UPPER_WORKSPACE_NAME}_HASH_POSEIDON_COMPILE_TIME_CONSTANTS "Build with compile-time Poseidon constants generation" TRUE)
+option(${CMAKE_UPPER_WORKSPACE_NAME}_HASH_PEDERSEN "Build with Pedersen hash support" TRUE)
+option(${CMAKE_UPPER_WORKSPACE_NAME}_HASH_REINFORCED_CONCRETE "Build with Reinforced Concrete hash support" ${${CMAKE_UPPER_WORKSPACE_NAME}_HASH_POSEIDON})
 
 set(BUILD_WITH_TARGET_ARCHITECTURE "" CACHE STRING "Target build architecture")
 
@@ -53,7 +53,6 @@ endif()
 
 check_sse()
 check_avx()
-
 
 if(CRYPTO3_HASH_BLAKE2B)
     add_definitions(-D${CMAKE_UPPER_WORKSPACE_NAME}_HAS_BLAKE2B)
@@ -103,53 +102,57 @@ endif()
 if(CRYPTO3_HASH_POSEIDON)
     add_definitions(-D${CMAKE_UPPER_WORKSPACE_NAME}_HAS_POSEIDON)
     list(APPEND ${CURRENT_PROJECT_NAME}_INTERFACE_LIBRARIES
-         ${CMAKE_WORKSPACE_NAME}::algebra
-         ${CMAKE_WORKSPACE_NAME}::multiprecision
+            ${CMAKE_WORKSPACE_NAME}::algebra
+            ${CMAKE_WORKSPACE_NAME}::multiprecision
 
-         crypto3::marshalling-algebra)
+            crypto3::marshalling-algebra)
+    if(${CMAKE_UPPER_WORKSPACE_NAME}_HASH_POSEIDON_COMPILE_TIME_CONSTANTS)
+        add_definitions(-DCRYPTO3_HASH_POSEIDON_COMPILE_TIME)
+    endif()
 endif()
 
 if(CRYPTO3_HASH_REINFORCED_CONCRETE)
     add_definitions(-D${CMAKE_UPPER_WORKSPACE_NAME}_HAS_REINFORCED_CONCRETE)
     list(APPEND ${CURRENT_PROJECT_NAME}_INTERFACE_LIBRARIES
-         ${CMAKE_WORKSPACE_NAME}::algebra
-         ${CMAKE_WORKSPACE_NAME}::multiprecision
+            ${CMAKE_WORKSPACE_NAME}::algebra
+            ${CMAKE_WORKSPACE_NAME}::multiprecision
 
-         crypto3::marshalling-algebra)
+            crypto3::marshalling-algebra)
 endif()
 
 if(CRYPTO3_HASH_PEDERSEN)
     add_definitions(-D${CMAKE_UPPER_WORKSPACE_NAME}_HAS_PEDERSEN)
     list(APPEND ${CURRENT_PROJECT_NAME}_INTERFACE_LIBRARIES
-         ${CMAKE_WORKSPACE_NAME}::algebra
-         ${CMAKE_WORKSPACE_NAME}::multiprecision
+            ${CMAKE_WORKSPACE_NAME}::algebra
+            ${CMAKE_WORKSPACE_NAME}::multiprecision
 
-         crypto3::marshalling-algebra)
+            crypto3::marshalling-algebra)
 endif()
 
 cm_setup_version(VERSION 0.1.0 PREFIX ${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME})
 
 add_library(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME} INTERFACE)
 set_target_properties(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME} PROPERTIES
-                      EXPORT_NAME ${CURRENT_PROJECT_NAME})
+        EXPORT_NAME ${CURRENT_PROJECT_NAME})
 
 target_link_libraries(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME} INTERFACE
-                      ${${CURRENT_PROJECT_NAME}_INTERFACE_LIBRARIES}
-                      ${CMAKE_WORKSPACE_NAME}::multiprecision
-                      ${CMAKE_WORKSPACE_NAME}::algebra
-                      ${CMAKE_WORKSPACE_NAME}::block
+        ${${CURRENT_PROJECT_NAME}_INTERFACE_LIBRARIES}
+        ${CMAKE_WORKSPACE_NAME}::multiprecision
+        ${CMAKE_WORKSPACE_NAME}::algebra
+        ${CMAKE_WORKSPACE_NAME}::block
+        ${CMAKE_WORKSPACE_NAME}::random
 
-                      Boost::container)
+        Boost::container)
 
 target_include_directories(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME} INTERFACE
-                           "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-                           "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>"
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+        "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>"
 
-                           $<$<BOOL:${Boost_FOUND}>:${Boost_INCLUDE_DIRS}>)
+        $<$<BOOL:${Boost_FOUND}>:${Boost_INCLUDE_DIRS}>)
 
 cm_deploy(TARGETS ${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME}
-          INCLUDE include
-          NAMESPACE ${CMAKE_WORKSPACE_NAME}::)
+        INCLUDE include
+        NAMESPACE ${CMAKE_WORKSPACE_NAME}::)
 
 if(${CMAKE_TARGET_ARCHITECTURE} STREQUAL "x86_64" OR ${CMAKE_TARGET_ARCHITECTURE} STREQUAL "x86")
     if(CXX_AVX512_FOUND)
@@ -169,3 +172,4 @@ elseif(${CMAKE_TARGET_ARCHITECTURE} STREQUAL "ppc64")
             "${CMAKE_UPPER_WORKSPACE_NAME}_HAS_POWER8")
 endif()
 
+cm_add_test_subdirectory(test)

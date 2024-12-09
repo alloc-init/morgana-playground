@@ -17,8 +17,8 @@ Crypto3.Modes consists of several parts to review:
 
 Internal dependencies:
 
-1. [Crypto3.Pubkey](https://github.com/nilfoundation/pubkey.git)
-2. [Crypto3.Pkpad](https://github.com/nilfoundation/pkpad.git)
+1. [Crypto3.Pubkey](https://github.com/alloc-init/pubkey.git)
+2. [Crypto3.Pkpad](https://github.com/alloc-init/pkpad.git)
 
 Outer dependencies:
 1. [Boost](https://boost.org) (>= 1.58)

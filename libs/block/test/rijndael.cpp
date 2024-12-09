@@ -405,11 +405,11 @@ BOOST_AUTO_TEST_SUITE(aes_various_containers_test_suite)
 
 BOOST_AUTO_TEST_CASE(aes_128_with_array_32) {
 
-    std::array<uint32_t, 4> const k = {0x03020100, 0x07060504, 0x0b0a0908, 0x0f0e0d0c};
+    std::array<uint32_t, 4> const K = {0x03020100, 0x07060504, 0x0b0a0908, 0x0f0e0d0c};
     std::array<uint32_t, 4> const p = {0x33221100, 0x77665544, 0xbbaa9988, 0xffeeddcc};
     std::array<uint32_t, 4> const c = {0xd8e0c469, 0x30047b6a, 0x80b7cdd8, 0x5ac5b470};
 
-    cipher_fixture<aes<128>, std::array<uint32_t, 4>, std::array<uint32_t, 4>> f(k, p, c);
+    cipher_fixture<aes<128>, std::array<uint32_t, 4>, std::array<uint32_t, 4>> f(K, p, c);
     f.encrypt();
     f.check_encrypt();
     f.decrypt();
@@ -417,11 +417,11 @@ BOOST_AUTO_TEST_CASE(aes_128_with_array_32) {
 }
 
 BOOST_AUTO_TEST_CASE(aes_128_with_array_16) {
-    std::array<uint16_t, 8> const k = {0x0100, 0x0302, 0x0504, 0x0706, 0x0908, 0x0b0a, 0x0d0c, 0x0f0e};
+    std::array<uint16_t, 8> const K = {0x0100, 0x0302, 0x0504, 0x0706, 0x0908, 0x0b0a, 0x0d0c, 0x0f0e};
     std::array<uint16_t, 8> const p = {0x1100, 0x3322, 0x5544, 0x7766, 0x9988, 0xbbaa, 0xddcc, 0xffee};
     std::array<uint16_t, 8> const c = {0xc469, 0xd8e0, 0x7b6a, 0x3004, 0xcdd8, 0x80b7, 0xb470, 0x5ac5};
 
-    cipher_fixture<aes<128>, std::array<uint16_t, 8>, std::array<uint16_t, 8>> f(k, p, c);
+    cipher_fixture<aes<128>, std::array<uint16_t, 8>, std::array<uint16_t, 8>> f(K, p, c);
     f.encrypt();
     f.check_encrypt();
     f.decrypt();
@@ -429,14 +429,14 @@ BOOST_AUTO_TEST_CASE(aes_128_with_array_16) {
 }
 
 BOOST_AUTO_TEST_CASE(aes_128_with_array_8) {
-    std::array<uint8_t, 16> const k = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a,
+    std::array<uint8_t, 16> const K = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a,
                                        0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
     std::array<uint8_t, 16> const p = {0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa,
                                        0xbb, 0xcc, 0xdd, 0xee, 0xff};
     std::array<uint8_t, 16> const c = {0x69, 0xc4, 0xe0, 0xd8, 0x6a, 0x7b, 0x04, 0x30, 0xd8, 0xcd, 0xb7,
                                        0x80, 0x70, 0xb4, 0xc5, 0x5a};
 
-    cipher_fixture<aes<128>, std::array<uint8_t, 16>, std::array<uint8_t, 16>> f(k, p, c);
+    cipher_fixture<aes<128>, std::array<uint8_t, 16>, std::array<uint8_t, 16>> f(K, p, c);
     f.encrypt();
     f.check_encrypt();
     f.decrypt();

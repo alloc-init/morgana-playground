@@ -301,7 +301,7 @@ namespace nil {
                     H[0] += coeff * omega_to_small_m;
                 }
                 void divide_by_z_on_coset(std::vector<field_value_type> &P) override {
-                    // (c^{2^k}-1) * (c^{2^r} * w^{2^{r+1}*i) - w^{2^r})
+                    // (c^{2^K}-1) * (c^{2^r} * w^{2^{r+1}*i) - w^{2^r})
                     const field_value_type coset = fields::arithmetic_params<FieldType>::multiplicative_generator;
 
                     const field_value_type Z0 = coset.pow(big_m) - field_value_type::one();
@@ -315,7 +315,7 @@ namespace nil {
                         elt *= omega_to_2small_m;
                     }
 
-                    // (c^{2^k}*w^{2^k}-1) * (c^{2^k} * w^{2^r} - w^{2^r})
+                    // (c^{2^K}*w^{2^K}-1) * (c^{2^K} * w^{2^r} - w^{2^r})
 
                     const field_value_type Z1 = (((coset * omega).pow(big_m) - field_value_type::one()) *
                                            ((coset * omega).pow(small_m) - omega.pow(small_m)));

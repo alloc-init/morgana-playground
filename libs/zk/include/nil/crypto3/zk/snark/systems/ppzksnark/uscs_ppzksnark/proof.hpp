@@ -26,6 +26,8 @@
 #ifndef CRYPTO3_USCS_PPZKSNARK_PROOF_HPP
 #define CRYPTO3_USCS_PPZKSNARK_PROOF_HPP
 
+#include <algorithm>
+
 namespace nil {
     namespace crypto3 {
         namespace zk {
@@ -49,16 +51,17 @@ namespace nil {
                     typename g2_type::value_type V_g2;
 
                     uscs_ppzksnark_proof() :
-                        V_g1(g1_type::value_type::one()), alpha_V_g1(g1_type::value_type::one()),
-                        H_g1(g1_type::value_type::one()), V_g2(g2_type::value_type::one()) {
+                            V_g1(g1_type::value_type::one()), alpha_V_g1(g1_type::value_type::one()),
+                            H_g1(g1_type::value_type::one()), V_g2(g2_type::value_type::one()) {
                         // invalid proof with valid curve points
                     }
+
                     uscs_ppzksnark_proof(typename g1_type::value_type &&V_g1,
                                          typename g1_type::value_type &&alpha_V_g1,
                                          typename g1_type::value_type &&H_g1,
                                          typename g2_type::value_type &&V_g2) :
-                        V_g1(std::move(V_g1)),
-                        alpha_V_g1(std::move(alpha_V_g1)), H_g1(std::move(H_g1)), V_g2(std::move(V_g2)) {};
+                            V_g1(std::move(V_g1)),
+                            alpha_V_g1(std::move(alpha_V_g1)), H_g1(std::move(H_g1)), V_g2(std::move(V_g2)) {};
 
                     std::size_t G1_size() const {
                         return 3;

@@ -64,7 +64,7 @@
 
 #include <nil/crypto3/zk/snark/systems/ppzksnark/r1cs_gg_ppzksnark.hpp>
 
-#include <nil/crypto3/zk/components/voting/encrypted_input_voting.hpp>
+//#include <nil/crypto3/zk/components/voting/encrypted_input_voting.hpp>
 
 #include <nil/crypto3/marshalling/zk/types/r1cs_gg_ppzksnark/primary_input.hpp>
 #include <nil/crypto3/marshalling/zk/types/r1cs_gg_ppzksnark/proof.hpp>
@@ -343,7 +343,7 @@ struct test_policy {
     using encryption_scheme = elgamal_verifiable<pairing_curve_type>;
     using proof_system = typename encryption_scheme::proof_system_type;
     using marshalling_data_type = marshalling_verification_data_groth16_encrypted_input<
-        typename proof_system::verification_key_type, typename encryption_scheme::public_key_type,
+        typename proof_system::verification_key_type, typename encryption_scheme::schedule_type,
         typename proof_system::proof_type, typename proof_system::primary_input_type,
         typename encryption_scheme::cipher_type::first_type>;
 };

@@ -87,11 +87,11 @@ namespace boost {
     }        // namespace test_tools
 }    // namespace boost
 
-// template<typename Group>
-// void check_hash_to_curve(const std::string &msg_str, const typename Group::value_type &expected) {
-//     using hash_type = hashes::h2c<Group>;
+// template<typename GroupType>
+// void check_hash_to_curve(const std::string &msg_str, const typename GroupType::value_type &expected) {
+//     using hash_type = hashes::h2c<GroupType>;
 //     std::vector<std::uint8_t> msg(msg_str.begin(), msg_str.end());
-//     typename Group::value_type result = to_curve<hash_type>(msg);
+//     typename GroupType::value_type result = to_curve<hash_type>(msg);
 //     BOOST_CHECK_EQUAL(result, expected);
 // }
 

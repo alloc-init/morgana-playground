@@ -1,6 +1,6 @@
-# Marshalling utilities for =nil;Crypto3 Multiprecision
+# Marshalling utilities for [[alloc] init]'s Multiprecision
 
-This module provides extension of [=nil;Marshalling](https://github.com/NilFoundation/marshalling) utilities for [=nil;Crypto3 Multiprecision](https://github.com/NilFoundation/crypto3-multiprecision)
+This module provides extension of [Marshalling](https://github.com/alloc-init/marshalling) utilities for [[[alloc] init]'s Multiprecision](https://github.com/alloc-init/crypto3-multiprecision)
 
 ## Building
 
@@ -11,14 +11,14 @@ library in a project it is required to:
 2. Add all the internal dependencies using [CMake Modules](https://github.com/BoostCMake/cmake_modules.git) as
    submodules to target project repository.
 3. Initialize parent project with [CMake Modules](https://github.com/BoostCMake/cmake_modules.git) (Look
-   at [crypto3](https://github.com/nilfoundation/crypto3.git) for the example)
+   at [crypto3](https://github.com/alloc-init/crypto3.git) for the example)
 
 ## Dependencies
 
 ### Internal
 
-* [Multiprecision](https://github.com/nilfoundation/crypto3-multiprecision.git)
-* [=nil;Marshalling](https://github.com/NilFoundation/marshalling)
+* [Multiprecision](https://github.com/alloc-init/crypto3-multiprecision.git)
+* [=nil;Marshalling](https://github.com/alloc-init/marshalling)
 
 ### External
 

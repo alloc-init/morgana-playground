@@ -40,7 +40,8 @@ namespace nil {
         using namespace nil::crypto3;
 
         template<typename CurveType>
-        class curve_element_serializer { };
+        class curve_element_serializer {
+        };
 
         // ZCash serialization format for BLS12-381
         // https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-pairing-friendly-curves-09#appendix-C
@@ -53,9 +54,9 @@ namespace nil {
             typedef typename curve_type::template g2_type<>::value_type g2_value_type;
 
             typedef typename curve_type::template g1_type<algebra::curves::coordinates::affine>::value_type
-                g1_affine_value_type;
+                    g1_affine_value_type;
             typedef typename curve_type::template g2_type<algebra::curves::coordinates::affine>::value_type
-                g2_affine_value_type;
+                    g2_affine_value_type;
 
             typedef typename g1_value_type::field_type::value_type g1_field_value_type;
             typedef typename g2_value_type::field_type::value_type g2_field_value_type;
@@ -77,7 +78,7 @@ namespace nil {
                 // TODO: check possibilities for TA
                 if (!(I_bit & m_byte)) {
                     boost::multiprecision::export_bits(
-                        point_affine.X.data.template convert_to<integral_type>(), result.rbegin(), 8, false);
+                            point_affine.X.data.template convert_to<integral_type>(), result.rbegin(), 8, false);
                 }
                 result[0] |= m_byte;
                 return result;
@@ -90,11 +91,11 @@ namespace nil {
                 // TODO: check possibilities for TA
                 if (!(I_bit & m_byte)) {
                     boost::multiprecision::export_bits(
-                        point_affine.Y.data.template convert_to<integral_type>(), result.rbegin(), 8, false);
+                            point_affine.Y.data.template convert_to<integral_type>(), result.rbegin(), 8, false);
                     boost::multiprecision::export_bits(point_affine.X.data.template convert_to<integral_type>(),
-                                                result.rbegin() + sizeof_field_element,
-                                                8,
-                                                false);
+                                                       result.rbegin() + sizeof_field_element,
+                                                       8,
+                                                       false);
                 }
                 result[0] |= m_byte;
                 return result;
@@ -107,11 +108,12 @@ namespace nil {
                 // TODO: check possibilities for TA
                 if (!(I_bit & m_byte)) {
                     boost::multiprecision::export_bits(
-                        point_affine.X.data[0].data.template convert_to<integral_type>(), result.rbegin(), 8, false);
+                            point_affine.X.data[0].data.template convert_to<integral_type>(), result.rbegin(), 8,
+                            false);
                     boost::multiprecision::export_bits(point_affine.X.data[1].data.template convert_to<integral_type>(),
-                                                result.rbegin() + sizeof_field_element,
-                                                8,
-                                                false);
+                                                       result.rbegin() + sizeof_field_element,
+                                                       8,
+                                                       false);
                 }
                 result[0] |= m_byte;
                 return result;
@@ -124,19 +126,20 @@ namespace nil {
                 // TODO: check possibilities for TA
                 if (!(I_bit & m_byte)) {
                     boost::multiprecision::export_bits(
-                        point_affine.Y.data[0].data.template convert_to<integral_type>(), result.rbegin(), 8, false);
+                            point_affine.Y.data[0].data.template convert_to<integral_type>(), result.rbegin(), 8,
+                            false);
                     boost::multiprecision::export_bits(point_affine.Y.data[1].data.template convert_to<integral_type>(),
-                                                result.rbegin() + sizeof_field_element,
-                                                8,
-                                                false);
+                                                       result.rbegin() + sizeof_field_element,
+                                                       8,
+                                                       false);
                     boost::multiprecision::export_bits(point_affine.X.data[0].data.template convert_to<integral_type>(),
-                                                result.rbegin() + 2 * sizeof_field_element,
-                                                8,
-                                                false);
+                                                       result.rbegin() + 2 * sizeof_field_element,
+                                                       8,
+                                                       false);
                     boost::multiprecision::export_bits(point_affine.X.data[1].data.template convert_to<integral_type>(),
-                                                result.rbegin() + 3 * sizeof_field_element,
-                                                8,
-                                                false);
+                                                       result.rbegin() + 3 * sizeof_field_element,
+                                                       8,
+                                                       false);
                 }
                 result[0] |= m_byte;
                 return result;
@@ -146,8 +149,8 @@ namespace nil {
             // Deserialization procedure according to
             // https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-pairing-friendly-curves-09#appendix-C.2
             template<typename PointOctetsRange,
-                     typename = typename std::enable_if<
-                         std::is_same<std::uint8_t, typename PointOctetsRange::value_type>::value>::type>
+                    typename = typename std::enable_if<
+                            std::is_same<std::uint8_t, typename PointOctetsRange::value_type>::value>::type>
             static inline g1_value_type octets_to_g1_point(const PointOctetsRange &octets) {
                 BOOST_CONCEPT_ASSERT((boost::SinglePassRangeConcept<PointOctetsRange>));
 
@@ -165,8 +168,8 @@ namespace nil {
 
             // TODO: use iterators
             template<typename PointOctetsRange,
-                     typename = typename std::enable_if<
-                         std::is_same<std::uint8_t, typename PointOctetsRange::value_type>::value>::type>
+                    typename = typename std::enable_if<
+                            std::is_same<std::uint8_t, typename PointOctetsRange::value_type>::value>::type>
             static inline g2_value_type octets_to_g2_point(const PointOctetsRange &octets) {
                 BOOST_CONCEPT_ASSERT((boost::SinglePassRangeConcept<PointOctetsRange>));
 
@@ -191,8 +194,8 @@ namespace nil {
             //     (g1_field_value_type::modulus - integral_type(1)) / integral_type(2);
 
             template<typename PointOctetsRange,
-                     typename = typename std::enable_if<
-                         std::is_same<std::uint8_t, typename PointOctetsRange::value_type>::value>::type>
+                    typename = typename std::enable_if<
+                            std::is_same<std::uint8_t, typename PointOctetsRange::value_type>::value>::type>
             static inline g1_value_type compressed_to_g1_point(PointOctetsRange &point_octets, std::uint8_t m_byte) {
                 BOOST_ASSERT(std::distance(point_octets.begin(), point_octets.end()) == sizeof_field_element);
 
@@ -219,8 +222,8 @@ namespace nil {
             }
 
             template<typename PointOctetsRange,
-                     typename = typename std::enable_if<
-                         std::is_same<std::uint8_t, typename PointOctetsRange::value_type>::value>::type>
+                    typename = typename std::enable_if<
+                            std::is_same<std::uint8_t, typename PointOctetsRange::value_type>::value>::type>
             static inline g1_value_type uncompressed_to_g1_point(PointOctetsRange &point_octets, std::uint8_t m_byte) {
                 BOOST_ASSERT(std::distance(point_octets.begin(), point_octets.end()) == 2 * sizeof_field_element);
 
@@ -231,17 +234,17 @@ namespace nil {
 
                 integral_type x, y;
                 boost::multiprecision::import_bits(
-                    y, point_octets.rbegin(), point_octets.rbegin() + sizeof_field_element, 8, false);
+                        y, point_octets.rbegin(), point_octets.rbegin() + sizeof_field_element, 8, false);
                 boost::multiprecision::import_bits(
-                    x, point_octets.rbegin() + sizeof_field_element, point_octets.rend(), 8, false);
+                        x, point_octets.rbegin() + sizeof_field_element, point_octets.rend(), 8, false);
                 g1_value_type result(g1_field_value_type(x), g1_field_value_type(y), g1_field_value_type::one());
                 BOOST_ASSERT(result.is_well_formed());
                 return result;
             }
 
             template<typename PointOctetsRange,
-                     typename = typename std::enable_if<
-                         std::is_same<std::uint8_t, typename PointOctetsRange::value_type>::value>::type>
+                    typename = typename std::enable_if<
+                            std::is_same<std::uint8_t, typename PointOctetsRange::value_type>::value>::type>
             static inline g2_value_type compressed_to_g2_point(PointOctetsRange &point_octets, std::uint8_t m_byte) {
                 BOOST_ASSERT(std::distance(point_octets.begin(), point_octets.end()) == 2 * sizeof_field_element);
 
@@ -252,9 +255,9 @@ namespace nil {
 
                 integral_type x_0, x_1;
                 boost::multiprecision::import_bits(
-                    x_0, point_octets.rbegin(), point_octets.rbegin() + sizeof_field_element, 8, false);
+                        x_0, point_octets.rbegin(), point_octets.rbegin() + sizeof_field_element, 8, false);
                 boost::multiprecision::import_bits(
-                    x_1, point_octets.rbegin() + sizeof_field_element, point_octets.rend(), 8, false);
+                        x_1, point_octets.rbegin() + sizeof_field_element, point_octets.rend(), 8, false);
                 g2_field_value_type x_mod(x_0, x_1);
                 g2_field_value_type y2_mod = x_mod.pow(3u) + g2_field_value_type(4u, 4u);
                 BOOST_ASSERT(y2_mod.is_square());
@@ -271,8 +274,8 @@ namespace nil {
             }
 
             template<typename PointOctetsRange,
-                     typename = typename std::enable_if<
-                         std::is_same<std::uint8_t, typename PointOctetsRange::value_type>::value>::type>
+                    typename = typename std::enable_if<
+                            std::is_same<std::uint8_t, typename PointOctetsRange::value_type>::value>::type>
             static inline g2_value_type uncompressed_to_g2_point(PointOctetsRange &point_octets, std::uint8_t m_byte) {
                 BOOST_ASSERT(std::distance(point_octets.begin(), point_octets.end()) == 4 * sizeof_field_element);
 
@@ -283,19 +286,19 @@ namespace nil {
 
                 integral_type x_0, x_1, y_0, y_1;
                 boost::multiprecision::import_bits(
-                    y_0, point_octets.rbegin(), point_octets.rbegin() + sizeof_field_element, 8, false);
+                        y_0, point_octets.rbegin(), point_octets.rbegin() + sizeof_field_element, 8, false);
                 boost::multiprecision::import_bits(y_1,
-                                            point_octets.rbegin() + sizeof_field_element,
-                                            point_octets.rbegin() + 2 * sizeof_field_element,
-                                            8,
-                                            false);
+                                                   point_octets.rbegin() + sizeof_field_element,
+                                                   point_octets.rbegin() + 2 * sizeof_field_element,
+                                                   8,
+                                                   false);
                 boost::multiprecision::import_bits(x_0,
-                                            point_octets.rbegin() + 2 * sizeof_field_element,
-                                            point_octets.rbegin() + 3 * sizeof_field_element,
-                                            8,
-                                            false);
+                                                   point_octets.rbegin() + 2 * sizeof_field_element,
+                                                   point_octets.rbegin() + 3 * sizeof_field_element,
+                                                   8,
+                                                   false);
                 boost::multiprecision::import_bits(
-                    x_1, point_octets.rbegin() + 3 * sizeof_field_element, point_octets.rend(), 8, false);
+                        x_1, point_octets.rbegin() + 3 * sizeof_field_element, point_octets.rend(), 8, false);
                 g2_value_type result(g2_field_value_type(g1_field_value_type(x_0), g1_field_value_type(x_1)),
                                      g2_field_value_type(g1_field_value_type(y_0), g1_field_value_type(y_1)),
                                      g2_field_value_type::one());
@@ -305,7 +308,7 @@ namespace nil {
 
             static inline bool sign_gf_p(const g1_field_value_type &v) {
                 static const typename g1_field_value_type::integral_type half_p =
-                    (g1_field_value_type::modulus - integral_type(1)) / integral_type(2);
+                        (g1_field_value_type::modulus - integral_type(1)) / integral_type(2);
 
                 if (v > half_p) {
                     return true;

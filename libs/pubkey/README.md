@@ -1,4 +1,4 @@
-# Public Key Cryptography Schemes for =nil; Foundation's Cryptography Suite
+# Public Key Cryptography Schemes for [[alloc] init]'s Cryptography Suite
 
 ## Building
 
@@ -9,14 +9,14 @@ library in a project it is required to:
 2. Add all the internal dependencies using [CMake Modules](https://github.com/BoostCMake/cmake_modules.git) as
    submodules to target project repository.
 3. Initialize parent project with [CMake Modules](https://github.com/BoostCMake/cmake_modules.git) (Look
-   at [crypto3](https://github.com/nilfoundation/crypto3.git) for the example)
+   at [crypto3](https://github.com/alloc-init/crypto3.git) for the example)
 
 ## Dependencies
 
 ### Internal
 
-* [Multiprecision](https://github.com/nilfoundation/crypto3-multiprecision.git)
-* [Algebra](https://github.com/nilfoundation/crypto3-algebra.git)
+* [Multiprecision](https://github.com/alloc-init/crypto3-multiprecision.git)
+* [Algebra](https://github.com/alloc-init/crypto3-algebra.git)
 
 ### External
 

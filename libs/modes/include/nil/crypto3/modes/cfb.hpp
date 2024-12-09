@@ -63,9 +63,9 @@ namespace nil {
 
                         static inline void xor_copy(uint8_t buf[], uint8_t key_buf[], size_t len) {
                             for (size_t i = 0; i != len; ++i) {
-                                uint8_t k = key_buf[i];
+                                uint8_t K = key_buf[i];
                                 key_buf[i] = buf[i];
-                                buf[i] ^= k;
+                                buf[i] ^= K;
                             }
                         }
                     };
@@ -420,9 +420,9 @@ namespace nil {
                         }
                     };
 
-                    template<typename Policy>
+                    template<typename PolicyType>
                     class cipher_feedback {
-                        typedef Policy policy_type;
+                        typedef PolicyType policy_type;
 
                     public:
                         typedef typename policy_type::cipher_type cipher_type;
@@ -492,9 +492,9 @@ namespace nil {
                                                           ciphertext_stealing_type>
                         decryption_policy;
 
-                    template<template<typename, typename> class Policy>
+                    template<template<typename, typename> class PolicyType>
                     struct bind {
-                        typedef detail::cipher_feedback<Policy<cipher_type, padding_type>> type;
+                        typedef detail::cipher_feedback<PolicyType<cipher_type, padding_type>> type;
                     };
                 };
 

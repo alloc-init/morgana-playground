@@ -47,7 +47,7 @@ namespace nil {
                      typename GeneratorType,
                      typename DistributionType = void,
                      typename = typename std::enable_if<std::is_same<typename CurveType::scalar_field_type::value_type,
-                                                                     typename GeneratorType::result_type>::value>::type>
+                         typename GeneratorType::result_type>::value>::type>
             struct ecdsa {
                 typedef ecdsa<CurveType, Padding, GeneratorType, DistributionType> self_type;
                 typedef CurveType curve_type;
@@ -66,12 +66,12 @@ namespace nil {
                      typename GeneratorHash,
                      typename DistributionType>
             struct ecdsa<CurveType,
-                         Padding,
-                         random::rfc6979<GeneratorResultType, GeneratorHash>,
-                         DistributionType,
-                         typename std::enable_if<std::is_same<typename Padding::hash_type, GeneratorHash>::value &&
-                                                 std::is_same<typename CurveType::scalar_field_type::value_type,
-                                                              GeneratorResultType>::value>::type> {
+                        Padding,
+                        random::rfc6979<GeneratorResultType, GeneratorHash>,
+                        DistributionType,
+                        typename std::enable_if<std::is_same<typename Padding::hash_type, GeneratorHash>::value &&
+                                                std::is_same<typename CurveType::scalar_field_type::value_type,
+                                                    GeneratorResultType>::value>::type> {
                 typedef random::rfc6979<GeneratorResultType, GeneratorHash> generator_type;
                 typedef ecdsa<CurveType, Padding, generator_type, DistributionType> self_type;
                 typedef CurveType curve_type;
@@ -90,7 +90,7 @@ namespace nil {
                 typedef typename policy_type::curve_type curve_type;
                 typedef typename policy_type::padding_policy padding_policy;
 
-                typedef padding::encoding_accumulator_set<padding_policy> internal_accumulator_type;
+                typedef padding::encoding_accumulator_set<padding_policy> accumulator_type;
 
                 typedef typename curve_type::scalar_field_type scalar_field_type;
                 typedef typename scalar_field_type::value_type scalar_field_value_type;
@@ -99,56 +99,57 @@ namespace nil {
                 typedef typename curve_type::base_field_type::integral_type base_integral_type;
                 typedef typename scalar_field_type::modular_type scalar_modular_type;
 
-                typedef g1_value_type public_key_type;
+                typedef g1_value_type schedule_type;
                 typedef std::pair<scalar_field_value_type, scalar_field_value_type> signature_type;
 
-                public_key(const public_key_type &key) : pubkey(key) {
+                public_key() = delete;
+
+                public_key(const schedule_type &key) : pubkey(key) {
                 }
 
-                static inline void init_accumulator(internal_accumulator_type &acc) {
+                static inline void init_accumulator(accumulator_type &acc) {
                 }
 
                 template<typename InputRange>
-                inline void update(internal_accumulator_type &acc, const InputRange &range) const {
+                inline void update(accumulator_type &acc, const InputRange &range) const {
                     encode<padding_policy>(range, acc);
                 }
 
                 template<typename InputIterator>
-                inline void update(internal_accumulator_type &acc, InputIterator first, InputIterator last) const {
+                inline void update(accumulator_type &acc, InputIterator first, InputIterator last) const {
                     encode<padding_policy>(first, last, acc);
                 }
 
-                inline bool verify(internal_accumulator_type &acc, const signature_type &signature) const {
+                inline bool verify(accumulator_type &acc, const signature_type &signature) const {
                     scalar_field_value_type encoded_m =
-                        padding::accumulators::extract::encode<padding::encoding_policy<padding_policy>>(acc);
+                            padding::accumulators::extract::encode<padding::encoding_policy<padding_policy>>(acc);
 
                     scalar_field_value_type w = signature.second.inversed();
                     g1_value_type X = (encoded_m * w) * g1_value_type::one() + (signature.first * w) * pubkey;
                     if (X.is_zero()) {
                         return false;
                     }
-                    return signature.first == scalar_field_value_type(scalar_modular_type(typename scalar_modular_type::backend_type(
-                                                  static_cast<base_integral_type>(X.to_affine().X.data),
-                                                  scalar_field_value_type::modulus)));
+                    return signature.first ==
+                           scalar_field_value_type(scalar_modular_type(typename scalar_modular_type::backend_type(
+                               static_cast<base_integral_type>(X.to_affine().X.data),
+                               scalar_field_value_type::modulus)));
                 }
 
-                inline public_key_type pubkey_data() const {
+                inline schedule_type pubkey_data() const {
                     return pubkey;
                 }
 
             protected:
-                public_key_type pubkey;
+                schedule_type pubkey;
             };
 
             template<typename CurveType, typename Padding, typename GeneratorType, typename DistributionType>
-            struct private_key<
-                ecdsa<CurveType, Padding, GeneratorType, DistributionType>,
-                typename std::enable_if<!std::is_same<
-                    GeneratorType,
-                    random::rfc6979<typename CurveType::scalar_field_type::value_type,
+            struct private_key<ecdsa<CurveType, Padding, GeneratorType, DistributionType>,
+                        typename std::enable_if<!std::is_same<GeneratorType,
+                                random::rfc6979<typename CurveType::scalar_field_type::value_type,
                                     typename ecdsa<CurveType, Padding, GeneratorType, DistributionType>::hash_type>>::
-                                            value>::type>
-                : public public_key<ecdsa<CurveType, Padding, GeneratorType, DistributionType>> {
+                            value>::type>
+                    : public public_key<ecdsa<CurveType, Padding, GeneratorType, DistributionType>> {
                 typedef ecdsa<CurveType, Padding, GeneratorType, DistributionType> policy_type;
                 typedef public_key<policy_type> base_type;
 
@@ -158,7 +159,7 @@ namespace nil {
                 typedef typename policy_type::distribution_type distribution_type;
                 typedef typename policy_type::hash_type hash_type;
 
-                typedef padding::encoding_accumulator_set<padding_policy> internal_accumulator_type;
+                typedef padding::encoding_accumulator_set<padding_policy> accumulator_type;
 
                 typedef typename base_type::scalar_field_value_type scalar_field_value_type;
                 typedef typename base_type::g1_value_type g1_value_type;
@@ -166,38 +167,38 @@ namespace nil {
                 typedef typename base_type::scalar_modular_type scalar_modular_type;
 
                 typedef scalar_field_value_type private_key_type;
-                typedef typename base_type::public_key_type public_key_type;
+                typedef typename base_type::schedule_type public_key_schedule_type;
                 typedef typename base_type::signature_type signature_type;
 
                 private_key(const private_key_type &key) : privkey(key), base_type(generate_public_key(key)) {
                 }
 
-                static inline public_key_type generate_public_key(const private_key_type &key) {
-                    return key * public_key_type::one();
+                static inline public_key_schedule_type generate_public_key(const private_key_type &key) {
+                    return key * public_key_schedule_type::one();
                 }
 
-                static inline void init_accumulator(internal_accumulator_type &acc) {
+                static inline void init_accumulator(accumulator_type &acc) {
                 }
 
                 template<typename InputRange>
-                inline void update(internal_accumulator_type &acc, const InputRange &range) const {
+                inline void update(accumulator_type &acc, const InputRange &range) const {
                     encode<padding_policy>(range, acc);
                 }
 
                 template<typename InputIterator>
-                inline void update(internal_accumulator_type &acc, InputIterator first, InputIterator last) const {
+                inline void update(accumulator_type &acc, InputIterator first, InputIterator last) const {
                     encode<padding_policy>(first, last, acc);
                 }
 
                 // TODO: review to make blind signing
                 // TODO: add support of HMAC based generator (https://datatracker.ietf.org/doc/html/rfc6979)
                 // TODO: review passing of generator seed
-                inline signature_type sign(internal_accumulator_type &acc) const {
+                inline signature_type sign(accumulator_type &acc) const {
                     generator_type gen;
                     scalar_field_value_type encoded_m =
-                        padding::accumulators::extract::encode<padding::encoding_policy<padding_policy>>(acc);
+                            padding::accumulators::extract::encode<padding::encoding_policy<padding_policy>>(acc);
 
-                    // TODO: review behaviour if k, r or s generation produced zero, maybe return status instead cycled
+                    // TODO: review behaviour if K, r or s generation produced zero, maybe return status instead cycled
                     //  generation
                     scalar_field_value_type k;
                     scalar_field_value_type r;
@@ -222,13 +223,13 @@ namespace nil {
 
             template<typename CurveType, typename Padding, typename GeneratorType, typename DistributionType>
             struct private_key<
-                ecdsa<CurveType, Padding, GeneratorType, DistributionType>,
-                typename std::enable_if<std::is_same<
-                    GeneratorType,
-                    random::rfc6979<typename CurveType::scalar_field_type::value_type,
+                        ecdsa<CurveType, Padding, GeneratorType, DistributionType>,
+                        typename std::enable_if<std::is_same<
+                                GeneratorType,
+                                random::rfc6979<typename CurveType::scalar_field_type::value_type,
                                     typename ecdsa<CurveType, Padding, GeneratorType, DistributionType>::hash_type>>::
-                                            value>::type>
-                : public public_key<ecdsa<CurveType, Padding, GeneratorType, DistributionType>> {
+                            value>::type>
+                    : public public_key<ecdsa<CurveType, Padding, GeneratorType, DistributionType>> {
                 typedef ecdsa<CurveType, Padding, GeneratorType, DistributionType> policy_type;
                 typedef public_key<policy_type> base_type;
 
@@ -239,7 +240,7 @@ namespace nil {
                 typedef typename policy_type::hash_type hash_type;
 
                 typedef std::pair<accumulator_set<hash_type>, padding::encoding_accumulator_set<padding_policy>>
-                    internal_accumulator_type;
+                accumulator_type;
 
                 typedef typename base_type::scalar_field_value_type scalar_field_value_type;
                 typedef typename base_type::g1_value_type g1_value_type;
@@ -247,39 +248,40 @@ namespace nil {
                 typedef typename base_type::scalar_modular_type scalar_modular_type;
 
                 typedef scalar_field_value_type private_key_type;
-                typedef typename base_type::public_key_type public_key_type;
+                typedef typename base_type::schedule_type public_key_schedule_type;
                 typedef typename base_type::signature_type signature_type;
 
                 private_key(const private_key_type &key) : privkey(key), base_type(generate_public_key(key)) {
                 }
 
-                static inline public_key_type generate_public_key(const private_key_type &key) {
-                    return key * public_key_type::one();
+                static inline public_key_schedule_type generate_public_key(const private_key_type &key) {
+                    return key * public_key_schedule_type::one();
                 }
 
-                static inline void init_accumulator(internal_accumulator_type &acc) {
+                static inline void init_accumulator(accumulator_type &acc) {
                 }
 
                 template<typename InputRange>
-                inline void update(internal_accumulator_type &acc, const InputRange &range) const {
+                inline void update(accumulator_type &acc, const InputRange &range) const {
                     hash<hash_type>(range, acc.first);
                     encode<padding_policy>(range, acc.second);
                 }
 
                 template<typename InputIterator>
-                inline void update(internal_accumulator_type &acc, InputIterator first, InputIterator last) const {
+                inline void update(accumulator_type &acc, InputIterator first, InputIterator last) const {
                     hash<hash_type>(first, last, acc.first);
                     encode<padding_policy>(first, last, acc.second);
                 }
 
-                inline signature_type sign(internal_accumulator_type &acc) const {
+                inline signature_type sign(accumulator_type &acc) const {
                     scalar_field_value_type encoded_m =
-                        padding::accumulators::extract::encode<padding::encoding_policy<padding_policy>>(acc.second);
+                            padding::accumulators::extract::encode<padding::encoding_policy<padding_policy>>(
+                                acc.second);
 
                     auto h = ::nil::crypto3::accumulators::extract::hash<hash_type>(acc.first);
                     generator_type gen(privkey, h);
 
-                    // TODO: review behaviour if k, r or s generation produced zero, maybe return status instead cycled
+                    // TODO: review behaviour if K, r or s generation produced zero, maybe return status instead cycled
                     //  generation
                     scalar_field_value_type k;
                     scalar_field_value_type r;
@@ -301,8 +303,8 @@ namespace nil {
             protected:
                 private_key_type privkey;
             };
-        }    // namespace pubkey
-    }        // namespace crypto3
-}    // namespace nil
+        } // namespace pubkey
+    } // namespace crypto3
+} // namespace nil
 
 #endif    // CRYPTO3_PUBKEY_ECDSA_HPP

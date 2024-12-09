@@ -47,15 +47,15 @@ namespace nil {
          *
          * @return
          */
-        template<typename Scheme, typename InputIterator,
+        template<typename SchemeType, typename InputIterator,
                  typename ProcessingMode =
-                     typename pubkey::modes::isomorphic<Scheme>::template bind<pubkey::signing_policy<Scheme>>::type,
+                     typename pubkey::modes::isomorphic<SchemeType>::template bind<pubkey::signing_policy<SchemeType>>::type,
                  typename SigningAccumulator = pubkey::weighted_signing_accumulator_set<ProcessingMode>,
                  typename StreamSchemeImpl = pubkey::detail::value_pubkey_impl<SigningAccumulator>,
                  typename SchemeImpl = pubkey::detail::range_pubkey_impl<StreamSchemeImpl>>
         SchemeImpl sign(InputIterator first, InputIterator last,
-                        typename pubkey::private_key<Scheme>::weights_type &weights,
-                        const pubkey::private_key<Scheme> &key) {
+                        typename pubkey::private_key<SchemeType>::weights_type &weights,
+                        const pubkey::private_key<SchemeType> &key) {
             return SchemeImpl(first, last, SigningAccumulator(key, nil::crypto3::accumulators::weights = weights));
         }
 
@@ -72,14 +72,14 @@ namespace nil {
          *
          * @return
          */
-        template<typename Scheme, typename SinglePassRange,
+        template<typename SchemeType, typename SinglePassRange,
                  typename ProcessingMode =
-                     typename pubkey::modes::isomorphic<Scheme>::template bind<pubkey::signing_policy<Scheme>>::type,
+                     typename pubkey::modes::isomorphic<SchemeType>::template bind<pubkey::signing_policy<SchemeType>>::type,
                  typename SigningAccumulator = pubkey::weighted_signing_accumulator_set<ProcessingMode>,
                  typename StreamSchemeImpl = pubkey::detail::value_pubkey_impl<SigningAccumulator>,
                  typename SchemeImpl = pubkey::detail::range_pubkey_impl<StreamSchemeImpl>>
-        SchemeImpl sign(const SinglePassRange &rng, typename pubkey::private_key<Scheme>::weights_type &weights,
-                        const pubkey::private_key<Scheme> &key) {
+        SchemeImpl sign(const SinglePassRange &rng, typename pubkey::private_key<SchemeType>::weights_type &weights,
+                        const pubkey::private_key<SchemeType> &key) {
             return SchemeImpl(rng, SigningAccumulator(key, nil::crypto3::accumulators::weights = weights));
         }
     }    // namespace crypto3

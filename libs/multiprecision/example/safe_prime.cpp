@@ -13,7 +13,7 @@
 int main()
 {
    using namespace boost::random;
-   using namespace nil::crypto3::multiprecision;
+   using namespace boost::multiprecision;
 
    typedef cpp_int int_type;
    mt11213b base_gen(clock());

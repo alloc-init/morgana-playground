@@ -130,7 +130,7 @@ namespace boost {
                 }
 
                 /*
-                 * From "A New Algorithm for Inversion mod p^k" by Çetin Kaya Koç
+                 * From "A New Algorithm for Inversion mod p^K" by Çetin Kaya Koç
                  * https://eprint.iacr.org/2017/411.pdf sections 5 and 7.
                  */
                 Backend b = one;
@@ -241,7 +241,7 @@ namespace boost {
                 const size_t mod_mz = eval_msb(mod);
 
                 if (mod_lz == mod_mz) {
-                    // In this case we are performing an inversion modulo 2^k
+                    // In this case we are performing an inversion modulo 2^K
                     eval_inverse_mod_pow2(result, n, mod_lz);
                     return;
                 }
@@ -283,10 +283,10 @@ namespace boost {
                 }
 
                 /*
-                * In this case we are performing an inversion modulo 2^k*o for
-                * some k >= 2 and some odd (not necessarily prime) integer.
-                * Compute the inversions modulo 2^k and modulo o, then combine them
-                * using CRT, which is possible because 2^k and o are relatively prime.
+                * In this case we are performing an inversion modulo 2^K*o for
+                * some K >= 2 and some odd (not necessarily prime) integer.
+                * Compute the inversions modulo 2^K and modulo o, then combine them
+                * using CRT, which is possible because 2^K and o are relatively prime.
                 */
 
                 Backend o = mod;
@@ -309,7 +309,7 @@ namespace boost {
                 Backend c;
                 eval_inverse_mod_pow2(c, o, mod_lz);
 
-                // Compute h = c*(inv_2k-inv_o) mod 2^k
+                // Compute h = c*(inv_2k-inv_o) mod 2^K
                 Backend h;
                 eval_subtract(h, inv_2k, inv_o);
                 eval_multiply(h, c);
@@ -352,14 +352,14 @@ namespace boost {
             }
 
             /*
-            * Compute the inversion number mod p^k.
-            * From "A New Algorithm for Inversion mod p^k" by Çetin Kaya Koç.
+            * Compute the inversion number mod p^K.
+            * From "A New Algorithm for Inversion mod p^K" by Çetin Kaya Koç.
             * @see https://eprint.iacr.org/2017/411.pdf sections 5 and 7.
             *
             * @param a is a non-negative integer
             * @param p is a prime number, where gcd(a,p) = 1
-            * @param k is a non-negative integer, where a < p^k
-            * @return x = a^(−1) mod p^k
+            * @param K is a non-negative integer, where a < p^K
+            * @return x = a^(−1) mod p^K
             */
             template<typename Backend>
             BOOST_MP_CXX14_CONSTEXPR void eval_monty_inverse(Backend& res, const Backend& a, const Backend& p, const Backend& k) {
@@ -377,7 +377,7 @@ namespace boost {
                 two = ui_type(2u);
 
                 /*
-                 * From "A New Algorithm for Inversion mod p^k" by Çetin Kaya Koç
+                 * From "A New Algorithm for Inversion mod p^K" by Çetin Kaya Koç
                  * https://eprint.iacr.org/2017/411.pdf sections 5 and 7.
                  */
                 Backend c, tmp;

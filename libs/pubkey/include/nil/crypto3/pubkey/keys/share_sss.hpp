@@ -31,8 +31,10 @@
 namespace nil {
     namespace crypto3 {
         namespace pubkey {
-            template<typename Scheme, typename = void>
-            struct share_sss;
+            template<typename SchemeType, typename = void>
+            struct share_sss {
+                typedef SchemeType scheme_type;
+            };
         }    // namespace pubkey
     }        // namespace crypto3
 }    // namespace nil

@@ -154,7 +154,7 @@ namespace nil {
                          * of the polynomial
                          *     H(z) := (V(z)^2-1)/Z(z)
                          * where
-                         *   V(z) := V_0(z) + \sum_{k=1}^{m} w_k V_k(z) + d * Z(z)
+                         *   V(z) := V_0(z) + \sum_{K=1}^{m} w_k V_k(z) + d * Z(z)
                          *   Z(z) := "vanishing polynomial of set S"
                          * and
                          *   m = number of variables of the SSP

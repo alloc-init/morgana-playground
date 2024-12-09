@@ -42,12 +42,12 @@ namespace nil {
             namespace modes {
                 namespace detail {
                     template<typename Cipher, std::size_t TagBits, typename Padding, typename StreamCipher,
-                             typename Hash, template<typename> class Allocator>
+                             typename HashType, template<typename> class Allocator>
                     struct gcm_policy {
                         typedef Cipher cipher_type;
                         typedef Padding padding_type;
                         typedef StreamCipher stream_cipher_type;
-                        typedef Hash hash_type;
+                        typedef HashType hash_type;
 
                         template<typename T>
                         using allocator_type = Allocator<T>;
@@ -93,10 +93,10 @@ namespace nil {
                     };
 
                     template<typename Cipher, std::size_t TagBits, typename Padding, typename StreamCipher,
-                             typename Hash, template<typename> class Allocator>
+                             typename HashType, template<typename> class Allocator>
                     class gcm_encryption_policy
-                        : public gcm_policy<Cipher, TagBits, Padding, StreamCipher, Hash, Allocator> {
-                        typedef gcm_policy<Cipher, TagBits, Padding, StreamCipher, Hash, Allocator> policy_type;
+                        : public gcm_policy<Cipher, TagBits, Padding, StreamCipher, HashType, Allocator> {
+                        typedef gcm_policy<Cipher, TagBits, Padding, StreamCipher, HashType, Allocator> policy_type;
 
                     public:
                         typedef typename policy_type::cipher_type cipher_type;
@@ -144,10 +144,10 @@ namespace nil {
                     };
 
                     template<typename Cipher, std::size_t TagBits, typename Padding, typename StreamCipher,
-                             typename Hash, template<typename> class Allocator>
+                             typename HashType, template<typename> class Allocator>
                     struct gcm_decryption_policy
-                        : public gcm_policy<Cipher, TagBits, Padding, StreamCipher, Hash, Allocator> {
-                        typedef gcm_policy<Cipher, TagBits, Padding, StreamCipher, Hash, Allocator> policy_type;
+                        : public gcm_policy<Cipher, TagBits, Padding, StreamCipher, HashType, Allocator> {
+                        typedef gcm_policy<Cipher, TagBits, Padding, StreamCipher, HashType, Allocator> policy_type;
 
                     public:
                         typedef typename policy_type::cipher_type cipher_type;
@@ -211,9 +211,9 @@ namespace nil {
                         }
                     };
 
-                    template<typename Policy>
+                    template<typename PolicyType>
                     class gcm {
-                        typedef Policy policy_type;
+                        typedef PolicyType policy_type;
 
                     public:
                         typedef typename policy_type::cipher_type cipher_type;
@@ -287,13 +287,13 @@ namespace nil {
                  */
                 template<typename BlockCipher, template<typename> class Padding, std::size_t TagBits = 16,
 
-                         typename Hash = hashes::ghash, typename StreamCipher = stream::ctr<BlockCipher>,
+                         typename HashType = hashes::ghash, typename StreamCipher = stream::ctr<BlockCipher>,
                          template<typename> class Allocator = std::allocator>
                 struct gcm {
                     typedef BlockCipher cipher_type;
                     typedef Padding<BlockCipher> padding_type;
                     typedef StreamCipher stream_cipher_type;
-                    typedef Hash hash_type;
+                    typedef HashType hash_type;
 
                     template<typename T>
                     using allocator_type = Allocator<T>;
@@ -306,10 +306,10 @@ namespace nil {
                         decryption_policy;
 
                     template<template<typename, std::size_t, typename, typename, typename, template<typename> class>
-                             class Policy>
+                             class PolicyType>
                     struct bind {
                         typedef detail::gcm<
-                            Policy<cipher_type, TagBits, padding_type, stream_cipher_type, hash_type, allocator_type>>
+                            PolicyType<cipher_type, TagBits, padding_type, stream_cipher_type, hash_type, allocator_type>>
                             type;
                     };
                 };

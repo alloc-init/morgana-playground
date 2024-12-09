@@ -27,7 +27,7 @@ using namespace nil::crypto3::multiprecision;
     using privkey_type = private_key<scheme_type>;
     using pubkey_type = public_key<scheme_type>;
     using _privkey_type = typename privkey_type::private_key_type;
-    using _pubkey_type = typename pubkey_type::public_key_type;
+    using _pubkey_type = typename pubkey_type::schedule_type;
     using signature_type = typename pubkey_type::signature_type;
 
 int main(int argc, const char * argv[]) {
@@ -69,13 +69,13 @@ using namespace nil::crypto3::multiprecision;
     using privkey_type = private_key<scheme_type>;
     using pubkey_type = public_key<scheme_type>;
     using _privkey_type = typename privkey_type::private_key_type;
-    using _pubkey_type = typename pubkey_type::public_key_type;
+    using _pubkey_type = typename pubkey_type::schedule_type;
     using signature_type = typename pubkey_type::signature_type;
     using modulus_type = typename _privkey_type::modulus_type;
 
     using signing_isomorphic_mode =
     typename ::nil::crypto3::pubkey::modes::isomorphic<scheme_type, ::nil::crypto3::pubkey::nop_padding>::
-        template bind<::nil::crypto3::pubkey::signing_policy<Scheme>>::type;
+        template bind<::nil::crypto3::pubkey::signing_policy<SchemeType>>::type;
     using verification_isomorphic_mode =
     typename ::nil::crypto3::pubkey::modes::isomorphic<scheme_type, ::nil::crypto3::pubkey::nop_padding>::
         template bind<::nil::crypto3::pubkey::verification_policy<scheme_type>>::type;

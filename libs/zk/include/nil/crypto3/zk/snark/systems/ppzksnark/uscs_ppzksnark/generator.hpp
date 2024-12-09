@@ -74,96 +74,99 @@ namespace nil {
                         /* perform USCS-to-SSP reduction */
 
                         ssp_instance_evaluation<scalar_field_type> ssp_inst =
-                            reductions::uscs_to_ssp<scalar_field_type>::instance_map_with_evaluation(constraint_system,
-                                                                                                     t);
+                                reductions::uscs_to_ssp<scalar_field_type>::instance_map_with_evaluation(
+                                        constraint_system,
+                                        t);
 
                         /* construct various tables of typename FieldType::value_type elements */
 
                         std::vector<typename scalar_field_type::value_type> Vt_table = std::move(
-                            ssp_inst.Vt);    // ssp_inst.Vt is now in unspecified state, but we do not use it later
+                                ssp_inst.Vt);    // ssp_inst.Vt is now in unspecified state, but we do not use it later
                         std::vector<typename scalar_field_type::value_type> Ht_table = std::move(
-                            ssp_inst.Ht);    // ssp_inst.Ht is now in unspecified state, but we do not use it later
+                                ssp_inst.Ht);    // ssp_inst.Ht is now in unspecified state, but we do not use it later
 
                         Vt_table.emplace_back(ssp_inst.Zt);
 
                         std::vector<typename scalar_field_type::value_type> Xt_table =
-                            std::vector<typename scalar_field_type::value_type>(
-                                Vt_table.begin(), Vt_table.begin() + ssp_inst.num_inputs + 1);
+                                std::vector<typename scalar_field_type::value_type>(
+                                        Vt_table.begin(), Vt_table.begin() + ssp_inst.num_inputs + 1);
                         std::vector<typename scalar_field_type::value_type> Vt_table_minus_Xt_table =
-                            std::vector<typename scalar_field_type::value_type>(
-                                Vt_table.begin() + ssp_inst.num_inputs + 1, Vt_table.end());
+                                std::vector<typename scalar_field_type::value_type>(
+                                        Vt_table.begin() + ssp_inst.num_inputs + 1, Vt_table.end());
 
                         /* sanity checks */
 
-                        assert(Vt_table.size() == ssp_inst.num_variables + 2);
-                        assert(Ht_table.size() == ssp_inst.degree + 1);
-                        assert(Xt_table.size() == ssp_inst.num_inputs + 1);
-                        assert(Vt_table_minus_Xt_table.size() == ssp_inst.num_variables + 2 - ssp_inst.num_inputs - 1);
+                        BOOST_ASSERT(Vt_table.size() == ssp_inst.num_variables + 2);
+                        BOOST_ASSERT(Ht_table.size() == ssp_inst.degree + 1);
+                        BOOST_ASSERT(Xt_table.size() == ssp_inst.num_inputs + 1);
+                        BOOST_ASSERT(
+                                Vt_table_minus_Xt_table.size() == ssp_inst.num_variables + 2 - ssp_inst.num_inputs - 1);
                         for (std::size_t i = 0; i < ssp_inst.num_inputs + 1; ++i) {
-                            assert(!Xt_table[i].is_zero());
+                            BOOST_ASSERT(!Xt_table[i].is_zero());
                         }
 
                         const typename scalar_field_type::value_type alpha =
-                            algebra::random_element<scalar_field_type>();
+                                algebra::random_element<scalar_field_type>();
 
                         const std::size_t g1_exp_count =
-                            Vt_table.size() + Vt_table_minus_Xt_table.size() + Ht_table.size();
+                                Vt_table.size() + Vt_table_minus_Xt_table.size() + Ht_table.size();
                         const std::size_t g2_exp_count = Vt_table_minus_Xt_table.size();
 
                         std::size_t g1_window = algebra::get_exp_window_size<g1_type>(g1_exp_count);
                         std::size_t g2_window = algebra::get_exp_window_size<g2_type>(g2_exp_count);
 
                         algebra::window_table<g1_type> g1_table = algebra::get_window_table<g1_type>(
-                            scalar_field_type::value_bits, g1_window, g1_type::value_type::one());
+                                scalar_field_type::value_bits, g1_window, g1_type::value_type::one());
 
                         algebra::window_table<g2_type> g2_table = algebra::get_window_table<g2_type>(
-                            scalar_field_type::value_bits, g2_window, g2_type::value_type::one());
+                                scalar_field_type::value_bits, g2_window, g2_type::value_type::one());
 
                         typename std::vector<typename g1_type::value_type> V_g1_query =
-                            algebra::batch_exp<g1_type, scalar_field_type>(scalar_field_type::value_bits, g1_window,
-                                                                           g1_table, Vt_table_minus_Xt_table);
+                                algebra::batch_exp<g1_type, scalar_field_type>(scalar_field_type::value_bits, g1_window,
+                                                                               g1_table, Vt_table_minus_Xt_table);
 #ifdef USE_MIXED_ADDITION
                         algebra::batch_to_special<g1_type>(V_g1_query);
 #endif
 
                         typename std::vector<typename g1_type::value_type> alpha_V_g1_query =
-                            algebra::batch_exp_with_coeff<g1_type, scalar_field_type>(
-                                scalar_field_type::value_bits, g1_window, g1_table, alpha, Vt_table_minus_Xt_table);
+                                algebra::batch_exp_with_coeff<g1_type, scalar_field_type>(
+                                        scalar_field_type::value_bits, g1_window, g1_table, alpha,
+                                        Vt_table_minus_Xt_table);
 #ifdef USE_MIXED_ADDITION
                         algebra::batch_to_special<g1_type>(alpha_V_g1_query);
 #endif
 
                         typename std::vector<typename g1_type::value_type> H_g1_query =
-                            algebra::batch_exp<g1_type, scalar_field_type>(scalar_field_type::value_bits, g1_window,
-                                                                           g1_table, Ht_table);
+                                algebra::batch_exp<g1_type, scalar_field_type>(scalar_field_type::value_bits, g1_window,
+                                                                               g1_table, Ht_table);
 #ifdef USE_MIXED_ADDITION
                         algebra::batch_to_special<g1_type>(H_g1_query);
 #endif
 
                         typename std::vector<typename g2_type::value_type> V_g2_query =
-                            algebra::batch_exp<g2_type, scalar_field_type>(scalar_field_type::value_bits, g2_window,
-                                                                           g2_table, Vt_table);
+                                algebra::batch_exp<g2_type, scalar_field_type>(scalar_field_type::value_bits, g2_window,
+                                                                               g2_table, Vt_table);
 #ifdef USE_MIXED_ADDITION
                         algebra::batch_to_special<g2_type>(V_g2_query);
 #endif
                         const typename scalar_field_type::value_type tilde =
-                            algebra::random_element<scalar_field_type>();
+                                algebra::random_element<scalar_field_type>();
                         typename g2_type::value_type tilde_g2 = tilde * g2_type::value_type::one();
                         typename g2_type::value_type alpha_tilde_g2 = (alpha * tilde) * g2_type::value_type::one();
                         typename g2_type::value_type Z_g2 = ssp_inst.Zt * g2_type::value_type::one();
 
                         typename g1_type::value_type encoded_IC_base = Xt_table[0] * g1_type::value_type::one();
                         typename std::vector<typename g1_type::value_type> encoded_IC_values =
-                            algebra::batch_exp<g1_type, scalar_field_type>(
-                                scalar_field_type::value_bits, g1_window, g1_table,
-                                std::vector<typename scalar_field_type::value_type>(Xt_table.begin() + 1,
-                                                                                    Xt_table.end()));
+                                algebra::batch_exp<g1_type, scalar_field_type>(
+                                        scalar_field_type::value_bits, g1_window, g1_table,
+                                        std::vector<typename scalar_field_type::value_type>(Xt_table.begin() + 1,
+                                                                                            Xt_table.end()));
 
-                        accumulation_vector<g1_type> encoded_IC_query(std::move(encoded_IC_base),
-                                                                      std::move(encoded_IC_values));
+                        container::accumulation_vector<g1_type> encoded_IC_query(std::move(encoded_IC_base),
+                                                                                 std::move(encoded_IC_values));
 
                         verification_key_type vk =
-                            verification_key_type(tilde_g2, alpha_tilde_g2, Z_g2, encoded_IC_query);
+                                verification_key_type(tilde_g2, alpha_tilde_g2, Z_g2, encoded_IC_query);
 
                         constraint_system_type cs_copy = constraint_system;
                         proving_key_type pk = proving_key_type(std::move(V_g1_query),

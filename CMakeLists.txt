@@ -15,6 +15,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake"
 find_package(CM)
 include(CMConfig)
 include(CMSetupVersion)
+
 cm_workspace(crypto3)
 cm_setup_version(VERSION 0.3.0 PREFIX ${CMAKE_WORKSPACE_NAME})
 
@@ -26,22 +27,22 @@ option(BUILD_DOCS "Build with configuring Doxygen documentation compiler" FALSE)
 
 # This is useful due to some build systems (Ninja in particular) are piping
 # compiler output and compiler switches it's output to plain text
-option (FORCE_COLORED_OUTPUT "Always produce ANSI-colored output (GNU/Clang only)." FALSE)
-if (${FORCE_COLORED_OUTPUT})
-    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-       add_compile_options (-fdiagnostics-color=always)
-    elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-       add_compile_options (-fcolor-diagnostics)
-    endif ()
-endif ()
+option(FORCE_COLORED_OUTPUT "Always produce ANSI-colored output (GNU/Clang only)." FALSE)
+if(${FORCE_COLORED_OUTPUT})
+    if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+        add_compile_options(-fdiagnostics-color=always)
+    elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+        add_compile_options(-fcolor-diagnostics)
+    endif()
+endif()
 
 # The file compile_commands.json is generated in build directory, so LSP could
 # pick it up and guess all include paths, defines and other stuff.
 # If Nix is used, LSP could not guess the locations of implicit include
 # directories, so we need to include them explicitly.
 if(CMAKE_EXPORT_COMPILE_COMMANDS)
-  set(CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES 
-      ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES})
+    set(CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES
+            ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES})
 endif()
 
 set(BUILD_WITH_TARGET_ARCHITECTURE "" CACHE STRING "Target build architecture") # TODO: check if we can do cross-compilation
@@ -72,14 +73,8 @@ include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
 set(CONFIG_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/crypto3)
 
-configure_package_config_file(
-        cmake/Config.cmake.in
-        crypto3Config.cmake
-        INSTALL_DESTINATION ${CONFIG_DIR}
-)
+configure_package_config_file(cmake/config.cmake.in crypto3Config.cmake
+        INSTALL_DESTINATION ${CONFIG_DIR})
 
-install(
-        FILES
-        ${CMAKE_CURRENT_BINARY_DIR}/crypto3Config.cmake
-        DESTINATION ${CONFIG_DIR}
-)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/crypto3Config.cmake
+        DESTINATION ${CONFIG_DIR})

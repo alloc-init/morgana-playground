@@ -97,7 +97,7 @@ generate_random_data(std::size_t leaf_number) {
     return v;
 }
 
-template<typename Endianness, typename Hash, std::size_t Arity, std::size_t LeafSize = 64>
+template<typename Endianness, typename HashType, std::size_t Arity, std::size_t LeafSize = 64>
 void test_merkle_proof(std::size_t tree_depth) {
 
     using namespace nil::crypto3::marshalling;

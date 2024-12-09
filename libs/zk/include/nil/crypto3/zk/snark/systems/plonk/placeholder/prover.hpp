@@ -333,7 +333,7 @@ namespace nil {
                                     gates[i].constraints[j].evaluate(
                                         *_polynomial_table, preprocessed_public_data.common_data.basic_domain) *
                                     _polynomial_table.selector(gates[i].selector_index);
-                                // for (std::size_t k = 0; k < table_description.rows_amount; k++) {
+                                // for (std::size_t K = 0; K < table_description.rows_amount; K++) {
                                 if (constraint_result.evaluate(
                                         preprocessed_public_data.common_data.basic_domain->get_domain_element(253)) !=
                                     FieldType::value_type::zero()) {

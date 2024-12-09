@@ -39,13 +39,13 @@
 namespace nil {
     namespace crypto3 {
         namespace pubkey {
-            template<typename Group>
+            template<typename GroupType>
             struct sss_basic_policy {
                 //===========================================================================
                 // internal secret sharing scheme types
 
-                using private_element_type = typename Group::curve_type::scalar_field_type::value_type;
-                using public_element_type = typename Group::value_type;
+                using private_element_type = typename GroupType::curve_type::scalar_field_type::value_type;
+                using public_element_type = typename GroupType::value_type;
                 using indexed_private_element_type = std::pair<std::size_t, private_element_type>;
                 using indexed_public_element_type = std::pair<std::size_t, public_element_type>;
 

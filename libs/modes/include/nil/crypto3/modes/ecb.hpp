@@ -294,9 +294,9 @@ namespace nil {
                     };
 
                     // Electronic Code Book CodecMode (ECB)
-                    template<typename Policy>
+                    template<typename PolicyType>
                     class electronic_code_book {
-                        typedef Policy policy_type;
+                        typedef PolicyType policy_type;
 
                     public:
                         typedef typename policy_type::cipher_type cipher_type;
@@ -354,9 +354,9 @@ namespace nil {
                     typedef detail::ecb_decryption_policy<cipher_type, padding_type, ciphertext_stealing_type>
                         decryption_policy;
 
-                    template<template<typename, typename> class Policy>
+                    template<template<typename, typename> class PolicyType>
                     struct bind {
-                        typedef detail::electronic_code_book<Policy<cipher_type, padding_type>> type;
+                        typedef detail::electronic_code_book<PolicyType<cipher_type, padding_type>> type;
                     };
                 };
 

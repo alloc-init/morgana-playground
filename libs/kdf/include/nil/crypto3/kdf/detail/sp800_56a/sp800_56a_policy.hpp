@@ -36,9 +36,9 @@ namespace nil {
                 template<typename Construction, typename = void>
                 struct sp800_56a_policy { };
 
-                template<typename Hash>
-                struct sp800_56a_policy<Hash, typename std::enable_if<is_hash<Hash>::value>::type> {
-                    typedef Hash hash_type;
+                template<typename HashType>
+                struct sp800_56a_policy<HashType, typename std::enable_if<is_hash<HashType>::value>::type> {
+                    typedef HashType hash_type;
                 };
 
                 template<typename MessageAuthenticationCode>
@@ -47,11 +47,11 @@ namespace nil {
                     typedef MessageAuthenticationCode mac_type;
                 };
 
-                template<typename Hash>
-                struct sp800_56a_policy<mac::hmac<Hash>,
-                                        typename std::enable_if<is_mac<mac::hmac<Hash>>::value>::type> {
-                    typedef Hash hash_type;
-                    typedef mac::hmac<Hash> mac_type;
+                template<typename HashType>
+                struct sp800_56a_policy<mac::hmac<HashType>,
+                                        typename std::enable_if<is_mac<mac::hmac<HashType>>::value>::type> {
+                    typedef HashType hash_type;
+                    typedef mac::hmac<HashType> mac_type;
 
                     constexpr static const std::size_t min_key_bits = 0;
                     constexpr static const std::size_t max_key_bits = 2ULL >> 32ULL;

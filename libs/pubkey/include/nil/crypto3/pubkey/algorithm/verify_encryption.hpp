@@ -38,15 +38,15 @@
 namespace nil {
     namespace crypto3 {
         namespace pubkey {
-            template<typename Scheme>
-            using encryption_verification_init_params_type = typename verify_encryption_op<Scheme>::init_params_type;
+            template<typename SchemeType>
+            using encryption_verification_init_params_type = typename verify_encryption_op<SchemeType>::init_params_type;
         }
 
-        template<typename Scheme, typename Mode = pubkey::modes::verifiable_encryption<Scheme>,
+        template<typename SchemeType, typename Mode = pubkey::modes::verifiable_encryption<SchemeType>,
                  typename ProcessingMode = typename Mode::encryption_verification_policy, typename InputIterator,
                  typename OutputIterator>
         OutputIterator verify_encryption(InputIterator first, InputIterator last,
-                                         const pubkey::encryption_verification_init_params_type<Scheme> &init_params,
+                                         const pubkey::encryption_verification_init_params_type<SchemeType> &init_params,
                                          OutputIterator out) {
 
             typedef typename pubkey::pubkey_accumulator_set<ProcessingMode> PubkeyAccumulator;
@@ -57,11 +57,11 @@ namespace nil {
             return SchemeImpl(first, last, std::move(out), PubkeyAccumulator(init_params));
         }
 
-        template<typename Scheme, typename Mode = pubkey::modes::verifiable_encryption<Scheme>,
+        template<typename SchemeType, typename Mode = pubkey::modes::verifiable_encryption<SchemeType>,
                  typename ProcessingMode = typename Mode::encryption_verification_policy, typename SinglePassRange,
                  typename OutputIterator>
         OutputIterator verify_encryption(const SinglePassRange &range,
-                                         const pubkey::encryption_verification_init_params_type<Scheme> &init_params,
+                                         const pubkey::encryption_verification_init_params_type<SchemeType> &init_params,
                                          OutputIterator out) {
 
             typedef typename pubkey::pubkey_accumulator_set<ProcessingMode> PubkeyAccumulator;
@@ -72,7 +72,7 @@ namespace nil {
             return SchemeImpl(range, std::move(out), PubkeyAccumulator(init_params));
         }
 
-        template<typename Scheme, typename Mode = pubkey::modes::verifiable_encryption<Scheme>,
+        template<typename SchemeType, typename Mode = pubkey::modes::verifiable_encryption<SchemeType>,
                  typename ProcessingMode = typename Mode::encryption_verification_policy, typename InputIterator,
                  typename OutputAccumulator = typename pubkey::pubkey_accumulator_set<ProcessingMode>>
         typename std::enable_if<boost::accumulators::detail::is_accumulator_set<OutputAccumulator>::value,
@@ -85,7 +85,7 @@ namespace nil {
             return SchemeImpl(first, last, std::forward<OutputAccumulator>(acc));
         }
 
-        template<typename Scheme, typename Mode = pubkey::modes::verifiable_encryption<Scheme>,
+        template<typename SchemeType, typename Mode = pubkey::modes::verifiable_encryption<SchemeType>,
                  typename ProcessingMode = typename Mode::encryption_verification_policy, typename SinglePassRange,
                  typename OutputAccumulator = typename pubkey::pubkey_accumulator_set<ProcessingMode>>
         typename std::enable_if<boost::accumulators::detail::is_accumulator_set<OutputAccumulator>::value,
@@ -98,24 +98,24 @@ namespace nil {
             return SchemeImpl(range, std::forward<OutputAccumulator>(acc));
         }
 
-        template<typename Scheme, typename Mode = pubkey::modes::verifiable_encryption<Scheme>,
+        template<typename SchemeType, typename Mode = pubkey::modes::verifiable_encryption<SchemeType>,
                  typename ProcessingMode = typename Mode::encryption_verification_policy, typename InputIterator,
                  typename PubkeyAccumulator = typename pubkey::pubkey_accumulator_set<ProcessingMode>,
                  typename StreamSchemeImpl = pubkey::detail::value_pubkey_impl<PubkeyAccumulator>,
                  typename SchemeImpl = pubkey::detail::range_pubkey_impl<StreamSchemeImpl>>
         SchemeImpl verify_encryption(InputIterator first, InputIterator last,
-                                     const pubkey::encryption_verification_init_params_type<Scheme> &init_params) {
+                                     const pubkey::encryption_verification_init_params_type<SchemeType> &init_params) {
 
             return SchemeImpl(first, last, PubkeyAccumulator(init_params));
         }
 
-        template<typename Scheme, typename Mode = pubkey::modes::verifiable_encryption<Scheme>,
+        template<typename SchemeType, typename Mode = pubkey::modes::verifiable_encryption<SchemeType>,
                  typename ProcessingMode = typename Mode::encryption_verification_policy, typename SinglePassRange,
                  typename PubkeyAccumulator = typename pubkey::pubkey_accumulator_set<ProcessingMode>,
                  typename StreamSchemeImpl = pubkey::detail::value_pubkey_impl<PubkeyAccumulator>,
                  typename SchemeImpl = pubkey::detail::range_pubkey_impl<StreamSchemeImpl>>
         SchemeImpl verify_encryption(const SinglePassRange &range,
-                                     const pubkey::encryption_verification_init_params_type<Scheme> &init_params) {
+                                     const pubkey::encryption_verification_init_params_type<SchemeType> &init_params) {
 
             return SchemeImpl(range, PubkeyAccumulator(init_params));
         }

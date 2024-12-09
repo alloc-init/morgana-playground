@@ -52,12 +52,10 @@ set(RUNTIME_TESTS_NAMES
     "inverse"
     "jacobi"
     "ressol"
-    "arithmetic_non_matching_bitlength_numbers"
-    )
+    "arithmetic_non_matching_bitlength_numbers")
 
 set(MODULAR_TESTS_NAMES
-    "modular_adaptor_fixed"
-)
+    "modular_adaptor_fixed")
 
 foreach(TEST_NAME ${RUNTIME_TESTS_NAMES})
     define_runtime_multiprecision_test(${TEST_NAME})

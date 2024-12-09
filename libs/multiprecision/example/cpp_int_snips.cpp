@@ -13,7 +13,7 @@ void t1() {
     //=
     //=int main()
     //={
-    using namespace nil::crypto3::multiprecision;
+    using namespace boost::multiprecision;
 
     int128_t v = 1;
 
@@ -45,7 +45,7 @@ void t3() {
     //=
     //=int main()
     //={
-    using namespace nil::crypto3::multiprecision;
+    using namespace boost::multiprecision;
 
     cpp_rational v = 1;
 

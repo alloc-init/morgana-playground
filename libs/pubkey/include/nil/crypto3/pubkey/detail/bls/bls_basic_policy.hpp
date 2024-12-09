@@ -80,7 +80,7 @@ namespace nil {
                     constexpr static const std::size_t signature_bits = signature_type::value_bits;
 
                     typedef hashes::h2c<signature_group_type, hashes::sha2<256>, PublicParams> h2c_policy;
-                    typedef accumulator_set<h2c_policy> internal_accumulator_type;
+                    typedef accumulator_set<h2c_policy> accumulator_type;
 
                     static inline gt_value_type pairing(const signature_type &U, const public_key_type &V) {
                         return algebra::pair_reduced<curve_type>(U, V);
@@ -116,7 +116,7 @@ namespace nil {
                     constexpr static const std::size_t signature_bits = signature_type::value_bits;
 
                     typedef hashes::h2c<signature_group_type, hashes::sha2<256>, PublicParams> h2c_policy;
-                    typedef accumulator_set<h2c_policy> internal_accumulator_type;
+                    typedef accumulator_set<h2c_policy> accumulator_type;
 
                     static inline gt_value_type pairing(const signature_type &U, const public_key_type &V) {
                         return algebra::pair_reduced<curve_type>(V, U);
@@ -130,9 +130,9 @@ namespace nil {
                         return bls_serializer::point_to_octets_compress(sig);
                     }
                 };
-            }    // namespace detail
-        }        // namespace pubkey
-    }            // namespace crypto3
-}    // namespace nil
+            } // namespace detail
+        } // namespace pubkey
+    } // namespace crypto3
+} // namespace nil
 
 #endif    // CRYPTO3_PUBKEY_BLS_BASIC_POLICY_HPP

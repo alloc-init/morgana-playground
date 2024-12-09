@@ -120,15 +120,15 @@ namespace nil {
                             crypto3::marshalling::algebra<typename TCurve::scalar_field_type>(
                                 transcript.get_challenge("z").begin());
 
-                        // Compute the evaluations of the lagrange polynomials L_1(X) and L_{n - k}(X) at X = zeta.
-                        // Here k = num_roots_cut_out_of_the_vanishing_polynomial and n is the size of the evaluation
+                        // Compute the evaluations of the lagrange polynomials L_1(X) and L_{n - K}(X) at X = zeta.
+                        // Here K = num_roots_cut_out_of_the_vanishing_polynomial and n is the size of the evaluation
                         // domain.
                         const auto lagrange_evals =
                             math::polynomial_arithmetic::get_lagrange_evaluations(zeta, key->domain);
 
                         // Step 8: Compute quotient polynomial evaluation at zeta
                         //           r_eval − ((a_eval + β.sigma1_eval + γ)(b_eval + β.sigma2_eval + γ)(c_eval + γ)
-                        //           z_eval_omega)α − L_1(zeta).α^{3} + (z_eval_omega - ∆_{PI}).L_{n-k}(zeta)α^{2}
+                        //           z_eval_omega)α − L_1(zeta).α^{3} + (z_eval_omega - ∆_{PI}).L_{n-K}(zeta)α^{2}
                         // t_eval =
                         // --------------------------------------------------------------------------------------------------------------------------------------------------------------
                         //                                                                       Z_H*(zeta)

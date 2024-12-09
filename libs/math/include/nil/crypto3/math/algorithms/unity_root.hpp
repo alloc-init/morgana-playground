@@ -32,13 +32,15 @@
 #include <boost/math/constants/constants.hpp>
 #include <boost/multiprecision/number.hpp>
 
-#include <nil/crypto3/algebra/totient.hpp>
 #include <nil/crypto3/algebra/type_traits.hpp>
 #include <nil/crypto3/algebra/fields/params.hpp>
+
+#include <nil/crypto3/math/totient.hpp>
 
 namespace nil {
     namespace crypto3 {
         namespace math {
+            using namespace boost::multiprecision;
 
             /*
              A helper function to RootOfUnity function. This finds a generator for a given
@@ -58,7 +60,7 @@ namespace nil {
                     uint32_t count = 0;
 
                     // gen = RNG(qm2).ModAdd(IntegerType::ONE, q); //modadd note needed
-                    gen = RNG(qm2) + IntegerType(1);
+                    gen = UniformRandomBitGenerator(qm2) + IntegerType(1);
 
                     for (auto it = prime_factors.begin(); it != prime_factors.end(); ++it) {
                         if (gen.ModExp(qm1 / (*it), q) == IntegerType(1))
@@ -89,7 +91,7 @@ namespace nil {
              * @return a root of unity.
              */
             template<typename Backend,
-                    boost::multiprecision::expression_template_option ExpressionTemplates>
+                     boost::multiprecision::expression_template_option ExpressionTemplates>
             boost::multiprecision::number<Backend, ExpressionTemplates>
             unity_root(uint32_t m, const boost::multiprecision::number<Backend, ExpressionTemplates> &modulo) {
                 using namespace boost::multiprecision;
@@ -121,20 +123,21 @@ namespace nil {
                  *
                  */
 
-                boost::multiprecision::number<Backend, ExpressionTemplates> mu = modulo.ComputeMu();
-                boost::multiprecision::number<Backend, ExpressionTemplates> x(1);
+                number<Backend, ExpressionTemplates> mu = modulo.ComputeMu();
+                number<Backend, ExpressionTemplates> x(1);
                 x.ModMulEq(result, modulo, mu);
-                boost::multiprecision::number<Backend, ExpressionTemplates> minRU(x);
-                boost::multiprecision::number<Backend, ExpressionTemplates> curPowIdx(1);
-                std::vector<boost::multiprecision::number<Backend, ExpressionTemplates>> coprimes = algebra::totient_list<boost::multiprecision::number<Backend, ExpressionTemplates>>(
-                        m);
+                number<Backend, ExpressionTemplates> minRU(x);
+                number<Backend, ExpressionTemplates> curPowIdx(1);
+                std::vector<number<Backend, ExpressionTemplates>> coprimes = totient_list<number<Backend,
+                    ExpressionTemplates>>(
+                    m);
                 for (uint32_t i = 0; i < coprimes.size(); i++) {
                     auto nextPowIdx = coprimes[i];
-                    boost::multiprecision::number<Backend, ExpressionTemplates> diffPow(nextPowIdx - curPowIdx);
+                    number<Backend, ExpressionTemplates> diffPow(nextPowIdx - curPowIdx);
                     for (std::size_t j = 0; j < diffPow; j++) {
                         x.ModMulEq(result, modulo, mu);
                     }
-                    if (x < minRU && x != boost::multiprecision::number<Backend, ExpressionTemplates>(1)) {
+                    if (x < minRU && x != number<Backend, ExpressionTemplates>(1)) {
                         minRU = x;
                     }
                     curPowIdx = nextPowIdx;
@@ -144,7 +147,7 @@ namespace nil {
 
             template<typename FieldType>
             constexpr typename std::enable_if<std::is_same<typename FieldType::value_type, std::complex<double>>::value,
-                    typename FieldType::value_type>::type
+                typename FieldType::value_type>::type
             unity_root(const std::size_t n) {
                 const double PI = boost::math::constants::pi<double>();
 
@@ -154,9 +157,8 @@ namespace nil {
             template<typename FieldType>
             constexpr
             typename std::enable_if<!std::is_same<typename FieldType::value_type, std::complex<double>>::value,
-                    typename FieldType::value_type>::type
+                typename FieldType::value_type>::type
             unity_root(const std::size_t n) {
-
                 typedef typename FieldType::value_type value_type;
 
                 const std::size_t logn = std::ceil(std::log2(n));
@@ -175,8 +177,8 @@ namespace nil {
 
                 return omega;
             }
-        }    // namespace math
-    }        // namespace crypto3
+        } // namespace math
+    } // namespace crypto3
 }
 
 #endif    // CRYPTO3_MATH_UNITY_ROOT_HPP

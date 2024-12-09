@@ -9,13 +9,13 @@
 include(CMTest)
 
 target_include_directories(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME} INTERFACE
-    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-    "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>")
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+        "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>")
 
 cm_test_link_libraries(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME}
-    ${CMAKE_WORKSPACE_NAME}::random
-    crypto3::marshalling-zk
-    Boost::unit_test_framework)
+        ${CMAKE_WORKSPACE_NAME}::random
+        marshalling::crypto3_zk
+        Boost::unit_test_framework)
 
 option(ZK_PLACEHOLDER_PROFILING_ENABLED "Build with placeholder profiling" FALSE)
 
@@ -30,10 +30,10 @@ macro(define_zk_test test)
     cm_test(NAME ${full_test_name} SOURCES ${test}.cpp)
 
     target_include_directories(${full_test_name} PRIVATE
-                               "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-                               "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>"
+            "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+            "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>"
 
-                               ${Boost_INCLUDE_DIRS})
+            ${Boost_INCLUDE_DIRS})
 
     set_target_properties(${full_test_name} PROPERTIES CXX_STANDARD 17)
 
@@ -46,62 +46,63 @@ macro(define_zk_test test)
 endmacro()
 
 set(TESTS_NAMES
-    "commitment/lpc"
-    "commitment/fri"
-    "commitment/kzg"
-    "commitment/fold_polynomial"
-    "commitment/pedersen"
-    "commitment/proof_of_knowledge"
-#    "commitment/powers_of_tau"
-#    "commitment/r1cs_gg_ppzksnark_mpc"
-#    "commitment/type_traits"
-#    "commitment/kimchi_pedersen"
-    "commitment/proof_of_work"
+        "commitment/lpc"
+        "commitment/fri"
+        "commitment/kzg"
+        "commitment/fold_polynomial"
+        "commitment/lpc_performance"
+        "commitment/pedersen"
+        "commitment/proof_of_knowledge"
+        "commitment/powers_of_tau"
+        "commitment/r1cs_gg_ppzksnark_mpc"
+        "commitment/type_traits"
+        "commitment/kimchi_pedersen"
+        "commitment/proof_of_work"
 
-    "math/expression"
+        "math/expression"
 
-#    "routing_algorithms/test_routing_algorithms"
+        "routing_algorithms/test_routing_algorithms"
 
-#    "relations/numeric/qap"
-#    "relations/numeric/sap"
-#    "relations/numeric/ssp"
+        #    "relations/numeric/qap"
+        #    "relations/numeric/sap"
+        #    "relations/numeric/ssp"
 
-#    "systems/plonk/pickles/pickles"
-#    "systems/plonk/pickles/kimchi"
-#    "systems/plonk/pickles/oracles"
-#    "systems/plonk/pickles/to_field"
-#    "systems/plonk/pickles/to_group"
+        "systems/plonk/pickles/pickles"
+        "systems/plonk/pickles/kimchi"
+        "systems/plonk/pickles/oracles"
+        "systems/plonk/pickles/to_field"
+        "systems/plonk/pickles/to_group"
 
-    "systems/plonk/placeholder/placeholder_circuits"
-    "systems/plonk/placeholder/placeholder_goldilocks"
-    "systems/plonk/placeholder/placeholder_lookup_argument"
-    "systems/plonk/placeholder/placeholder_gate_argument"
-    "systems/plonk/placeholder/placeholder_permutation_argument"
-    "systems/plonk/placeholder/placeholder_kzg"
-    "systems/plonk/placeholder/placeholder_hashes"
-    "systems/plonk/placeholder/placeholder_curves"
-    "systems/plonk/placeholder/placeholder_quotient_polynomial_chunks"
+        "systems/plonk/placeholder/placeholder_circuits"
+        "systems/plonk/placeholder/placeholder_goldilocks"
+        "systems/plonk/placeholder/placeholder_m31"
+        "systems/plonk/placeholder/placeholder_babybear"
+        "systems/plonk/placeholder/placeholder_lookup_argument"
+        "systems/plonk/placeholder/placeholder_gate_argument"
+        "systems/plonk/placeholder/placeholder_permutation_argument"
+        "systems/plonk/placeholder/placeholder_kzg"
+        "systems/plonk/placeholder/placeholder_hashes"
+        "systems/plonk/placeholder/placeholder_curves"
+        "systems/plonk/placeholder/placeholder_quotient_polynomial_chunks"
 
-#    "systems/pcd/r1cs_pcd/r1cs_mp_ppzkpcd/r1cs_mp_ppzkpcd"
-#    "systems/pcd/r1cs_pcd/r1cs_sp_ppzkpcd/r1cs_sp_ppzkpcd"
+        #    "systems/pcd/r1cs_pcd/r1cs_mp_ppzkpcd/r1cs_mp_ppzkpcd"
+        #    "systems/pcd/r1cs_pcd/r1cs_sp_ppzkpcd/r1cs_sp_ppzkpcd"
 
-#    "systems/ppzksnark/bacs_ppzksnark/bacs_ppzksnark"
-    "systems/ppzksnark/r1cs_gg_ppzksnark/r1cs_gg_ppzksnark"
-#    "systems/ppzksnark/r1cs_gg_ppzksnark/r1cs_gg_ppzksnark_marshalling"
-#    "systems/ppzksnark/r1cs_gg_ppzksnark/r1cs_gg_ppzksnark_tvm_marshalling"
-#    "systems/ppzksnark/r1cs_ppzksnark/r1cs_ppzksnark"
-#    "systems/ppzksnark/r1cs_se_ppzksnark/r1cs_se_ppzksnark"
-#    "systems/ppzksnark/ram_ppzksnark/ram_ppzksnark"
-#    "systems/ppzksnark/tbcs_ppzksnark/tbcs_ppzksnark"
-#    "systems/ppzksnark/uscs_ppzksnark/uscs_ppzksnark"
-#    "systems/ppzksnark/r1cs_gg_ppzksnark/r1cs_gg_ppzksnark_aggregation_conformity"
+        #    "systems/ppzksnark/bacs_ppzksnark/bacs_ppzksnark"
+        "systems/ppzksnark/r1cs_gg_ppzksnark/r1cs_gg_ppzksnark"
+        #    "systems/ppzksnark/r1cs_gg_ppzksnark/r1cs_gg_ppzksnark_marshalling"
+        #    "systems/ppzksnark/r1cs_gg_ppzksnark/r1cs_gg_ppzksnark_tvm_marshalling"
+        "systems/ppzksnark/r1cs_ppzksnark/r1cs_ppzksnark"
+        #    "systems/ppzksnark/r1cs_se_ppzksnark/r1cs_se_ppzksnark"
+        #    "systems/ppzksnark/ram_ppzksnark/ram_ppzksnark"
+        #    "systems/ppzksnark/tbcs_ppzksnark/tbcs_ppzksnark"
+        #    "systems/ppzksnark/uscs_ppzksnark/uscs_ppzksnark"
+        "systems/ppzksnark/r1cs_gg_ppzksnark/r1cs_gg_ppzksnark_aggregation_conformity"
 
-    "transcript/transcript"
+        "transcript/transcript"
+        "transcript/kimchi_transcript"
 
-#   TODO: either delete this code with the test, or fix it later.
-#    "transcript/kimchi_transcript"
-
-    "systems/plonk/plonk_constraint")
+        "systems/plonk/plonk_constraint")
 
 foreach(TEST_NAME ${TESTS_NAMES})
     define_zk_test(${TEST_NAME})

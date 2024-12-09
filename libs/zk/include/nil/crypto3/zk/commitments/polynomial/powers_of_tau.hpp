@@ -40,8 +40,8 @@ namespace nil {
 
                     // The result of this function is considered toxic wast
                     // and should thus be destroyed
-                    template<typename RNG = boost::random_device>
-                    static private_key_type generate_private_key(RNG &&rng = boost::random_device()) {
+                    template<typename UniformRandomBitGenerator = boost::random_device>
+                    static private_key_type generate_private_key(UniformRandomBitGenerator &&rng = boost::random_device()) {
                         typename scalar_field_type::value_type tau = algebra::random_element<scalar_field_type>(rng);
                         typename scalar_field_type::value_type alpha = algebra::random_element<scalar_field_type>(rng);
                         typename scalar_field_type::value_type beta = algebra::random_element<scalar_field_type>(rng);
@@ -64,10 +64,10 @@ namespace nil {
                         return gen;
                     }
 
-                    template<typename RNG = boost::random_device>
+                    template<typename UniformRandomBitGenerator = boost::random_device>
                     static public_key_type proof_eval(const private_key_type &private_key,
                                                       const accumulator_type &before,
-                                                      RNG &&rng = boost::random_device()) {
+                                                      UniformRandomBitGenerator &&rng = boost::random_device()) {
                         std::vector<std::uint8_t> transcript = compute_transcript(before);
                         auto tau_pok = proof_of_knowledge_scheme_type::proof_eval(
                                 private_key.tau, transcript, tau_personalization, rng);

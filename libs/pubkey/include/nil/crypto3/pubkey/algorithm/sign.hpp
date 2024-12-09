@@ -38,19 +38,19 @@
 namespace nil {
     namespace crypto3 {
         namespace pubkey {
-            template<typename Scheme>
-            using signing_policy = typename pubkey::modes::isomorphic<Scheme>::signing_policy;
+            template<typename SchemeType>
+            using signing_policy = typename pubkey::modes::isomorphic<SchemeType>::signing_policy;
 
-            template<typename Scheme>
-            using pop_proving_policy = typename pubkey::modes::isomorphic<Scheme>::pop_proving_policy;
+            template<typename SchemeType>
+            using pop_proving_policy = typename pubkey::modes::isomorphic<SchemeType>::pop_proving_policy;
 
-            template<typename Scheme>
+            template<typename SchemeType>
             using signing_processing_mode_default =
-                typename modes::isomorphic<Scheme>::template bind<signing_policy<Scheme>>::type;
+                    typename modes::isomorphic<SchemeType>::template bind<signing_policy<SchemeType>>::type;
 
-            template<typename Scheme>
+            template<typename SchemeType>
             using pop_proving_processing_mode_default =
-                typename modes::isomorphic<Scheme>::template bind<pop_proving_policy<Scheme>>::type;
+                    typename modes::isomorphic<SchemeType>::template bind<pop_proving_policy<SchemeType>>::type;
         }    // namespace pubkey
 
         /*!
@@ -70,11 +70,11 @@ namespace nil {
          *
          * @return \p SchemeImpl
          */
-        template<typename Scheme, typename ProcessingMode = pubkey::pop_proving_processing_mode_default<Scheme>,
-                 typename SigningAccumulator = pubkey::signing_accumulator_set<ProcessingMode>,
-                 typename StreamSchemeImpl = pubkey::detail::value_pubkey_impl<SigningAccumulator>,
-                 typename SchemeImpl = pubkey::detail::range_pubkey_impl<StreamSchemeImpl>>
-        SchemeImpl sign(const pubkey::private_key<Scheme> &key) {
+        template<typename SchemeType, typename ProcessingMode = pubkey::pop_proving_processing_mode_default<SchemeType>,
+                typename SigningAccumulator = pubkey::signing_accumulator_set<ProcessingMode>,
+                typename StreamSchemeImpl = pubkey::detail::value_pubkey_impl<SigningAccumulator>,
+                typename SchemeImpl = pubkey::detail::range_pubkey_impl<StreamSchemeImpl>>
+        SchemeImpl sign(const pubkey::private_key<SchemeType> &key) {
             return SchemeImpl(SigningAccumulator(key));
         }
 
@@ -98,12 +98,12 @@ namespace nil {
          *
          * @return \p SchemeImpl
          */
-        template<typename Scheme, typename InputIterator,
-                 typename ProcessingMode = pubkey::signing_processing_mode_default<Scheme>,
-                 typename SigningAccumulator = pubkey::signing_accumulator_set<ProcessingMode>,
-                 typename StreamSchemeImpl = pubkey::detail::value_pubkey_impl<SigningAccumulator>,
-                 typename SchemeImpl = pubkey::detail::range_pubkey_impl<StreamSchemeImpl>>
-        SchemeImpl sign(InputIterator first, InputIterator last, const pubkey::private_key<Scheme> &key) {
+        template<typename SchemeType, typename InputIterator,
+                typename ProcessingMode = pubkey::signing_processing_mode_default<SchemeType>,
+                typename SigningAccumulator = pubkey::signing_accumulator_set<ProcessingMode>,
+                typename StreamSchemeImpl = pubkey::detail::value_pubkey_impl<SigningAccumulator>,
+                typename SchemeImpl = pubkey::detail::range_pubkey_impl<StreamSchemeImpl>>
+        SchemeImpl sign(InputIterator first, InputIterator last, const pubkey::private_key<SchemeType> &key) {
             return SchemeImpl(first, last, SigningAccumulator(key));
         }
 
@@ -126,12 +126,12 @@ namespace nil {
          *
          * @return \p SchemeImpl
          */
-        template<typename Scheme, typename SinglePassRange,
-                 typename ProcessingMode = pubkey::signing_processing_mode_default<Scheme>,
-                 typename SigningAccumulator = pubkey::signing_accumulator_set<ProcessingMode>,
-                 typename StreamSchemeImpl = pubkey::detail::value_pubkey_impl<SigningAccumulator>,
-                 typename SchemeImpl = pubkey::detail::range_pubkey_impl<StreamSchemeImpl>>
-        SchemeImpl sign(const SinglePassRange &range, const pubkey::private_key<Scheme> &key) {
+        template<typename SchemeType, typename SinglePassRange,
+                typename ProcessingMode = pubkey::signing_processing_mode_default<SchemeType>,
+                typename SigningAccumulator = pubkey::signing_accumulator_set<ProcessingMode>,
+                typename StreamSchemeImpl = pubkey::detail::value_pubkey_impl<SigningAccumulator>,
+                typename SchemeImpl = pubkey::detail::range_pubkey_impl<StreamSchemeImpl>>
+        SchemeImpl sign(const SinglePassRange &range, const pubkey::private_key<SchemeType> &key) {
             return SchemeImpl(range, SigningAccumulator(key));
         }
 
@@ -153,12 +153,12 @@ namespace nil {
          *
          * @return \p OutputAccumulator
          */
-        template<typename Scheme, typename InputIterator,
-                 typename ProcessingMode = pubkey::signing_processing_mode_default<Scheme>,
-                 typename OutputAccumulator = pubkey::signing_accumulator_set<ProcessingMode>>
+        template<typename SchemeType, typename InputIterator,
+                typename ProcessingMode = pubkey::signing_processing_mode_default<SchemeType>,
+                typename OutputAccumulator = pubkey::signing_accumulator_set<ProcessingMode>>
         typename std::enable_if<boost::accumulators::detail::is_accumulator_set<OutputAccumulator>::value,
-                                OutputAccumulator>::type &
-            sign(InputIterator first, InputIterator last, OutputAccumulator &acc) {
+                OutputAccumulator>::type &
+        sign(InputIterator first, InputIterator last, OutputAccumulator &acc) {
             typedef pubkey::detail::ref_pubkey_impl<OutputAccumulator> StreamSchemeImpl;
             typedef pubkey::detail::range_pubkey_impl<StreamSchemeImpl> SchemeImpl;
 
@@ -182,12 +182,12 @@ namespace nil {
          *
          * @return \p OutputAccumulator
          */
-        template<typename Scheme, typename SinglePassRange,
-                 typename ProcessingMode = pubkey::signing_processing_mode_default<Scheme>,
-                 typename OutputAccumulator = pubkey::signing_accumulator_set<ProcessingMode>>
+        template<typename SchemeType, typename SinglePassRange,
+                typename ProcessingMode = pubkey::signing_processing_mode_default<SchemeType>,
+                typename OutputAccumulator = pubkey::signing_accumulator_set<ProcessingMode>>
         typename std::enable_if<boost::accumulators::detail::is_accumulator_set<OutputAccumulator>::value,
-                                OutputAccumulator>::type &
-            sign(const SinglePassRange &range, OutputAccumulator &acc) {
+                OutputAccumulator>::type &
+        sign(const SinglePassRange &range, OutputAccumulator &acc) {
             typedef pubkey::detail::ref_pubkey_impl<OutputAccumulator> StreamSchemeImpl;
             typedef pubkey::detail::range_pubkey_impl<StreamSchemeImpl> SchemeImpl;
 
@@ -212,9 +212,9 @@ namespace nil {
          *
          * @return \p OutputIterator
          */
-        template<typename Scheme, typename InputIterator, typename OutputIterator,
-                 typename ProcessingMode = pubkey::signing_processing_mode_default<Scheme>>
-        OutputIterator sign(InputIterator first, InputIterator last, const pubkey::private_key<Scheme> &key,
+        template<typename SchemeType, typename InputIterator, typename OutputIterator,
+                typename ProcessingMode = pubkey::signing_processing_mode_default<SchemeType>>
+        OutputIterator sign(InputIterator first, InputIterator last, const pubkey::private_key<SchemeType> &key,
                             OutputIterator out) {
             typedef pubkey::signing_accumulator_set<ProcessingMode> SigningAccumulator;
 
@@ -241,9 +241,10 @@ namespace nil {
          *
          * @return \p OutputIterator
          */
-        template<typename Scheme, typename SinglePassRange, typename OutputIterator,
-                 typename ProcessingMode = pubkey::signing_processing_mode_default<Scheme>>
-        OutputIterator sign(const SinglePassRange &range, const pubkey::private_key<Scheme> &key, OutputIterator out) {
+        template<typename SchemeType, typename SinglePassRange, typename OutputIterator,
+                typename ProcessingMode = pubkey::signing_processing_mode_default<SchemeType>>
+        OutputIterator
+        sign(const SinglePassRange &range, const pubkey::private_key<SchemeType> &key, OutputIterator out) {
             typedef pubkey::signing_accumulator_set<ProcessingMode> SigningAccumulator;
 
             typedef pubkey::detail::value_pubkey_impl<SigningAccumulator> StreamSchemeImpl;

@@ -40,13 +40,13 @@
 
 #if defined(USE_CPP_BIN_FLOAT)
 #include <nil/crypto3/multiprecision/cpp_bin_float.hpp>
-typedef nil::crypto3::multiprecision::number<nil::crypto3::multiprecision::cpp_bin_float<DIGIT_COUNT + 10>> mp_type;
+typedef boost::multiprecision::number<boost::multiprecision::cpp_bin_float<DIGIT_COUNT + 10>> mp_type;
 #elif defined(USE_CPP_DEC_FLOAT)
 #include <nil/crypto3/multiprecision/cpp_dec_float.hpp>
-typedef nil::crypto3::multiprecision::number<nil::crypto3::multiprecision::cpp_dec_float<DIGIT_COUNT + 10>> mp_type;
+typedef boost::multiprecision::number<boost::multiprecision::cpp_dec_float<DIGIT_COUNT + 10>> mp_type;
 #elif defined(USE_MPFR)
 #include <nil/crypto3/multiprecision/mpfr.hpp>
-typedef nil::crypto3::multiprecision::number<nil::crypto3::multiprecision::mpfr_float_backend<DIGIT_COUNT + 10>>
+typedef boost::multiprecision::number<boost::multiprecision::mpfr_float_backend<DIGIT_COUNT + 10>>
     mp_type;
 #else
 #error no multiprecision floating type is defined
@@ -153,7 +153,7 @@ namespace orthogonal_polynomial_series {
 
         // Calculate higher orders using the recurrence relation.
         // The direction of stability is upward recursion.
-        for (std::int32_t k = static_cast<std::int32_t>(2); k <= static_cast<std::int32_t>(n); ++k) {
+        for (std::int32_t K = static_cast<std::int32_t>(2); K <= static_cast<std::int32_t>(n); ++K) {
             yk = (((a * x) + b) * y1) - (c * y0);
 
             y0 = y1;
@@ -284,7 +284,7 @@ namespace examples {
 
                 const T Z1 = T(4) / hypergeometric_pfq_base<T>::W;
 
-                for (std::int32_t k = static_cast<std::int32_t>(0); k < N1; ++k) {
+                for (std::int32_t K = static_cast<std::int32_t>(0); K < N1; ++K) {
                     const T DIVFAC = T(1) / X1;
 
                     --X1;
@@ -343,7 +343,7 @@ namespace examples {
 
                 const T AFAC = 2 - (T(4) / hypergeometric_pfq_base<T>::W);
 
-                for (std::int32_t k = static_cast<std::int32_t>(0); k < N1; ++k) {
+                for (std::int32_t K = static_cast<std::int32_t>(0); K < N1; ++K) {
                     --X1;
 
                     // The terms have been slightly re-arranged resulting in lower complexity.
@@ -399,7 +399,7 @@ namespace examples {
 
                 const T Z1 = T(4) / hypergeometric_pfq_base<T>::W;
 
-                for (std::int32_t k = static_cast<std::int32_t>(0); k < N1; ++k) {
+                for (std::int32_t K = static_cast<std::int32_t>(0); K < N1; ++K) {
                     --X;
                     --X1;
                     --XA;
@@ -459,7 +459,7 @@ namespace examples {
 
                 const T Z1 = T(4) / hypergeometric_pfq_base<T>::W;
 
-                for (std::int32_t k = static_cast<std::int32_t>(0); k < N1; ++k) {
+                for (std::int32_t K = static_cast<std::int32_t>(0); K < N1; ++K) {
                     --X;
                     --PP;
 
@@ -533,7 +533,7 @@ namespace examples {
 
                 const T Z1 = T(4) / hypergeometric_pfq_base<T>::W;
 
-                for (std::int32_t k = static_cast<std::int32_t>(0); k < N1; ++k) {
+                for (std::int32_t K = static_cast<std::int32_t>(0); K < N1; ++K) {
                     --X;
                     --X1;
                     --X3A;

@@ -62,7 +62,10 @@
 
 #include <nil/crypto3/algebra/fields/detail/element/fp.hpp>
 #include <nil/crypto3/algebra/fields/detail/element/fp2.hpp>
+
 #include <nil/crypto3/algebra/fields/goldilocks64/base_field.hpp>
+#include <nil/crypto3/algebra/fields/babybear/base_field.hpp>
+#include <nil/crypto3/algebra/fields/m31/base_field.hpp>
 
 using namespace nil::crypto3::algebra;
 

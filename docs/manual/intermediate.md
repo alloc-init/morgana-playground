@@ -55,7 +55,7 @@ using curve_type = nil::crypto3::algebra::curves::bls12_381;
 using base_scheme_type = bls<bls_default_public_params<>, bls_mps_ro_version, bls_basic_scheme, curve_type>;
 ```
 
-Schemes can operate in two [modes](https://github.com/NilFoundation/crypto3-pkmodes/). 
+Schemes can operate in two [modes](https://github.com/alloc-init/crypto3-pkmodes/). 
 - Isomorphic : Single key 
 - Threshold : Multiple key operations
 
@@ -183,4 +183,4 @@ Same as previously , we aggregate and verify these subset of signatures
                         nil::crypto3::verify<scheme_type, decltype(msg), verification_processing_mode_type>(msg, sig_t, PK)));
 ```
 
-Complete source code for this example can be found [here](https://github.com/NilFoundation/crypto3-scaffold)
+Complete source code for this example can be found [here](https://github.com/alloc-init/crypto3-scaffold)

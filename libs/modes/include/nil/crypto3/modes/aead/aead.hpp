@@ -131,9 +131,9 @@ namespace nil {
                     using aead_decryption_policy =
                         authenticated_encryption_associated_data_decryption_policy<Cipher, Padding, Allocator>;
 
-                    template<typename Policy>
+                    template<typename PolicyType>
                     class authenticated_encryption_associated_data {
-                        typedef Policy policy_type;
+                        typedef PolicyType policy_type;
 
                     public:
                         typedef typename policy_type::cipher_type cipher_type;
@@ -180,8 +180,8 @@ namespace nil {
                         cipher_type cipher;
                     };
 
-                    template<typename Policy>
-                    using aead = authenticated_encryption_associated_data<Policy>;
+                    template<typename PolicyType>
+                    using aead = authenticated_encryption_associated_data<PolicyType>;
                 }    // namespace detail
 
                 /*!
@@ -209,10 +209,10 @@ namespace nil {
                     typedef detail::aead_encryption_policy<cipher_type, padding_type, allocator_type> encryption_policy;
                     typedef detail::aead_decryption_policy<cipher_type, padding_type, allocator_type> decryption_policy;
 
-                    template<template<typename, typename, template<typename> class> class Policy>
+                    template<template<typename, typename, template<typename> class> class PolicyType>
                     struct bind {
                         typedef detail::authenticated_encryption_associated_data<
-                            Policy<cipher_type, padding_type, allocator_type>>
+                            PolicyType<cipher_type, padding_type, allocator_type>>
                             type;
                     };
                 };

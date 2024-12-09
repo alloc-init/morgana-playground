@@ -36,12 +36,12 @@
 namespace nil {
     namespace crypto3 {
         namespace pubkey {
-            template<typename Scheme>
-            using share_verification_policy = typename pubkey::modes::isomorphic<Scheme>::share_verification_policy;
+            template<typename SchemeType>
+            using share_verification_policy = typename pubkey::modes::isomorphic<SchemeType>::share_verification_policy;
 
-            template<typename Scheme>
+            template<typename SchemeType>
             using share_verification_processing_mode_default =
-                typename modes::isomorphic<Scheme>::template bind<share_verification_policy<Scheme>>::type;
+                typename modes::isomorphic<SchemeType>::template bind<share_verification_policy<SchemeType>>::type;
         }    // namespace pubkey
 
         /*!
@@ -62,9 +62,9 @@ namespace nil {
          *
          * @return \p OutputIterator
          */
-        template<typename Scheme, typename InputIterator, typename OutputIterator,
-                 typename ProcessingMode = pubkey::share_verification_processing_mode_default<Scheme>>
-        OutputIterator verify_share(InputIterator first, InputIterator last, const pubkey::public_share_sss<Scheme> &s,
+        template<typename SchemeType, typename InputIterator, typename OutputIterator,
+                 typename ProcessingMode = pubkey::share_verification_processing_mode_default<SchemeType>>
+        OutputIterator verify_share(InputIterator first, InputIterator last, const pubkey::public_share_sss<SchemeType> &s,
                                     OutputIterator out) {
 
             typedef typename pubkey::share_verification_accumulator_set<ProcessingMode> VerificationAccumulator;
@@ -92,9 +92,9 @@ namespace nil {
          *
          * @return \p OutputIterator
          */
-        template<typename Scheme, typename SinglePassRange, typename OutputIterator,
-                 typename ProcessingMode = pubkey::share_verification_processing_mode_default<Scheme>>
-        OutputIterator verify_share(const SinglePassRange &range, const pubkey::public_share_sss<Scheme> &s,
+        template<typename SchemeType, typename SinglePassRange, typename OutputIterator,
+                 typename ProcessingMode = pubkey::share_verification_processing_mode_default<SchemeType>>
+        OutputIterator verify_share(const SinglePassRange &range, const pubkey::public_share_sss<SchemeType> &s,
                                     OutputIterator out) {
 
             typedef typename pubkey::share_verification_accumulator_set<ProcessingMode> VerificationAccumulator;
@@ -124,8 +124,8 @@ namespace nil {
          *
          * @return \p OutputAccumulator
          */
-        template<typename Scheme, typename InputIterator,
-                 typename ProcessingMode = pubkey::share_verification_processing_mode_default<Scheme>,
+        template<typename SchemeType, typename InputIterator,
+                 typename ProcessingMode = pubkey::share_verification_processing_mode_default<SchemeType>,
                  typename OutputAccumulator = typename pubkey::share_verification_accumulator_set<ProcessingMode>>
         typename std::enable_if<boost::accumulators::detail::is_accumulator_set<OutputAccumulator>::value,
                                 OutputAccumulator>::type &
@@ -155,8 +155,8 @@ namespace nil {
          *
          * @return \p OutputAccumulator
          */
-        template<typename Scheme, typename SinglePassRange,
-                 typename ProcessingMode = pubkey::share_verification_processing_mode_default<Scheme>,
+        template<typename SchemeType, typename SinglePassRange,
+                 typename ProcessingMode = pubkey::share_verification_processing_mode_default<SchemeType>,
                  typename OutputAccumulator = typename pubkey::share_verification_accumulator_set<ProcessingMode>>
         typename std::enable_if<boost::accumulators::detail::is_accumulator_set<OutputAccumulator>::value,
                                 OutputAccumulator>::type &
@@ -189,12 +189,12 @@ namespace nil {
          *
          * @return \p SchemeImpl
          */
-        template<typename Scheme, typename InputIterator,
-                 typename ProcessingMode = pubkey::share_verification_processing_mode_default<Scheme>,
+        template<typename SchemeType, typename InputIterator,
+                 typename ProcessingMode = pubkey::share_verification_processing_mode_default<SchemeType>,
                  typename VerificationAccumulator = typename pubkey::share_verification_accumulator_set<ProcessingMode>,
                  typename StreamSchemeImpl = pubkey::detail::value_pubkey_impl<VerificationAccumulator>,
                  typename SchemeImpl = pubkey::detail::range_pubkey_impl<StreamSchemeImpl>>
-        SchemeImpl verify_share(InputIterator first, InputIterator last, const pubkey::public_share_sss<Scheme> &s) {
+        SchemeImpl verify_share(InputIterator first, InputIterator last, const pubkey::public_share_sss<SchemeType> &s) {
 
             return SchemeImpl(first, last, VerificationAccumulator(s));
         }
@@ -219,12 +219,12 @@ namespace nil {
          *
          * @return \p SchemeImpl
          */
-        template<typename Scheme, typename SinglePassRange,
-                 typename ProcessingMode = pubkey::share_verification_processing_mode_default<Scheme>,
+        template<typename SchemeType, typename SinglePassRange,
+                 typename ProcessingMode = pubkey::share_verification_processing_mode_default<SchemeType>,
                  typename VerificationAccumulator = typename pubkey::share_verification_accumulator_set<ProcessingMode>,
                  typename StreamSchemeImpl = pubkey::detail::value_pubkey_impl<VerificationAccumulator>,
                  typename SchemeImpl = pubkey::detail::range_pubkey_impl<StreamSchemeImpl>>
-        SchemeImpl verify_share(const SinglePassRange &range, const pubkey::public_share_sss<Scheme> &s) {
+        SchemeImpl verify_share(const SinglePassRange &range, const pubkey::public_share_sss<SchemeType> &s) {
 
             return SchemeImpl(range, VerificationAccumulator(s));
         }

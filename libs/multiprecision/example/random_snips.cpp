@@ -17,7 +17,7 @@ void t1() {
     //=
     //=int main()
     //={
-    using namespace nil::crypto3::multiprecision;
+    using namespace boost::multiprecision;
     using namespace boost::random;
 
     //
@@ -88,7 +88,7 @@ void t2() {
     //=
     //=int main()
     //={
-    using namespace nil::crypto3::multiprecision;
+    using namespace boost::multiprecision;
     using namespace boost::random;
 
     //
@@ -134,7 +134,7 @@ void t3() {
     //=
     //=int main()
     //={
-    using namespace nil::crypto3::multiprecision;
+    using namespace boost::multiprecision;
     using namespace boost::random;
 
     mt19937 gen;
@@ -188,7 +188,7 @@ void t4() {
     //=
     //=int main()
     //={
-    using namespace nil::crypto3::multiprecision;
+    using namespace boost::multiprecision;
     using namespace boost::random;
     //
     // Generate some distruted values:
@@ -266,7 +266,7 @@ void t5() {
     //=
     //=int main()
     //={
-    using namespace nil::crypto3::multiprecision;
+    using namespace boost::multiprecision;
     using namespace boost::random;
     //
     // Generate some multiprecision values, note that the generator is so large

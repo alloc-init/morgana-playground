@@ -29,9 +29,13 @@
 namespace nil {
     namespace crypto3 {
         namespace hashes {
-            enum class UniformityCount : std::size_t { nonuniform_count = 1, uniform_count };
+            enum class uniformity_count : std::size_t {
+                nonuniform_count = 1, uniform_count
+            };
 
-            enum class ExpandMsgVariant : std::size_t { rfc_xmd, rfc_xof };
+            enum class expand_msg_variant : std::size_t {
+                rfc_xmd, rfc_xof
+            };
         }    // namespace hashes
     }        // namespace crypto3
 }    // namespace nil

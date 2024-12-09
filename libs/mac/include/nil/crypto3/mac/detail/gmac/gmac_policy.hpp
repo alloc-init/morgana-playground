@@ -33,7 +33,7 @@ namespace nil {
     namespace crypto3 {
         namespace mac {
             namespace detail {
-                template<typename BlockCipher, typename Hash>
+                template<typename BlockCipher, typename HashType>
                 struct gmac_policy {
                     typedef BlockCipher cipher_type;
                     typedef Hash hash_type;

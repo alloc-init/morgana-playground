@@ -53,10 +53,10 @@ namespace nil {
                     }
 
                     const size_t k_bits = m_group.exponent_bits();
-                    const number<Backend, ExpressionTemplates> k(rng, k_bits);
+                    const number<Backend, ExpressionTemplates> K(rng, k_bits);
 
-                    const number<Backend, ExpressionTemplates> a = m_group.power_g_p(k);
-                    const number<Backend, ExpressionTemplates> b = m_group.multiply_mod_p(m, m_powermod_y_p(k));
+                    const number<Backend, ExpressionTemplates> a = m_group.power_g_p(K);
+                    const number<Backend, ExpressionTemplates> b = m_group.multiply_mod_p(m, m_powermod_y_p(K));
 
                     return number<Backend, ExpressionTemplates>::encode_fixed_length_int_pair(a, b, m_group.p_bytes());
                 }
@@ -85,8 +85,8 @@ namespace nil {
                     //---------
                     m_group(key.get_group()), m_powermod_x_p(key.get_x(), m_group.get_p()),
                         m_blinder(
-                            m_group.p(), rng, [](const number<Backend, ExpressionTemplates> &k) { return k; },
-                            [this](const number<Backend, ExpressionTemplates> &k) { return m_powermod_x_p(k); }) {
+                            m_group.p(), rng, [](const number<Backend, ExpressionTemplates> &K) { return K; },
+                            [this](const number<Backend, ExpressionTemplates> &K) { return m_powermod_x_p(K); }) {
                     }
                     //---------
                     m_y = m_group.power_g_p(m_x);
@@ -117,7 +117,7 @@ namespace nil {
             struct el_gamal {
                 typedef FieldType field_type;
 
-                typedef el_gamal_public_key<field_type> public_key_type;
+                typedef el_gamal_public_key<field_type> schedule_type;
                 typedef el_gamal_private_key<field_type> private_key_type;
             };
         }    // namespace pubkey

@@ -52,7 +52,7 @@ namespace nil {
                         protected:
                             typedef ProcessingPolicy processing_policy;
                             typedef typename processing_policy::msg_repr_type msg_repr_type;
-                            typedef typename processing_policy::internal_accumulator_type internal_accumulator_type;
+                            typedef typename processing_policy::accumulator_type accumulator_type;
 
                         public:
                             typedef typename processing_policy::result_type result_type;
@@ -64,7 +64,7 @@ namespace nil {
                             template<typename Args>
                             inline void operator()(const Args &args) {
                                 resolve_type(args[boost::accumulators::sample],
-                                             args[::nil::crypto3::accumulators::iterator_last | nullptr]);
+                                             args[crypto3::accumulators::iterator_last | nullptr]);
                             }
 
                             inline result_type result(boost::accumulators::dont_care) const {
@@ -83,7 +83,7 @@ namespace nil {
                             }
 
                             msg_repr_type msg_repr;
-                            internal_accumulator_type acc;
+                            accumulator_type acc;
                         };
                     }    // namespace impl
 
@@ -95,7 +95,7 @@ namespace nil {
                             /// INTERNAL ONLY
                             ///
 
-                            typedef boost::mpl::always<accumulators::impl::verify_impl<processing_policy>> impl;
+                            typedef boost::mpl::always<impl::verify_impl<processing_policy>> impl;
                         };
                     }    // namespace tag
 

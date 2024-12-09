@@ -34,8 +34,8 @@ namespace nil {
                 /*!
                  * @brief EME from PKCS #1 v1.5
                  */
-                template<typename Scheme, typename Hash>
-                class eme_pkcs1v15 : public eme<Scheme, Hash> {
+                template<typename SchemeType, typename HashType>
+                class eme_pkcs1v15 : public eme<SchemeType, HashType> {
                 public:
                     template<typename UniformRandomBitGenerator, typename RandomNumberDistribution,
                              typename InputIterator, typename OutputIterator>

@@ -43,22 +43,23 @@ namespace nil {
             /*!
              * @brief Pedersen hash
              *
-             * @tparam Group
+             * @tparam GroupType
              * @tparam Params
              */
             // TODO: use blake2s by default
-            template<typename Params = find_group_hash_default_params,
+            template<typename ParamsType = find_group_hash_default_params,
                      typename BasePointGeneratorHash = sha2<256>,
-                     typename Group = algebra::curves::jubjub::template g1_type<
+                     typename GroupType = algebra::curves::jubjub::template g1_type<
                          nil::crypto3::algebra::curves::coordinates::affine,
                          nil::crypto3::algebra::curves::forms::twisted_edwards>>
             struct pedersen_to_point {
-                using params = Params;
-                using group_type = Group;
+                using params_type = ParamsType;
+
+                using group_type = GroupType;
                 using word_type = bool;
 
                 using base_point_generator_hash = BasePointGeneratorHash;
-                using base_point_generator = find_group_hash<params, base_point_generator_hash, group_type>;
+                using base_point_generator = find_group_hash<params_type, base_point_generator_hash, group_type>;
 
                 using curve_type = typename group_type::curve_type;
                 using group_value_type = typename group_type::value_type;
@@ -71,24 +72,27 @@ namespace nil {
                     struct params_type {
                         typedef nil::marshalling::option::little_endian digest_endian;
                     };
+
                     typedef void type;
                 };
 
-                constexpr static detail::stream_processor_type stream_processor = detail::stream_processor_type::RawDelegating;
-                using accumulator_tag = accumulators::tag::forwarding_hash<pedersen_to_point<Params, BasePointGeneratorHash, Group>>;
+                constexpr static detail::stream_processor_type stream_processor =
+                        detail::stream_processor_type::raw_delegating;
+                using accumulator_tag = accumulators::tag::forwarding_hash<pedersen_to_point<params_type,
+                    BasePointGeneratorHash, group_type>>;
 
                 // TODO: sync definition of the chunk_bits with circuit
                 static constexpr std::size_t chunk_bits = 3;
                 /// See definition of \p c in https://zips.z.cash/protocol/protocol.pdf#concretepedersenhash
                 static constexpr std::size_t chunks_per_base_point =
-                    detail::chunks_per_base_point<typename curve_type::scalar_field_type>(chunk_bits);
+                        detail::chunks_per_base_point<typename curve_type::scalar_field_type>(chunk_bits);
 
-                class internal_accumulator_type {
+                class accumulator_type {
                     std::size_t bits_supplied = 0;
                     std::vector<bool> cached_bits;
                     typename curve_type::scalar_field_type::integral_type pow_two = 1;
                     typename curve_type::scalar_field_type::value_type encoded_segment =
-                        curve_type::scalar_field_type::value_type::zero();
+                            curve_type::scalar_field_type::value_type::zero();
                     group_value_type current_base_point = hash<base_point_generator>({
                         static_cast<std::uint32_t>(0),
                     });
@@ -103,10 +107,11 @@ namespace nil {
                     }
 
                     inline bool is_time_to_go_to_new_segment() const {
-                        return supplied_chunks() > 1 &&    ///< first base point is initialized by default, there is no
-                                                           ///< need to update when processing first segment
+                        return supplied_chunks() > 1 &&
+                               ///< first base point is initialized by default, there is no
+                                                             ///< need to update when processing first segment
                                supplied_chunks() % chunks_per_base_point ==
-                                   1;    ///< it's time to update base point if we moved to a new segment
+                               1; ///< it's time to update base point if we moved to a new segment
                     }
 
                     inline void update_result() {
@@ -117,7 +122,9 @@ namespace nil {
                         assert(bits_supplied > 0);
                         assert(is_time_to_go_to_new_segment());
                         current_base_point = hash<base_point_generator>({
-                            static_cast<std::uint32_t>(supplied_chunks() / chunks_per_base_point),
+                            static_cast<std::uint32_t>(
+                                supplied_chunks() /
+                                chunks_per_base_point),
                         });
                         pow_two = 1;
                         encoded_segment = curve_type::scalar_field_type::value_type::zero();
@@ -126,20 +133,22 @@ namespace nil {
                     inline void update_current_segment() {
                         assert(cached_bits.size() == chunk_bits);
                         typename curve_type::scalar_field_type::value_type encoded_chunk =
-                            detail::lookup<typename curve_type::scalar_field_type::value_type, chunk_bits>::process(
-                                cached_bits) *
-                            pow_two;
+                                detail::lookup<typename curve_type::scalar_field_type::value_type, chunk_bits>::process(
+                                    cached_bits) *
+                                pow_two;
                         encoded_segment = encoded_segment + encoded_chunk;
                         pow_two = pow_two << (chunk_bits + 1);
-                        cached_bits.clear();    ///< current chunk was processed, we could clear cache and be ready to
-                                                ///< accepts bits of the next chunk
+                        cached_bits.clear();
+                        ///< current chunk was processed, we could clear cache and be ready to
+                                               ///< accepts bits of the next chunk
                     }
 
                 public:
                     inline void update(bool b) {
                         cached_bits.template emplace_back(b);
                         ++bits_supplied;
-                        if (cached_bits.size() == chunk_bits) {    ///< we could proceed if whole chunk was supplied
+                        if (cached_bits.size() == chunk_bits) {
+                            ///< we could proceed if whole chunk was supplied
                             if (is_time_to_go_to_new_segment()) {
                                 update_result();
                                 update_new_segment();
@@ -149,26 +158,27 @@ namespace nil {
                     }
 
                     inline void pad_update() {
-                        while (!cached_bits
-                                    .empty() ||     ///< length of the input bit string is not a multiple of chunk_bits
-                               !bits_supplied) {    ///< empty bit string is being hashed, then hash only padding
+                        while (!cached_bits.empty() ||
+                               ///< length of the input bit string is not a multiple of chunk_bits
+                               !bits_supplied) {
+                            ///< empty bit string is being hashed, then hash only padding
                             update(false);
                         }
                         update_result();
                     }
                 };
 
-                static inline void init_accumulator(internal_accumulator_type &acc) {
+                static inline void init_accumulator(accumulator_type &acc) {
                 }
 
                 template<
                     typename InputRange,
                     typename std::enable_if<
                         std::is_same<bool,
-                                     typename std::iterator_traits<typename InputRange::iterator>::value_type>::value,
+                            typename std::iterator_traits<typename InputRange::iterator>::value_type>::value,
                         bool>::type = true>
-                static inline void update(internal_accumulator_type &acc, const InputRange &range) {
-                    for (auto b : range) {
+                static inline void update(accumulator_type &acc, const InputRange &range) {
+                    for (auto b: range) {
                         acc.update(b);
                     }
                 }
@@ -177,30 +187,30 @@ namespace nil {
                          typename std::enable_if<
                              std::is_same<bool, typename std::iterator_traits<InputIterator>::value_type>::value,
                              bool>::type = true>
-                static inline void update(internal_accumulator_type &acc, InputIterator first, InputIterator last) {
+                static inline void update(accumulator_type &acc, InputIterator first, InputIterator last) {
                     for (auto it = first; it != last; ++it) {
                         acc.update(*it);
                     }
                 }
 
-                static inline result_type process(internal_accumulator_type &acc) {
+                static inline result_type process(accumulator_type &acc) {
                     acc.pad_update();
                     return acc.result;
                 }
             };
 
             // TODO: use blake2s by default
-            template<typename Params = find_group_hash_default_params,
+            template<typename ParamsType = find_group_hash_default_params,
                      typename BasePointGeneratorHash = sha2<256>,
-                     typename Group = algebra::curves::jubjub::template g1_type<
+                     typename GroupType = algebra::curves::jubjub::template g1_type<
                          nil::crypto3::algebra::curves::coordinates::affine,
                          nil::crypto3::algebra::curves::forms::twisted_edwards>>
             struct pedersen {
-                using params = Params;
-                using group_type = Group;
+                using params_type = ParamsType;
+                using group_type = GroupType;
                 using base_point_generator_hash = BasePointGeneratorHash;
 
-                using base_hash_type = pedersen_to_point<params, base_point_generator_hash, group_type>;
+                using base_hash_type = pedersen_to_point<params_type, base_point_generator_hash, group_type>;
 
                 using word_type = typename base_hash_type::word_type;
 
@@ -213,42 +223,46 @@ namespace nil {
                 using digest_type = std::vector<bool>;
                 using result_type = digest_type;
 
-                constexpr static detail::stream_processor_type stream_processor = detail::stream_processor_type::RawDelegating;
-                using accumulator_tag = accumulators::tag::forwarding_hash<pedersen<Params, BasePointGeneratorHash, Group>>;
+                constexpr static detail::stream_processor_type stream_processor =
+                        detail::stream_processor_type::raw_delegating;
+                using accumulator_tag = accumulators::tag::forwarding_hash<pedersen<params_type, BasePointGeneratorHash,
+                    group_type>>;
 
                 struct construction {
                     struct params_type {
                         typedef nil::marshalling::option::little_endian digest_endian;
                     };
+
                     typedef void type;
                 };
 
-                using internal_accumulator_type = nil::crypto3::accumulator_set<base_hash_type>;
+                using accumulator_type = nil::crypto3::accumulator_set<base_hash_type>;
 
-                static inline void init_accumulator(internal_accumulator_type &acc) {
+                static inline void init_accumulator(accumulator_type &acc) {
                 }
 
                 template<typename InputRange>
-                static inline void update(internal_accumulator_type &acc, const InputRange &range) {
+                static inline void update(accumulator_type &acc, const InputRange &range) {
                     hash<base_hash_type>(range, acc);
                 }
 
                 template<typename InputIterator>
-                static inline void update(internal_accumulator_type &acc, InputIterator first, InputIterator last) {
+                static inline void update(accumulator_type &acc, InputIterator first, InputIterator last) {
                     hash<base_hash_type>(first, last, acc);
                 }
 
-                static inline result_type process(internal_accumulator_type &acc) {
+                static inline result_type process(accumulator_type &acc) {
                     auto result_point = nil::crypto3::accumulators::extract::hash<base_hash_type>(acc);
                     nil::marshalling::status_type status;
                     // TODO: check status
                     result_type result =
-                        nil::marshalling::pack<typename construction::params_type::digest_endian>(result_point, status);
+                            nil::marshalling::pack<typename construction::params_type::digest_endian>(result_point,
+                                status);
                     return result;
                 }
             };
-        }    // namespace hashes
-    }        // namespace crypto3
-}    // namespace nil
+        } // namespace hashes
+    } // namespace crypto3
+} // namespace nil
 
 #endif    // CRYPTO3_HASH_PEDERSEN_HPP

@@ -519,9 +519,9 @@ namespace nil {
                         }
                     };
 
-                    template<typename Policy>
+                    template<typename PolicyType>
                     class ocb {
-                        typedef Policy policy_type;
+                        typedef PolicyType policy_type;
 
                     public:
                         typedef typename policy_type::cipher_type cipher_type;
@@ -602,9 +602,9 @@ namespace nil {
                     typedef detail::ocb_decryption_policy<cipher_type, padding_type, TagBits, allocator_type>
                         decryption_policy;
 
-                    template<template<typename, typename, std::size_t, template<typename> class> class Policy>
+                    template<template<typename, typename, std::size_t, template<typename> class> class PolicyType>
                     struct bind {
-                        typedef detail::ocb<Policy<cipher_type, padding_type, TagBits, allocator_type>> type;
+                        typedef detail::ocb<PolicyType<cipher_type, padding_type, TagBits, allocator_type>> type;
                     };
                 };
             }    // namespace modes

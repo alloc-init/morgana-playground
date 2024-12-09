@@ -580,28 +580,28 @@ void test() {
     T logten = log(T(10));
 
     unsigned max_err = 0;
-    for (unsigned k = 0; k < data.size(); k++) {
-        T val = boost::multiprecision::log(tenth + pi * (100 * k) * (100 * k));
-        T e = relative_error(val, T(data[k]));
+    for (unsigned K = 0; K < data.size(); K++) {
+        T val = boost::multiprecision::log(tenth + pi * (100 * K) * (100 * K));
+        T e = relative_error(val, T(data[K]));
         unsigned err = e.template convert_to<unsigned>();
         if (err > max_err)
             max_err = err;
 
-        val = boost::multiprecision::log(1 / (tenth + pi * (100 * k) * (100 * k)));
-        e = relative_error(val, T(-T(data[k])));
+        val = boost::multiprecision::log(1 / (tenth + pi * (100 * K) * (100 * K)));
+        e = relative_error(val, T(-T(data[K])));
         err = e.template convert_to<unsigned>();
         if (err > max_err) {
             max_err = err;
         }
 
-        val = boost::multiprecision::log10(tenth + pi * (100 * k) * (100 * k));
-        e = relative_error(val, T(T(data[k]) / logten));
+        val = boost::multiprecision::log10(tenth + pi * (100 * K) * (100 * K));
+        e = relative_error(val, T(T(data[K]) / logten));
         err = e.template convert_to<unsigned>();
         if (err > max_err)
             max_err = err;
 
-        val = boost::multiprecision::log10(1 / (tenth + pi * (100 * k) * (100 * k)));
-        e = relative_error(val, T(-T(data[k]) / logten));
+        val = boost::multiprecision::log10(1 / (tenth + pi * (100 * K) * (100 * K)));
+        e = relative_error(val, T(-T(data[K]) / logten));
         err = e.template convert_to<unsigned>();
         if (err > max_err)
             max_err = err;

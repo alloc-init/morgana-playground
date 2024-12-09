@@ -52,7 +52,7 @@ namespace nil {
                         struct encode_impl<ProcessingPolicy> : boost::accumulators::accumulator_base {
                         protected:
                             typedef ProcessingPolicy processing_policy;
-                            typedef typename processing_policy::internal_accumulator_type internal_accumulator_type;
+                            typedef typename processing_policy::accumulator_type accumulator_type;
 
                         public:
                             typedef typename processing_policy::result_type result_type;
@@ -65,7 +65,7 @@ namespace nil {
                             template<typename Args>
                             inline void operator()(const Args &args) {
                                 resolve_type(args[boost::accumulators::sample],
-                                             args[::nil::crypto3::accumulators::iterator_last | nullptr]);
+                                             args[crypto3::accumulators::iterator_last | nullptr]);
                             }
 
                             inline result_type result(boost::accumulators::dont_care) const {
@@ -83,7 +83,7 @@ namespace nil {
                                 processing_policy::update(acc, first, last);
                             }
 
-                            mutable internal_accumulator_type acc;
+                            mutable accumulator_type acc;
                         };
                     }    // namespace impl
 
@@ -95,7 +95,7 @@ namespace nil {
                             /// INTERNAL ONLY
                             ///
 
-                            typedef boost::mpl::always<accumulators::impl::encode_impl<processing_policy>> impl;
+                            typedef boost::mpl::always<impl::encode_impl<processing_policy>> impl;
                         };
                     }    // namespace tag
 

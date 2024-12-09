@@ -42,16 +42,16 @@ namespace nil {
     namespace crypto3 {
         namespace pubkey {
             namespace detail {
-                template<typename Scheme, template<typename, typename = void> class Operation>
+                template<typename SchemeType, template<typename, typename = void> class Operation>
                 struct verifiable_encryption {
-                    typedef Scheme scheme_type;
+                    typedef SchemeType scheme_type;
 
                     typedef Operation<scheme_type> op_type;
-                    typedef typename op_type::internal_accumulator_type internal_accumulator_type;
+                    typedef typename op_type::accumulator_type accumulator_type;
                     typedef typename op_type::result_type result_type;
 
                     template<typename... Args>
-                    static inline internal_accumulator_type init_accumulator(Args &...args) {
+                    static inline accumulator_type init_accumulator(Args &...args) {
                         return op_type::init_accumulator(args...);
                     }
 
@@ -81,9 +81,9 @@ namespace nil {
                  * @brief
                  * @tparam Scheme
                  */
-                template<typename Scheme>
+                template<typename SchemeType>
                 struct verifiable_encryption {
-                    typedef Scheme scheme_type;
+                    typedef SchemeType scheme_type;
 
                     typedef detail::verifiable_encryption<scheme_type, generate_keypair_op> keypair_generation_policy;
                     typedef detail::verifiable_encryption<scheme_type, encrypt_op> encryption_policy;

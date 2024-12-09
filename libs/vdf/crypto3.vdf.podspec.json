@@ -13,7 +13,7 @@
     "osx": "10.7"
   },
   "source": {
-    "git": "https://github.com/nilfoundation/vdf.git",
+    "git": "https://github.com/alloc-init/vdf.git",
     "branch": "master"
   },
   "xcconfig": {

@@ -134,11 +134,11 @@ BOOST_AUTO_TEST_SUITE(lpc_performance_test_suite)
         typedef hashes::keccak_1600<256> transcript_hash_type;
 
         constexpr static const std::size_t lambda = 40;
-        constexpr static const std::size_t k = 1;
+        constexpr static const std::size_t K = 1;
 
         // It's important parameter
         constexpr static const std::size_t d = 1 << 24;
-        constexpr static const std::size_t r = boost::static_log2<(d - k)>::value;
+        constexpr static const std::size_t r = boost::static_log2<(d - K)>::value;
 
         constexpr static const std::size_t m = 2;
 
@@ -225,12 +225,12 @@ BOOST_AUTO_TEST_SUITE(lpc_performance_test_suite)
         typedef hashes::keccak_1600<256> transcript_hash_type;
 
         constexpr static const std::size_t lambda = 40;
-        constexpr static const std::size_t k = 1;
+        constexpr static const std::size_t K = 1;
 
         // It's important parameter
         constexpr static const std::size_t d = 1 << 24;
 
-        constexpr static const std::size_t r = boost::static_log2<(d - k)>::value;
+        constexpr static const std::size_t r = boost::static_log2<(d - K)>::value;
         constexpr static const std::size_t m = 2;
 
         typedef zk::commitments::fri<FieldType, merkle_hash_type, transcript_hash_type, m> fri_type;
@@ -316,12 +316,12 @@ BOOST_AUTO_TEST_SUITE(lpc_performance_test_suite)
         typedef hashes::keccak_1600<256> transcript_hash_type;
 
         constexpr static const std::size_t lambda = 40;
-        constexpr static const std::size_t k = 1;
+        constexpr static const std::size_t K = 1;
 
         // It's important parameter
         constexpr static const std::size_t d = 1 << 24;
         constexpr static const std::size_t m = 2;
-        constexpr static const std::size_t r = boost::static_log2<(d - k)>::value;
+        constexpr static const std::size_t r = boost::static_log2<(d - K)>::value;
 
         typedef zk::commitments::fri<FieldType, merkle_hash_type, transcript_hash_type, m> fri_type;
         typedef zk::commitments::list_polynomial_commitment_params<merkle_hash_type, transcript_hash_type, m> lpc_params_type;

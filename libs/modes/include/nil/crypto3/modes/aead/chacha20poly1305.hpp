@@ -267,9 +267,9 @@ namespace nil {
                         }
                     };
 
-                    template<typename Policy>
+                    template<typename PolicyType>
                     class chacha20poly1305 {
-                        typedef Policy policy_type;
+                        typedef PolicyType policy_type;
 
                     public:
                         typedef typename policy_type::stream_cipher_type stream_cipher_type;
@@ -354,10 +354,10 @@ namespace nil {
                         decryption_policy;
 
                     template<template<typename, typename, std::size_t, std::size_t, template<typename> class>
-                             class Policy>
+                             class PolicyType>
                     struct bind {
                         typedef detail::chacha20poly1305<
-                            Policy<stream_cipher_type, padding_type, NonceBits, TagBits, Allocator>>
+                            PolicyType<stream_cipher_type, padding_type, NonceBits, TagBits, Allocator>>
                             type;
                     };
                 };

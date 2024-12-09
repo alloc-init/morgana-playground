@@ -47,11 +47,11 @@ namespace nil {
 
                     template<typename ValueType>
                     struct emsa_raw_encoding_policy<ValueType,
-                                                    typename std::enable_if<std::is_integral<ValueType>::value>::type> {
-                        typedef std::vector<ValueType> internal_accumulator_type;
-                        typedef internal_accumulator_type result_type;
+                                typename std::enable_if<std::is_integral<ValueType>::value>::type> {
+                        typedef std::vector<ValueType> accumulator_type;
+                        typedef accumulator_type result_type;
 
-                        static inline void init_accumulator(internal_accumulator_type &acc) {
+                        static inline void init_accumulator(accumulator_type &acc) {
                         }
 
                         // TODO: pack data from input::value_type to accumulator::value_type
@@ -59,7 +59,7 @@ namespace nil {
                         static inline typename std::enable_if<std::is_same<
                             ValueType,
                             typename std::iterator_traits<typename InputRange::iterator>::value_type>::value>::type
-                            update(internal_accumulator_type &acc, const InputRange &range) {
+                        update(accumulator_type &acc, const InputRange &range) {
                             std::copy(std::cbegin(range), std::cend(range), std::back_inserter(acc));
                         }
 
@@ -67,36 +67,36 @@ namespace nil {
                         template<typename InputIterator>
                         static inline typename std::enable_if<std::is_same<
                             ValueType, typename std::iterator_traits<InputIterator>::value_type>::value>::type
-                            update(internal_accumulator_type &acc, InputIterator first, InputIterator last) {
+                        update(accumulator_type &acc, InputIterator first, InputIterator last) {
                             std::copy(first, last, std::back_inserter(acc));
                         }
 
-                        static inline result_type process(internal_accumulator_type &acc) {
+                        static inline result_type process(accumulator_type &acc) {
                             return acc;
                         }
                     };
 
                     template<typename ValueType>
                     struct emsa_raw_verification_policy<
-                        ValueType, typename std::enable_if<std::is_integral<ValueType>::value>::type> {
+                                ValueType, typename std::enable_if<std::is_integral<ValueType>::value>::type> {
                     protected:
                         typedef emsa_raw_encoding_policy<ValueType> encoding_policy;
 
                     public:
-                        typedef typename encoding_policy::internal_accumulator_type internal_accumulator_type;
+                        typedef typename encoding_policy::accumulator_type accumulator_type;
                         typedef bool result_type;
 
-                        static inline void init_accumulator(internal_accumulator_type &acc) {
+                        static inline void init_accumulator(accumulator_type &acc) {
                             encoding_policy::init_accumulator(acc);
                         }
 
                         template<typename InputRange>
-                        static inline void update(internal_accumulator_type &acc, const InputRange &range) {
+                        static inline void update(accumulator_type &acc, const InputRange &range) {
                             encoding_policy::update(range, acc);
                         }
 
                         template<typename InputIterator>
-                        static inline void update(internal_accumulator_type &acc, InputIterator first,
+                        static inline void update(accumulator_type &acc, InputIterator first,
                                                   InputIterator last) {
                             encoding_policy::update(first, last, acc);
                         }
@@ -105,14 +105,14 @@ namespace nil {
                         template<typename InputRange>
                         static inline typename std::enable_if<
                             std::is_same<ValueType, typename std::iterator_traits<
-                                                        typename InputRange::iterator>::value_type>::value,
+                                typename InputRange::iterator>::value_type>::value,
                             result_type>::type
-                            process(internal_accumulator_type &acc, const InputRange &msg_repr) {
+                        process(accumulator_type &acc, const InputRange &msg_repr) {
                             return std::equal(std::cbegin(acc), std::cend(acc), std::cbegin(msg_repr),
                                               std::cend(msg_repr));
                         }
                     };
-                }    // namespace detail
+                } // namespace detail
 
                 /*!
                  * @brief EMSA raw.
@@ -128,9 +128,9 @@ namespace nil {
                     typedef detail::emsa_raw_encoding_policy<ValueType> encoding_policy;
                     typedef detail::emsa_raw_verification_policy<ValueType> verification_policy;
                 };
-            }    // namespace padding
-        }        // namespace pubkey
-    }            // namespace crypto3
-}    // namespace nil
+            } // namespace padding
+        } // namespace pubkey
+    } // namespace crypto3
+} // namespace nil
 
 #endif

@@ -33,7 +33,7 @@
 namespace nil {
     namespace crypto3 {
         namespace detail {
-            using namespace nil::crypto3::multiprecision;
+            using namespace boost::multiprecision;
 
             template<typename Endianness, int InValueBits, int OutValueBits, typename InputIterator, typename Backend,
                      expression_template_option ExpressionTemplates>

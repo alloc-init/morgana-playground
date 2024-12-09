@@ -50,7 +50,7 @@ namespace nil {
                     struct pubkey_impl<ProcessingMode> : boost::accumulators::accumulator_base {
                     protected:
                         typedef ProcessingMode processing_mode_type;
-                        typedef typename processing_mode_type::internal_accumulator_type internal_accumulator_type;
+                        typedef typename processing_mode_type::accumulator_type accumulator_type;
 
                     public:
                         typedef typename processing_mode_type::result_type result_type;
@@ -63,7 +63,7 @@ namespace nil {
                         template<typename Args>
                         inline void operator()(const Args &args) {
                             resolve_type(args[boost::accumulators::sample | nullptr],
-                                         args[nil::crypto3::accumulators::iterator_last | nullptr]);
+                                         args[crypto3::accumulators::iterator_last | nullptr]);
                         }
 
                         inline result_type result(boost::accumulators::dont_care) const {
@@ -84,7 +84,7 @@ namespace nil {
                             processing_mode_type::update(acc, first, last);
                         }
 
-                        mutable internal_accumulator_type acc;
+                        mutable accumulator_type acc;
                     };
                 }    // namespace impl
 
@@ -96,7 +96,7 @@ namespace nil {
                         /// INTERNAL ONLY
                         ///
 
-                        typedef boost::mpl::always<accumulators::impl::pubkey_impl<processing_mode_type>> impl;
+                        typedef boost::mpl::always<impl::pubkey_impl<processing_mode_type>> impl;
                     };
                 }    // namespace tag
 

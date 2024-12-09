@@ -2,8 +2,7 @@
 
 @tableofcontents
 
-The key idea of `algebra` is to provide usefull interfaces for basic cryptography math. It's based on NilFoundation fork of 
-Boost.Multiprecision so that it can be used with boost cpp_int, gmp or other backends.
+The key idea of `algebra` is to provide usefull interfaces for basic cryptography math. It's based on the extension of Boost.Multiprecision so that it can be used with boost cpp_int, gmp or other backends.
 
 We expanded Boost.Multiprecision with `modular_adaptor`, which is actually a multi-precision number by some modular. It contains 
 modular number-specific algorithms using Montgomery representation. It also supports compile-time computations, because it gives 
@@ -21,8 +20,6 @@ Algebra library consists of several modules listed below:
 5. Matricies and vectors
 
 This separation defines the implementation architecture.
-
-
 
 ## Fields Architecture ## {#fields_architecture}
 
@@ -55,7 +52,7 @@ node [shape="box"]
 
 A field policy describes its essential parameters such as `modulus`, `arity` or `mul_generator` - multiply generator. 
 
-### Field Extensions ### {#field_extensions}
+### FieldType Extensions ### {#field_extensions}
 
 For the purposes of effictive field/elliptic curve operations and pairings evaluation fields are arranged as a field tower.
 

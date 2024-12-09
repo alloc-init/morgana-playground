@@ -43,7 +43,7 @@ namespace nil {
 
 #else
 
-            using namespace nil::crypto3::multiprecision;
+            using namespace boost::multiprecision;
 
             template<typename Vdf,
                      typename SinglePassRange,

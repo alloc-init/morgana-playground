@@ -36,13 +36,13 @@
 namespace nil {
     namespace crypto3 {
         namespace pubkey {
-            template<typename Scheme>
+            template<typename SchemeType>
             using public_secret_reconstructing_policy =
-                typename pubkey::modes::isomorphic<Scheme>::public_secret_reconstructing_policy;
+                typename pubkey::modes::isomorphic<SchemeType>::public_secret_reconstructing_policy;
 
-            template<typename Scheme>
+            template<typename SchemeType>
             using public_secret_reconstructing_processing_mode =
-                typename modes::isomorphic<Scheme>::template bind<public_secret_reconstructing_policy<Scheme>>::type;
+                typename modes::isomorphic<SchemeType>::template bind<public_secret_reconstructing_policy<SchemeType>>::type;
         }    // namespace pubkey
 
         /*!
@@ -62,8 +62,8 @@ namespace nil {
          *
          * @return OutputIterator
          */
-        template<typename Scheme, typename InputIterator, typename OutputIterator,
-                 typename ProcessingMode = pubkey::public_secret_reconstructing_processing_mode<Scheme>>
+        template<typename SchemeType, typename InputIterator, typename OutputIterator,
+                 typename ProcessingMode = pubkey::public_secret_reconstructing_processing_mode<SchemeType>>
         typename std::enable_if<!boost::accumulators::detail::is_accumulator_set<OutputIterator>::value,
                                 OutputIterator>::type
             reconstruct_public_secret(InputIterator first, InputIterator last, OutputIterator out) {
@@ -92,8 +92,8 @@ namespace nil {
          *
          * @return OutputIterator
          */
-        template<typename Scheme, typename SinglePassRange, typename OutputIterator,
-                 typename ProcessingMode = pubkey::public_secret_reconstructing_processing_mode<Scheme>>
+        template<typename SchemeType, typename SinglePassRange, typename OutputIterator,
+                 typename ProcessingMode = pubkey::public_secret_reconstructing_processing_mode<SchemeType>>
         typename std::enable_if<!boost::accumulators::detail::is_accumulator_set<OutputIterator>::value,
                                 OutputIterator>::type
             reconstruct_public_secret(const SinglePassRange &range, OutputIterator out) {
@@ -124,8 +124,8 @@ namespace nil {
          *
          * @return OutputAccumulator
          */
-        template<typename Scheme, typename InputIterator,
-                 typename ProcessingMode = pubkey::public_secret_reconstructing_processing_mode<Scheme>,
+        template<typename SchemeType, typename InputIterator,
+                 typename ProcessingMode = pubkey::public_secret_reconstructing_processing_mode<SchemeType>,
                  typename OutputAccumulator = typename pubkey::reconstructing_accumulator_set<ProcessingMode>>
         typename std::enable_if<boost::accumulators::detail::is_accumulator_set<OutputAccumulator>::value,
                                 OutputAccumulator>::type &
@@ -154,8 +154,8 @@ namespace nil {
          *
          * @return OutputAccumulator
          */
-        template<typename Scheme, typename SinglePassRange,
-                 typename ProcessingMode = pubkey::public_secret_reconstructing_processing_mode<Scheme>,
+        template<typename SchemeType, typename SinglePassRange,
+                 typename ProcessingMode = pubkey::public_secret_reconstructing_processing_mode<SchemeType>,
                  typename OutputAccumulator = typename pubkey::reconstructing_accumulator_set<ProcessingMode>>
         typename std::enable_if<boost::accumulators::detail::is_accumulator_set<OutputAccumulator>::value,
                                 OutputAccumulator>::type &
@@ -187,8 +187,8 @@ namespace nil {
          *
          * @return SchemeImpl
          */
-        template<typename Scheme, typename InputIterator,
-                 typename ProcessingMode = pubkey::public_secret_reconstructing_processing_mode<Scheme>,
+        template<typename SchemeType, typename InputIterator,
+                 typename ProcessingMode = pubkey::public_secret_reconstructing_processing_mode<SchemeType>,
                  typename ReconstructionAccumulator = typename pubkey::reconstructing_accumulator_set<ProcessingMode>,
                  typename StreamSchemeImpl = pubkey::detail::value_pubkey_impl<ReconstructionAccumulator>,
                  typename SchemeImpl = pubkey::detail::range_pubkey_impl<StreamSchemeImpl>>
@@ -216,8 +216,8 @@ namespace nil {
          *
          * @return SchemeImpl
          */
-        template<typename Scheme, typename SinglePassRange,
-                 typename ProcessingMode = pubkey::public_secret_reconstructing_processing_mode<Scheme>,
+        template<typename SchemeType, typename SinglePassRange,
+                 typename ProcessingMode = pubkey::public_secret_reconstructing_processing_mode<SchemeType>,
                  typename ReconstructionAccumulator = typename pubkey::reconstructing_accumulator_set<ProcessingMode>,
                  typename StreamSchemeImpl = pubkey::detail::value_pubkey_impl<ReconstructionAccumulator>,
                  typename SchemeImpl = pubkey::detail::range_pubkey_impl<StreamSchemeImpl>>

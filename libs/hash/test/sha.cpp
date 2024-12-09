@@ -59,7 +59,7 @@ BOOST_TEST_DONT_PRINT_LOG_VALUE(hashes::sha::digest_type)
 class fixture {
 public:
     accumulator_set<hashes::sha> acc;
-    typedef hashes::sha hash_t;
+    typedef hashes::sha hash_type;
 
     virtual ~fixture() {
     }
@@ -116,12 +116,12 @@ BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE(sha_accumulator_test_suite)
 
 BOOST_FIXTURE_TEST_CASE(sha_accumulator1, fixture) {
-    hash_t::construction::type::block_type m = {{}};
+    hash_type::construction::type::block_type m = {{}};
 
     m[0] = 0x61626300;
     acc(m, accumulators::bits = 24);
 
-    hash_t::digest_type s = extract::hash<hash_t>(acc);
+    hash_type::digest_type s = extract::hash<hash_type>(acc);
 
 #ifdef CRYPTO3_HASH_SHOW_PROGRESS
     std::printf("%s\n", std::to_string(s).data());
@@ -132,12 +132,12 @@ BOOST_FIXTURE_TEST_CASE(sha_accumulator1, fixture) {
 
 BOOST_FIXTURE_TEST_CASE(sha_accumulator2, fixture) {
     // Appendix B: "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq"
-    hash_t::construction::type::block_type m = {{0x61626364, 0x62636465, 0x63646566, 0x64656667, 0x65666768, 0x66676869,
+    hash_type::construction::type::block_type m = {{0x61626364, 0x62636465, 0x63646566, 0x64656667, 0x65666768, 0x66676869,
                                                  0x6768696a, 0x68696a6b, 0x696a6b6c, 0x6a6b6c6d, 0x6b6c6d6e, 0x6c6d6e6f,
                                                  0x6d6e6f70, 0x6e6f7071, 0x00000000, 0x00000000}};
     acc(m, accumulators::bits = 512 - 64);
 
-    hash_t::digest_type s = extract::hash<hash_t>(acc);
+    hash_type::digest_type s = extract::hash<hash_type>(acc);
 
 #ifdef CRYPTO3_HASH_SHOW_PROGRESS
     std::printf("%s\n", std::to_string(s).data());

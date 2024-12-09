@@ -50,8 +50,8 @@ namespace nil {
              *
              * @note http://www.merkle.com/papers/Thesis1979.pdf
              */
-            template<typename Params, typename IV, typename Compressor, typename Padding,
-                     typename Finalizer = detail::nop_finalizer>
+            template<typename ParamsType, typename IV, typename Compressor, typename Padding,
+                    typename Finalizer = detail::nop_finalizer>
             class merkle_damgard_construction {
             public:
                 typedef IV iv_generator;
@@ -59,7 +59,7 @@ namespace nil {
                 typedef Padding padding_functor;
                 typedef Finalizer finalizer_functor;
 
-                typedef typename Params::digest_endian endian_type;
+                typedef typename ParamsType::digest_endian endian_type;
 
                 constexpr static const std::size_t word_bits = compressor_functor::word_bits;
                 typedef typename compressor_functor::word_type word_type;
@@ -72,17 +72,17 @@ namespace nil {
                 constexpr static const std::size_t block_words = compressor_functor::block_words;
                 typedef typename compressor_functor::block_type block_type;
 
-                constexpr static const std::size_t digest_bits = Params::digest_bits;
+                constexpr static const std::size_t digest_bits = ParamsType::digest_bits;
                 constexpr static const std::size_t digest_bytes = digest_bits / octet_bits;
                 constexpr static const std::size_t digest_words = digest_bits / word_bits;
                 typedef static_digest<digest_bits> digest_type;
 
             protected:
-                constexpr static const std::size_t length_bits = Params::length_bits;
+                constexpr static const std::size_t length_bits = ParamsType::length_bits;
                 // FIXME: do something more intelligent than capping at 64
                 constexpr static const std::size_t length_type_bits = length_bits < word_bits ? word_bits :
-                                                                      length_bits > 64        ? 64 :
-                                                                                                length_bits;
+                                                                      length_bits > 64 ? 64 :
+                                                                      length_bits;
                 typedef typename boost::uint_t<length_type_bits>::least length_type;
                 constexpr static const std::size_t length_words = length_bits / word_bits;
                 BOOST_STATIC_ASSERT(!length_bits || length_bits % word_bits == 0);
@@ -164,6 +164,7 @@ namespace nil {
                                                                                              length_type length) {
                     // No appending requested, so nothing to do
                 }
+
                 state_type state_;
             };
 

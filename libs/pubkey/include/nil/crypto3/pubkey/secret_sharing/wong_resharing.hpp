@@ -36,9 +36,9 @@ namespace nil {
                 // "Verifiable Secret Redistribution for Threshold Signing Schemes", by T. Wong et al.
                 // https://www.cs.cmu.edu/~wing/publications/Wong-Wing02b.pdf
                 //
-                template<typename Group>
-                struct wong_resharing : pedersen_dkg<Group> {
-                    typedef pedersen_dkg<Group> base_type;
+                template<typename GroupType>
+                struct wong_resharing : pedersen_dkg<GroupType> {
+                    typedef pedersen_dkg<GroupType> base_type;
 
                     typedef typename base_type::private_element_type private_element_type;
                     typedef typename base_type::public_element_type public_element_type;

@@ -34,7 +34,7 @@ namespace nil {
     namespace crypto3 {
         namespace zk {
             namespace snark {
-                template<typename Hash = hashes::keccak<256>>
+                template<typename HashType = hashes::keccak<256>>
                 struct standard_settings {
                     constexpr static const std::size_t num_challenge_bytes = 32;
                     constexpr static const transcript::HashType hash_type = transcript::HashType::Keccak256;
@@ -48,7 +48,7 @@ namespace nil {
                     constexpr static const std::size_t num_roots_cut_out_of_vanishing_polynomial = 4;
                 };
 
-                template<typename Hash = hashes::blake2s>
+                template<typename HashType = hashes::blake2s>
                 struct unrolled_standard_settings {
                     constexpr static const size_t num_challenge_bytes = 16;
                     constexpr static const transcript::HashType hash_type = transcript::HashType::PedersenBlake2s;
@@ -62,7 +62,7 @@ namespace nil {
                     constexpr static const size_t num_roots_cut_out_of_vanishing_polynomial = 4;
                 };
 
-                template<typename Hash = hashes::keccak<256>>
+                template<typename HashType = hashes::keccak<256>>
                 struct turbo_settings {
                     constexpr static const size_t num_challenge_bytes = 32;
                     constexpr static const transcript::HashType hash_type = transcript::HashType::Keccak256;
@@ -76,7 +76,7 @@ namespace nil {
                     constexpr static const size_t num_roots_cut_out_of_vanishing_polynomial = 4;
                 };
 
-                template<typename Hash = hashes::blake2s>
+                template<typename HashType = hashes::blake2s>
                 class unrolled_turbo_settings {
                 public:
                     constexpr static const size_t num_challenge_bytes = 16;

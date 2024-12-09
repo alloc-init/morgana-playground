@@ -60,25 +60,25 @@ namespace nil {
              * @brief Hashing to elliptic curve Jubjub according to FindGroupHash Zcash algorithm
              * https://zips.z.cash/protocol/protocol.pdf#concretegrouphashjubjub
              *
-             * @tparam Group
+             * @tparam GroupType
              * @tparam Params
              */
             // TODO: use blake2s by default
-            template<typename Params = find_group_hash_default_params,
-                     typename Hash = sha2<256>,
-                     typename Group = algebra::curves::jubjub::template g1_type<
+            template<typename ParamsType = find_group_hash_default_params,
+                     typename HashType = sha2<256>,
+                     typename GroupType = algebra::curves::jubjub::template g1_type<
                          nil::crypto3::algebra::curves::coordinates::affine,
                          nil::crypto3::algebra::curves::forms::twisted_edwards>>
             struct find_group_hash {
-                using params = Params;
-                using hash_type = Hash;
-                using group_type = Group;
+                using params_type = ParamsType;
+                using hash_type = HashType;
+                using group_type = GroupType;
                 using curve_type = typename group_type::curve_type;
 
                 // TODO: FIXME: use marshalling method to determine bit size of serialized group_value_type
                 static constexpr std::size_t digest_bits = group_type::field_type::value_bits;
                 using group_value_type = typename group_type::value_type;
-                using internal_accumulator_type = accumulator_set<hash_type>;
+                using accumulator_type = accumulator_set<hash_type>;
                 using result_type = group_value_type;
                 using digest_type = result_type;
 
@@ -86,47 +86,47 @@ namespace nil {
                     struct params_type {
                         typedef nil::marshalling::option::little_endian digest_endian;
                     };
+
                     typedef void type;
                 };
 
-                constexpr static detail::stream_processor_type stream_processor = detail::stream_processor_type::RawDelegating;
-                using accumulator_tag = accumulators::tag::forwarding_hash<find_group_hash<Params, Hash, Group>>;
+                constexpr static detail::stream_processor_type stream_processor =
+                        detail::stream_processor_type::raw_delegating;
+                using accumulator_tag = accumulators::tag::forwarding_hash<find_group_hash<ParamsType, hash_type,
+                    GroupType>>;
 
                 static inline std::vector<std::uint8_t> urs = {
                     0x30, 0x39, 0x36, 0x62, 0x33, 0x36, 0x61, 0x35, 0x38, 0x30, 0x34, 0x62, 0x66, 0x61, 0x63, 0x65,
                     0x66, 0x31, 0x36, 0x39, 0x31, 0x65, 0x31, 0x37, 0x33, 0x63, 0x33, 0x36, 0x36, 0x61, 0x34, 0x37,
                     0x66, 0x66, 0x35, 0x62, 0x61, 0x38, 0x34, 0x61, 0x34, 0x34, 0x66, 0x32, 0x36, 0x64, 0x64, 0x64,
-                    0x37, 0x65, 0x38, 0x64, 0x39, 0x66, 0x37, 0x39, 0x64, 0x35, 0x62, 0x34, 0x32, 0x64, 0x66, 0x30};
+                    0x37, 0x65, 0x38, 0x64, 0x39, 0x66, 0x37, 0x39, 0x64, 0x35, 0x62, 0x34, 0x32, 0x64, 0x66, 0x30
+                };
 
-                static inline void init_accumulator(internal_accumulator_type &acc) {
-                    hash<hash_type>(params::dst, acc);
+                static inline void init_accumulator(accumulator_type &acc) {
+                    hash<hash_type>(params_type::dst, acc);
                     hash<hash_type>(urs, acc);
                 }
 
                 template<typename InputRange>
-                static inline void update(internal_accumulator_type &acc, const InputRange &range) {
+                static inline void update(accumulator_type &acc, const InputRange &range) {
                     hash<hash_type>(range, acc);
                 }
 
                 template<typename InputIterator>
-                static inline void update(internal_accumulator_type &acc, InputIterator first, InputIterator last) {
+                static inline void update(accumulator_type &acc, InputIterator first, InputIterator last) {
                     hash<hash_type>(first, last, acc);
                 }
 
-                static inline result_type process(internal_accumulator_type &acc) {
+                static inline result_type process(accumulator_type &acc) {
                     nil::marshalling::status_type status;
                     group_value_type point;
                     std::uint8_t i = 0;
 
                     while (true) {
                         auto acc_copy = acc;
-                        hash<hash_type>(
-                            {
-                                i++,
-                            },
-                            acc_copy);
+                        hash<hash_type>({i++}, acc_copy);
                         typename hash_type::digest_type H =
-                            nil::crypto3::accumulators::extract::hash<hash_type>(acc_copy);
+                                nil::crypto3::accumulators::extract::hash<hash_type>(acc_copy);
                         // TODO: generalize pack interface to accept arbitrary containers
                         std::vector<std::uint8_t> H_vec(std::cbegin(H), std::cend(H));
                         point = nil::marshalling::pack<nil::marshalling::option::little_endian>(H_vec, status);
@@ -136,7 +136,8 @@ namespace nil {
                         // TODO: return status
                         assert(i < 256);
                     }
-                    point = typename curve_type::scalar_field_type::value_type(group_type::params_type::cofactor) * point;
+                    point = typename curve_type::scalar_field_type::value_type(group_type::params_type::cofactor) *
+                            point;
                     // TODO: return status
                     assert(!point.is_zero());
                     assert(point.is_well_formed());
@@ -144,8 +145,8 @@ namespace nil {
                     return point;
                 }
             };
-        }    // namespace hashes
-    }        // namespace crypto3
-}    // namespace nil
+        } // namespace hashes
+    } // namespace crypto3
+} // namespace nil
 
 #endif    // CRYPTO3_HASH_FIND_GROUP_HASH_HPP

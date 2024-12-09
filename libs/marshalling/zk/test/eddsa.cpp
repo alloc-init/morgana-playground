@@ -83,9 +83,9 @@ BOOST_AUTO_TEST_SUITE(lpc_test_suite)
         using params_type = void;
         using scheme_type = pubkey::eddsa<group_type, pubkey::eddsa_type::basic, params_type>;
         using private_key_type = pubkey::private_key<scheme_type>;
-        using public_key_type = pubkey::public_key<scheme_type>;
+        using schedule_type = pubkey::public_key<scheme_type>;
         using _private_key_type = typename private_key_type::private_key_type;
-        using _public_key_type = typename public_key_type::public_key_type;
+        using _public_key_type = typename schedule_type::schedule_type;
 
         // -----TEST 1
         _private_key_type privkey1 = {0x9d, 0x61, 0xb1, 0x9d, 0xef, 0xfd, 0x5a, 0x60, 0xba, 0x84, 0x4a,
@@ -102,14 +102,14 @@ BOOST_AUTO_TEST_SUITE(lpc_test_suite)
                 0xd2, 0x5b, 0xf5, 0xf0, 0x59, 0x5b, 0xbe, 0x24, 0x65, 0x51, 0x41, 0x43, 0x8e, 0x7a, 0x10, 0x0b};
 
         using endianness = nil::marshalling::option::big_endian;
-        public_key_type pub_k(etalon_pubkey1);
+        schedule_type pub_k(etalon_pubkey1);
         private_key_type priv_k(privkey1);
 
         auto filled_key = nil::crypto3::marshalling::types::fill_eddsa_public_key<
-                public_key_type, endianness>(pub_k);
+                schedule_type, endianness>(pub_k);
 
         auto made_key = nil::crypto3::marshalling::types::make_eddsa_public_key<
-                public_key_type, endianness>(filled_key);
+                schedule_type, endianness>(filled_key);
 
         BOOST_CHECK(made_key.pubkey_point == pub_k.pubkey_point);
         BOOST_CHECK(std::equal(made_key.pubkey.begin(), made_key.pubkey.end(), pub_k.pubkey.begin()));

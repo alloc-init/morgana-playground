@@ -33,24 +33,25 @@
 #include <nil/crypto3/hash/detail/h2f/h2f_suites.hpp>
 #include <nil/crypto3/hash/detail/h2f/h2f_functions.hpp>
 #include <nil/crypto3/hash/detail/stream_processors/stream_processors_enum.hpp>
+
 #include <nil/crypto3/multiprecision/cpp_int_modular.hpp>
 
 namespace nil {
     namespace crypto3 {
         namespace hashes {
-            template<typename Field,
-                     typename Hash,
-                     std::size_t _k = 128,
-                     UniformityCount _uniformity_count = UniformityCount::uniform_count,
-                     ExpandMsgVariant _expand_msg_variant = ExpandMsgVariant::rfc_xmd>
+            template<typename FieldType,
+                    typename HashType,
+                    std::size_t K = 128,
+                    uniformity_count UniformityCount = uniformity_count::uniform_count,
+                    expand_msg_variant ExpandMsgVariant = expand_msg_variant::rfc_xmd>
             struct h2f_default_params {
-                constexpr static UniformityCount uniformity_count = _uniformity_count;
-                constexpr static ExpandMsgVariant expand_msg_variant = _expand_msg_variant;
-                constexpr static std::size_t k = _k;
+                constexpr static uniformity_count uniformity_count = UniformityCount;
+                constexpr static expand_msg_variant expand_msg_variant = ExpandMsgVariant;
+                constexpr static std::size_t k = K;
 
                 typedef std::vector<std::uint8_t> dst_type;
                 static inline dst_type dst = []() {
-                    using suite_type = h2f_suite<Field, Hash, k>;
+                    using suite_type = h2f_suite<FieldType, HashType, k>;
                     std::string default_tag_str = "QUUX-V01-CS02-with-";
                     dst_type dst(default_tag_str.begin(), default_tag_str.end());
                     dst.insert(dst.end(), suite_type::suite_id.begin(), suite_type::suite_id.end());
@@ -62,14 +63,15 @@ namespace nil {
              * @brief Hashing to Fields
              * https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-hash-to-curve-11
              *
-             * @tparam Group
+             * @tparam GroupType
              * @tparam Params
              */
-            template<typename Field, typename Hash = sha2<256>, typename Params = h2f_default_params<Field, Hash>>
+            template<typename FieldType, typename HashType = sha2<256>,
+                    typename ParamsType = h2f_default_params<FieldType, HashType>>
             struct h2f {
-                typedef h2f_suite<Field, Hash, Params::k> suite_type;
-                static constexpr UniformityCount uniformity_count = Params::uniformity_count;
-                static constexpr ExpandMsgVariant expand_msg_variant = Params::expand_msg_variant;
+                typedef h2f_suite<FieldType, HashType, ParamsType::k> suite_type;
+                static constexpr uniformity_count uniformity_count = ParamsType::uniformity_count;
+                static constexpr expand_msg_variant expand_msg_variant = ParamsType::expand_msg_variant;
 
                 typedef typename suite_type::field_type field_type;
                 typedef typename suite_type::field_value_type field_value_type;
@@ -88,14 +90,14 @@ namespace nil {
 
                 constexpr static std::size_t len_in_bytes = count * m * L;
 
-                typedef typename std::conditional<(ExpandMsgVariant::rfc_xmd == expand_msg_variant),
-                                                  detail::expand_message_xmd<k, len_in_bytes, hash_type>,
-                                                  detail::expand_message_xof<k, len_in_bytes, hash_type> >::type expand_message_type;
+                typedef typename std::conditional<(expand_msg_variant::rfc_xmd == expand_msg_variant),
+                        detail::expand_message_xmd<k, len_in_bytes, hash_type>,
+                        detail::expand_message_xof<k, len_in_bytes, hash_type> >::type expand_message_type;
                 static_assert(!std::is_void<expand_message_type>::value, "Undefined expand_message_type.");
 
                 typedef std::array<field_value_type, count> result_type;
                 typedef result_type digest_type;
-                typedef typename expand_message_type::internal_accumulator_type internal_accumulator_type;
+                typedef typename expand_message_type::accumulator_type accumulator_type;
 
                 struct construction {
                     struct params_type {
@@ -104,29 +106,29 @@ namespace nil {
                     typedef void type;
                 };
 
-                constexpr static detail::stream_processor_type stream_processor = detail::stream_processor_type::RawDelegating;
-                using accumulator_tag = accumulators::tag::forwarding_hash<h2f<Field, Hash, Params>>;
+                constexpr static detail::stream_processor_type stream_processor = detail::stream_processor_type::raw_delegating;
+                using accumulator_tag = accumulators::tag::forwarding_hash<h2f<FieldType, HashType, ParamsType>>;
 
-                static inline void init_accumulator(internal_accumulator_type &acc) {
+                static inline void init_accumulator(accumulator_type &acc) {
                     expand_message_type::init_accumulator(acc);
                 }
 
                 template<typename InputRange>
-                static inline void update(internal_accumulator_type &acc, const InputRange &range) {
+                static inline void update(accumulator_type &acc, const InputRange &range) {
                     expand_message_type::update(acc, range);
                 }
 
                 template<typename InputIterator>
-                static inline void update(internal_accumulator_type &acc, InputIterator first, InputIterator last) {
+                static inline void update(accumulator_type &acc, InputIterator first, InputIterator last) {
                     expand_message_type::update(acc, first, last);
                 }
 
                 // TODO: use type deducing to element_fp instead of arity, make FieldParams public for this
-                template<std::size_t arity = m, typename std::enable_if<1 == arity, bool>::type = true>
-                static inline result_type process(internal_accumulator_type &acc) {
+                template<std::size_t Arity = m, typename std::enable_if<1 == Arity, bool>::type = true>
+                static inline result_type process(accumulator_type &acc) {
 
                     typename expand_message_type::result_type uniform_bytes =
-                        expand_message_type::process(acc, Params::dst);
+                            expand_message_type::process(acc, ParamsType::dst);
                     std::array<modular_type, m> coordinates;
                     std::array<field_value_type, count> result;
                     for (std::size_t i = 0; i < count; i++) {
@@ -140,8 +142,10 @@ namespace nil {
                                       std::cbegin(uniform_bytes) + elm_offset + L,
                                       std::back_inserter(imported_octets));
                             nil::marshalling::status_type status;
-                            boost::multiprecision::number<boost::multiprecision::cpp_int_modular_backend<L * CHAR_BIT>> tmp =
-                                nil::marshalling::pack<nil::marshalling::option::big_endian>(imported_octets, status);
+                            boost::multiprecision::number<boost::multiprecision::cpp_int_modular_backend<
+                                    L * CHAR_BIT>> tmp =
+                                    nil::marshalling::pack<nil::marshalling::option::big_endian>(imported_octets,
+                                                                                                 status);
                             coordinates[j] = modular_type(typename modular_type::backend_type(tmp.backend()));
                         }
                         result[i] = coordinates[0];
@@ -150,11 +154,11 @@ namespace nil {
                 }
 
                 // TODO: use type deducing to element_fp2 instead of arity, make FieldParams public for this
-                template<std::size_t arity = m, typename std::enable_if<2 == arity, bool>::type = true>
-                static inline result_type process(internal_accumulator_type &acc) {
+                template<std::size_t Arity = m, typename std::enable_if<2 == Arity, bool>::type = true>
+                static inline result_type process(accumulator_type &acc) {
 
                     typename expand_message_type::result_type uniform_bytes =
-                        expand_message_type::process(acc, Params::dst);
+                            expand_message_type::process(acc, ParamsType::dst);
                     std::array<modular_type, m> coordinates;
                     std::array<field_value_type, count> result;
                     for (std::size_t i = 0; i < count; i++) {
@@ -168,8 +172,10 @@ namespace nil {
                                       std::cbegin(uniform_bytes) + elm_offset + L,
                                       std::back_inserter(imported_octets));
                             nil::marshalling::status_type status;
-                            boost::multiprecision::number<boost::multiprecision::cpp_int_modular_backend<L * CHAR_BIT>> tmp =
-                                nil::marshalling::pack<nil::marshalling::option::big_endian>(imported_octets, status);
+                            boost::multiprecision::number<boost::multiprecision::cpp_int_modular_backend<
+                                    L * CHAR_BIT>> tmp =
+                                    nil::marshalling::pack<nil::marshalling::option::big_endian>(imported_octets,
+                                                                                                 status);
                             coordinates[j] = modular_type(typename modular_type::backend_type(tmp.backend()));
                         }
                         result[i] = field_value_type(coordinates[0], coordinates[1]);

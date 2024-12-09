@@ -66,7 +66,7 @@ template<std::size_t Size>
 class fixture {
 public:
     accumulator_set<hashes::tiger<Size>> acc;
-    typedef hashes::tiger<Size> hash_t;
+    typedef hashes::tiger<Size> hash_type;
     virtual ~fixture() {
     }
 };

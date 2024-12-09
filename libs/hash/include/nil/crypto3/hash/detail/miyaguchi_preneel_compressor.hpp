@@ -57,9 +57,9 @@ namespace nil {
                 typedef typename block_cipher_type::block_type block_type;
 
                 inline static void process_block(state_type &state, const block_type &block) {
-                    KeyConverterFunctor k;
+                    KeyConverterFunctor K;
                     key_type key = {0};
-                    k(key, state);
+                    K(key, state);
 
                     block_cipher_type cipher(key);
                     state_type new_state = cipher.encrypt(block);

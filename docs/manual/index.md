@@ -63,9 +63,9 @@ The suite is used as a header-only and is currently statically linked. Future ve
 #### Generic
 Generic usage of cryptography suite consists of all modules available at 
 [GitHub =nil; Crypto3 Team Repositories](https://github.com/orgs/NilFoundation/teams/nil-crypto3/repositories). 
-An umbrella-repository of it is available at  [Crypto3 GitHub](https://github.com/nilfoundation/crypto3.git). Modules
+An umbrella-repository of it is available at  [Crypto3 GitHub](https://github.com/alloc-init/crypto3.git). Modules
 are added as submodules emplaced in `libs` directory. A developer can thus add this  
-project as a submodule and would not need to resolve dependencies. See [crypto3-scaffold](https://github.com/NilFoundation/crypto3-scaffold) as an example of usage. 
+project as a submodule and would not need to resolve dependencies. See [crypto3-scaffold](https://github.com/alloc-init/crypto3-scaffold) as an example of usage. 
 
 ### Selective
 Developer can select to include a one or more modules to reduce the sources of resulting project and dependencies tree height. This however

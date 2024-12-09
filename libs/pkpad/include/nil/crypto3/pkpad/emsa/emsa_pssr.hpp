@@ -150,8 +150,8 @@ namespace nil {
                  * @brief PSSR aka EMSA4 in IEEE 1363
                  * @tparam Hash
                  */
-                template<typename Scheme, typename Hash>
-                struct emsa_pssr : public emsa<Scheme, Hash> {
+                template<typename SchemeType, typename HashType>
+                struct emsa_pssr : public emsa<SchemeType, HashType> {
                     template<typename InputIterator1, typename InputIterator2>
                     bool verify(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2,
                                 InputIterator2 last2, std::size_t key_bits) const {
@@ -177,15 +177,15 @@ namespace nil {
                     std::size_t salt_size;
 
                     template<typename InputMessageIterator, typename InputSaltIterator, typename OutputIterator>
-                    OutputIterator pss_encode(Hash &hash, InputMessageIterator firstm, InputMessageIterator lastm,
+                    OutputIterator pss_encode(HashType &hash, InputMessageIterator firstm, InputMessageIterator lastm,
                                               InputSaltIterator firsts, InputSaltIterator lasts, size_t output_bits) {
                         std::ptrdiff_t message_size = std::distance(firstm, lastm);
                         std::ptrdiff_t salt_size = std::distance(firsts, lasts);
 
-                        if (message_size != Hash::policy_type::digest_bits / 8) {
+                        if (message_size != HashType::policy_type::digest_bits / 8) {
                             throw encoding_error("Cannot encode PSS string, input length invalid for hash");
                         }
-                        if (output_bits < Hash::policy_type::digest_bits + 8 * salt_size + 9) {
+                        if (output_bits < HashType::policy_type::digest_bits + 8 * salt_size + 9) {
                             throw encoding_error("Cannot encode PSS string, output length too small");
                         }
 
@@ -200,12 +200,12 @@ namespace nil {
 
                         secure_vector<uint8_t> EM(output_length);
 
-                        EM[output_length - Hash::policy_type::digest_bits / 8 - salt_size - 2] = 0x01;
-                        buffer_insert(EM, output_length - 1 - Hash::policy_type::digest_bits / 8 - salt_size, salt);
-                        mgf1_mask(hash, H.data(), Hash::policy_type::digest_bits / 8, EM.data(),
-                                  output_length - Hash::policy_type::digest_bits / 8 - 1);
+                        EM[output_length - HashType::policy_type::digest_bits / 8 - salt_size - 2] = 0x01;
+                        buffer_insert(EM, output_length - 1 - HashType::policy_type::digest_bits / 8 - salt_size, salt);
+                        mgf1_mask(hash, H.data(), HashType::policy_type::digest_bits / 8, EM.data(),
+                                  output_length - HashType::policy_type::digest_bits / 8 - 1);
                         EM[0] &= 0xFF >> (8 * ((output_bits + 7) / 8) - output_bits);
-                        buffer_insert(EM, output_length - 1 - Hash::policy_type::digest_bits / 8, H);
+                        buffer_insert(EM, output_length - 1 - HashType::policy_type::digest_bits / 8, H);
                         EM[output_length - 1] = 0xBC;
                         return EM;
                     }
@@ -216,11 +216,11 @@ namespace nil {
                                     size_t *out_salt_size) {
                         const size_t KEY_BYTES = (key_bits + 7) / 8;
 
-                        if (key_bits < Hash::policy_type::digest_bits + 9) {
+                        if (key_bits < HashType::policy_type::digest_bits + 9) {
                             return false;
                         }
 
-                        if (message_hash.size() != Hash::policy_type::digest_bits / 8) {
+                        if (message_hash.size() != HashType::policy_type::digest_bits / 8) {
                             return false;
                         }
 
@@ -245,11 +245,11 @@ namespace nil {
                         }
 
                         uint8_t *DB = coded.data();
-                        const size_t DB_size = coded.size() - Hash::policy_type::digest_bits / 8 - 1;
+                        const size_t DB_size = coded.size() - HashType::policy_type::digest_bits / 8 - 1;
 
                         const uint8_t *H = &coded[DB_size];
 
-                        mgf1_mask(hash, H, Hash::policy_type::digest_bits / 8, DB, DB_size);
+                        mgf1_mask(hash, H, HashType::policy_type::digest_bits / 8, DB, DB_size);
                         DB[0] &= 0xFF >> TOP_BITS;
 
                         size_t salt_offset = 0;
@@ -276,7 +276,7 @@ namespace nil {
 
                         const secure_vector<uint8_t> H2 = hash.final();
 
-                        const bool ok = constant_time_compare(H, H2.data(), Hash::policy_type::digest_bits / 8);
+                        const bool ok = constant_time_compare(H, H2.data(), HashType::policy_type::digest_bits / 8);
 
                         if (out_salt_size && ok) {
                             *out_salt_size = salt_size;

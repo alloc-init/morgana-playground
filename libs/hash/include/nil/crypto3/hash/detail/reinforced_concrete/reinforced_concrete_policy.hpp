@@ -64,7 +64,7 @@ namespace nil {
 
                 template<>
                 struct reinforced_concrete_policy<nil::crypto3::algebra::fields::bls12_fr<381>>
-                    : public base_reinforced_concrete_policy<nil::crypto3::algebra::fields::bls12_fr<381>> {
+                        : public base_reinforced_concrete_policy<nil::crypto3::algebra::fields::bls12_fr<381>> {
                     constexpr static const std::size_t bucket_size = 27;
                     typedef std::array<element_type, bucket_size> bucket_type;
 
@@ -74,20 +74,20 @@ namespace nil {
                                                                element_type(integral_type(4ul))};
                     constexpr static const std::size_t d = 5;
                     constexpr static const bucket_type bucket = {
-                        element_type(integral_type(693)), element_type(integral_type(696)),
-                        element_type(integral_type(694)), element_type(integral_type(668)),
-                        element_type(integral_type(679)), element_type(integral_type(695)),
-                        element_type(integral_type(691)), element_type(integral_type(693)),
-                        element_type(integral_type(700)), element_type(integral_type(688)),
-                        element_type(integral_type(700)), element_type(integral_type(694)),
-                        element_type(integral_type(701)), element_type(integral_type(694)),
-                        element_type(integral_type(699)), element_type(integral_type(701)),
-                        element_type(integral_type(701)), element_type(integral_type(701)),
-                        element_type(integral_type(695)), element_type(integral_type(698)),
-                        element_type(integral_type(697)), element_type(integral_type(703)),
-                        element_type(integral_type(702)), element_type(integral_type(691)),
-                        element_type(integral_type(688)), element_type(integral_type(703)),
-                        element_type(integral_type(679))};
+                            element_type(integral_type(693)), element_type(integral_type(696)),
+                            element_type(integral_type(694)), element_type(integral_type(668)),
+                            element_type(integral_type(679)), element_type(integral_type(695)),
+                            element_type(integral_type(691)), element_type(integral_type(693)),
+                            element_type(integral_type(700)), element_type(integral_type(688)),
+                            element_type(integral_type(700)), element_type(integral_type(694)),
+                            element_type(integral_type(701)), element_type(integral_type(694)),
+                            element_type(integral_type(699)), element_type(integral_type(701)),
+                            element_type(integral_type(701)), element_type(integral_type(701)),
+                            element_type(integral_type(695)), element_type(integral_type(698)),
+                            element_type(integral_type(697)), element_type(integral_type(703)),
+                            element_type(integral_type(702)), element_type(integral_type(691)),
+                            element_type(integral_type(688)), element_type(integral_type(703)),
+                            element_type(integral_type(679))};
                     constexpr static const element_type p_min = element_type(integral_type(659ul));
                 };
             }    // namespace detail

@@ -74,14 +74,14 @@ namespace nil {
             /*!
              * @brief bit_in_unit_byte_reverser transforms the sequence of bits in each byte of
              * the input unit into reversed sequence of bits in each byte of the output unit.
-             * The function reverse is recursively invoked and the parameter k is used to track
+             * The function reverse is recursively invoked and the parameter K is used to track
              * the number of already processed input bytes. The recursion ends, when all input
-             * bytes have been processed, i.e. when k == UnitBits.
+             * bytes have been processed, i.e. when K == UnitBits.
              *
              * @ingroup reverser
              *
              * @tparam UnitBits
-             * @tparam k
+             * @tparam K
              */
             template<int UnitBits, int k = 0>
             struct bit_in_unit_byte_reverser {
@@ -157,15 +157,15 @@ namespace nil {
             /*!
              * @brief bit_in_unit_reverser transforms the sequence of bits in each unit of
              * the input value into reversed sequence of bits in each unit of the output value.
-             * The function reverse is recursively invoked and the parameter k is used to track
+             * The function reverse is recursively invoked and the parameter K is used to track
              * the number of already processed input units. The recursion ends, when all input
-             * units have been processed, i.e. when k == InputBits.
+             * units have been processed, i.e. when K == InputBits.
              *
              * @ingroup reverser
              *
              * @tparam InputBits
              * @tparam UnitBits
-             * @tparam k
+             * @tparam K
              */
             template<int InputBits, int UnitBits, int k = 0>
             struct bit_in_unit_reverser {
@@ -318,15 +318,15 @@ namespace nil {
             /*!
              * @brief byte_in_unit_reverser transforms the sequence of bytes in each unit of
              * the input value into reversed sequence of bytes in each unit of the output value.
-             * The function reverse is recursively invoked and the parameter k is used to track
+             * The function reverse is recursively invoked and the parameter K is used to track
              * the number of already processed input units. The recursion ends, when all input
-             * units have been processed, i.e. when k == InputBits.
+             * units have been processed, i.e. when K == InputBits.
              *
              * @ingroup reverser
              *
              * @tparam InputBits
              * @tparam UnitBits
-             * @tparam k
+             * @tparam K
              */
             template<int InputBits, int UnitBits, int k = 0>
             struct byte_in_unit_reverser {

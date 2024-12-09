@@ -16,7 +16,7 @@
 
 int main()
 {
-   using namespace nil::crypto3::multiprecision;
+   using namespace boost::multiprecision;
 
    boost::uint64_t i = (std::numeric_limits<boost::uint64_t>::max)();
    boost::uint64_t j = 1;

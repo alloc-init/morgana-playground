@@ -72,7 +72,7 @@ namespace nil {
              * @brief exploder_shift trait is used to determine whether the output elements are splitted
              * from an input element in reverse order. Since the input and output types are integral now,
              * this trait contains the shift indicating the position of output element derived from the
-             * input element when k output bits have already been processed.
+             * input element when K output bits have already been processed.
              *
              * @ingroup exploder
              *
@@ -80,7 +80,7 @@ namespace nil {
              * @tparam UnitBits
              * @tparam InputBits
              * @tparam OutputBits
-             * @tparam k
+             * @tparam K
              * @tparam IsLittleUnit
              */
             template<typename InputEndianness, int UnitBits, int InputBits, int OutputBits, int k,
@@ -99,7 +99,7 @@ namespace nil {
 
             /*!
              * @brief exploder_step obtains an output value represented in OutputEndianness endianness
-             * from an input value represented in InputEndianness endianness when k output bits
+             * from an input value represented in InputEndianness endianness when K output bits
              * have already been processed. It uses unit_reverser and bit_reverser to deal with the
              * order of units and bits in the output value, respectively. Shift constant is determined
              * by the exploder_shift trait.
@@ -111,7 +111,7 @@ namespace nil {
              * @tparam UnitBits
              * @tparam InputBits
              * @tparam OutputBits
-             * @tparam k
+             * @tparam K
              */
             template<typename InputEndianness, typename OutputEndianness, int UnitBits, int InputBits, int OutputBits,
                      int k>
@@ -132,9 +132,9 @@ namespace nil {
             /*!
              * @brief exploder forms a sequence of output values represented in OutputEndianness endianness
              * from an input value represented in InputEndianness endianness. The function explode is
-             * invoked recursively, and the parameter k is used to track the number of already processed
+             * invoked recursively, and the parameter K is used to track the number of already processed
              * output values derived from the input value. The recursion ends when all elements the input
-             * value can hold have already been processed, i.e. when k == InputBits.
+             * value can hold have already been processed, i.e. when K == InputBits.
              *
              * @ingroup exploder
              *
@@ -142,7 +142,7 @@ namespace nil {
              * @tparam OutputEndianness
              * @tparam InputBits
              * @tparam OutputBits
-             * @tparam k
+             * @tparam K
              */
             template<typename InputEndianness, typename OutputEndianness, int InputBits, int OutputBits, int k = 0>
             struct exploder;

@@ -141,13 +141,13 @@ namespace nil {
                         // The degree of t(X) is determined by the term:
                         // ((a(X) + βX + γ) (b(X) + βk_1X + γ) (c(X) + βk_2X + γ)z(X)) / Z*_H(X).
                         //
-                        // Let k = num_roots_cut_out_of_vanishing_polynomial, we have
-                        // deg(t) = (n - 1) * (program_width + 1) - (n - k)
-                        //        = n * program_width - program_width - 1 + k
+                        // Let K = num_roots_cut_out_of_vanishing_polynomial, we have
+                        // deg(t) = (n - 1) * (program_width + 1) - (n - K)
+                        //        = n * program_width - program_width - 1 + K
                         //
                         // Since we must cut atleast 4 roots from the vanishing polynomial
                         // (refer to
-                        // ./src/aztec/plonk/proof_system/widgets/random_widgets/permutation_widget_impl.hpp/L247), k =
+                        // ./src/aztec/plonk/proof_system/widgets/random_widgets/permutation_widget_impl.hpp/L247), K =
                         // 4 => deg(t) = n * program_width - program_width + 3
                         //
                         // For standard plonk, program_width = 3 and thus, deg(t) = 3n. This implies that there would be
@@ -219,7 +219,7 @@ namespace nil {
                             // NOTE: In TurboPlonk and UltraPlonk, the witness polynomials are evaluated at 2 points and
                             // thus we need to add 3 random scalars in them.
                             //
-                            // We start adding random scalars in `wire` polynomials from index (n - k) upto (n - k + 2).
+                            // We start adding random scalars in `wire` polynomials from index (n - K) upto (n - K + 2).
                             // For simplicity, we add 3 random scalars even for standard plonk (recall, just 2 of them
                             // are required) since an additional random scalar would not affect things.
                             //
@@ -229,8 +229,8 @@ namespace nil {
                             //
                             const size_t w_randomness = 3;
                             ASSERT(w_randomness < settings::num_roots_cut_out_of_vanishing_polynomial);
-                            for (size_t k = 0; k < w_randomness; ++k) {
-                                wire.at(n - settings::num_roots_cut_out_of_vanishing_polynomial + k) =
+                            for (size_t K = 0; K < w_randomness; ++K) {
+                                wire.at(n - settings::num_roots_cut_out_of_vanishing_polynomial + K) =
                                     algebra::random_element(typename TCurve::scalar_field_type);
                             }
 

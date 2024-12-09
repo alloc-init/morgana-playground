@@ -19,7 +19,7 @@ namespace nil {
             template<unsigned D>
             inline void log_postfix_event(const mpfi_float_backend<D>& val, const char* event_description) {
                 // Print out the (relative) diameter of the interval:
-                using namespace nil::crypto3::multiprecision;
+                using namespace boost::multiprecision;
                 number<mpfr_float_backend<D>> diam;
                 mpfi_diam(diam.backend().data(), val.data());
                 std::cout << "Diameter was " << diam << " after operation: " << event_description << std::endl;
@@ -34,7 +34,7 @@ namespace nil {
 }    // namespace nil
 
 int main() {
-    using namespace nil::crypto3::multiprecision;
+    using namespace boost::multiprecision;
     typedef number<logged_adaptor<mpfi_float_backend<17>>> logged_type;
     //
     // Test case deliberately introduces cancellation error, relative size of interval

@@ -72,7 +72,7 @@ namespace nil {
              * @brief exploder_shift trait is used to determine whether the output elements are splitted
              * from an input element in reverse order. Since the input and output types are integral now,
              * this trait contains the shift indicating the position of output element derived from the
-             * input element when k output bits have already been processed.
+             * input element when K output bits have already been processed.
              *
              * @ingroup exploder
              *
@@ -80,26 +80,26 @@ namespace nil {
              * @tparam UnitBits
              * @tparam InputBits
              * @tparam OutputBits
-             * @tparam k
+             * @tparam K
              * @tparam IsLittleUnit
              */
-            template<typename InputEndianness, int UnitBits, int InputBits, int OutputBits, int k,
+            template<typename InputEndianness, int UnitBits, int InputBits, int OutputBits, int K,
                      bool IsLittleUnit = is_little_unit<InputEndianness, UnitBits>::value>
             struct exploder_shift;
 
-            template<typename InputEndianness, int UnitBits, int InputBits, int OutputBits, int k>
-            struct exploder_shift<InputEndianness, UnitBits, InputBits, OutputBits, k, false> {
-                constexpr static int const value = InputBits - (OutputBits + k);
+            template<typename InputEndianness, int UnitBits, int InputBits, int OutputBits, int K>
+            struct exploder_shift<InputEndianness, UnitBits, InputBits, OutputBits, K, false> {
+                constexpr static int const value = InputBits - (OutputBits + K);
             };
 
-            template<typename InputEndianness, int UnitBits, int InputBits, int OutputBits, int k>
-            struct exploder_shift<InputEndianness, UnitBits, InputBits, OutputBits, k, true> {
-                constexpr static int const value = k;
+            template<typename InputEndianness, int UnitBits, int InputBits, int OutputBits, int K>
+            struct exploder_shift<InputEndianness, UnitBits, InputBits, OutputBits, K, true> {
+                constexpr static int const value = K;
             };
 
             /*!
              * @brief exploder_step obtains an output value represented in OutputEndianness endianness
-             * from an input value represented in InputEndianness endianness when k output bits
+             * from an input value represented in InputEndianness endianness when K output bits
              * have already been processed. It uses unit_reverser and bit_reverser to deal with the
              * order of units and bits in the output value, respectively. Shift constant is determined
              * by the exploder_shift trait.
@@ -111,13 +111,13 @@ namespace nil {
              * @tparam UnitBits
              * @tparam InputBits
              * @tparam OutputBits
-             * @tparam k
+             * @tparam K
              */
             template<typename InputEndianness, typename OutputEndianness, int UnitBits, int InputBits, int OutputBits,
-                     int k>
+                     int K>
             struct exploder_step {
                 constexpr static int const shift =
-                    exploder_shift<InputEndianness, UnitBits, InputBits, OutputBits, k>::value;
+                    exploder_shift<InputEndianness, UnitBits, InputBits, OutputBits, K>::value;
 
                 template<typename InputValue, typename OutputIterator>
                 inline static void step(InputValue const &in, OutputIterator &out) {
@@ -132,9 +132,9 @@ namespace nil {
             /*!
              * @brief exploder forms a sequence of output values represented in OutputEndianness endianness
              * from an input value represented in InputEndianness endianness. The function explode is
-             * invoked recursively, and the parameter k is used to track the number of already processed
+             * invoked recursively, and the parameter K is used to track the number of already processed
              * output values derived from the input value. The recursion ends when all elements the input
-             * value can hold have already been processed, i.e. when k == InputBits.
+             * value can hold have already been processed, i.e. when K == InputBits.
              *
              * @ingroup exploder
              *
@@ -142,14 +142,14 @@ namespace nil {
              * @tparam OutputEndianness
              * @tparam InputBits
              * @tparam OutputBits
-             * @tparam k
+             * @tparam K
              */
-            template<typename InputEndianness, typename OutputEndianness, int InputBits, int OutputBits, int k = 0>
+            template<typename InputEndianness, typename OutputEndianness, int InputBits, int OutputBits, int K = 0>
             struct exploder;
 
             template<template<int> class InputEndian, template<int> class OutputEndian, int UnitBits, int InputBits,
-                     int OutputBits, int k>
-            struct exploder<InputEndian<UnitBits>, OutputEndian<UnitBits>, InputBits, OutputBits, k> {
+                     int OutputBits, int K>
+            struct exploder<InputEndian<UnitBits>, OutputEndian<UnitBits>, InputBits, OutputBits, K> {
 
                 // To keep the implementation managable, input and output sizes must
                 // be multiples or factors of the unit size.
@@ -160,8 +160,8 @@ namespace nil {
 
                 typedef InputEndian<UnitBits> InputEndianness;
                 typedef OutputEndian<UnitBits> OutputEndianness;
-                typedef exploder_step<InputEndianness, OutputEndianness, UnitBits, InputBits, OutputBits, k> step_type;
-                typedef exploder<InputEndianness, OutputEndianness, InputBits, OutputBits, k + OutputBits> next_type;
+                typedef exploder_step<InputEndianness, OutputEndianness, UnitBits, InputBits, OutputBits, K> step_type;
+                typedef exploder<InputEndianness, OutputEndianness, InputBits, OutputBits, K + OutputBits> next_type;
 
                 template<typename InputValue, typename OutIter>
                 inline static void explode(InputValue const &x, OutIter &out) {

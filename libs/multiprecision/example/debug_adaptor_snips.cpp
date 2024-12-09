@@ -12,7 +12,7 @@ void t1() {
     //=#include <nil/crypto3/multiprecision/debug_adaptor.hpp>
     //=#include <nil/crypto3/multiprecision/cpp_dec_float.hpp>
 
-    using namespace nil::crypto3::multiprecision;
+    using namespace boost::multiprecision;
 
     typedef number<debug_adaptor<cpp_dec_float<50>>> fp_type;
 

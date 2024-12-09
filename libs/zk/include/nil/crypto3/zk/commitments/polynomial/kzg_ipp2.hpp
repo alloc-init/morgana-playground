@@ -200,7 +200,7 @@ namespace nil {
                     template<typename GroupType>
                     using opening_type = std::pair<typename GroupType::value_type, typename GroupType::value_type>;
 
-                    /// Both commitment outputs a pair of $F_q^k$ element.
+                    /// Both commitment outputs a pair of $F_q^K$ element.
                     using output_type =
                         std::pair<typename CurveType::gt_type::value_type, typename CurveType::gt_type::value_type>;
 

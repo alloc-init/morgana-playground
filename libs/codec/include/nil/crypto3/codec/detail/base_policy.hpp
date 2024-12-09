@@ -33,11 +33,11 @@
 #include <boost/container/small_vector.hpp>
 
 #include <boost/multiprecision/cpp_int.hpp>
-#include <nil/crypto3/multiprecision/integer.hpp>
+#include <boost/multiprecision/integer.hpp>
 
 #include <nil/crypto3/detail/inline_variable.hpp>
 
-using namespace nil::crypto3::multiprecision;
+using namespace boost::multiprecision;
 
 namespace nil {
     namespace crypto3 {
@@ -161,7 +161,7 @@ namespace nil {
                     CRYPTO3_INLINE_VARIABLE(constants_type, constants,
                                             ({'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
                                               'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-                                              'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+                                              'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'K', 'l', 'm',
                                               'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
                                               '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '/'}));
 
@@ -270,7 +270,7 @@ namespace nil {
                     CRYPTO3_INLINE_VARIABLE(constants_type, constants,
                                             ({'1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F',
                                               'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W',
-                                              'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'm',
+                                              'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'K', 'm',
                                               'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'}));
 
                     CRYPTO3_INLINE_VARIABLE(inverted_constants_type, inverted_constants,

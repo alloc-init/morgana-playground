@@ -57,7 +57,7 @@ namespace std {
 using namespace nil::crypto3;
 
 #ifdef CRYPTO3_VDF_BOOST
-using namespace nil::crypto3::multiprecision;
+using namespace boost::multiprecision;
 #endif
 
 constexpr static const std::size_t default_chia_itr = 2097152;

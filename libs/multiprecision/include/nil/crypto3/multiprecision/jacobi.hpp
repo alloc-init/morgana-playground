@@ -25,8 +25,9 @@ namespace boost {
          * @return (n / m)
          */
         template<typename Backend, expression_template_option ExpressionTemplates>
-        BOOST_MP_CXX14_CONSTEXPR typename boost::enable_if_c<number_category<Backend>::value == number_kind_integer, int>::type
-            jacobi(const number<Backend, ExpressionTemplates>& a, const number<Backend, ExpressionTemplates>& n) {
+        BOOST_MP_CXX14_CONSTEXPR typename boost::enable_if_c<
+                number_category<Backend>::value == number_kind_integer, int>::type
+        jacobi(const number<Backend, ExpressionTemplates> &a, const number<Backend, ExpressionTemplates> &n) {
             return backends::eval_jacobi(a.backend(), n.backend());
         }
     }    // namespace multiprecision

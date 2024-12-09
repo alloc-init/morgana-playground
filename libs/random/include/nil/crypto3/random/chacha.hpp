@@ -71,11 +71,11 @@ namespace nil {
              * not fast enough.
              */
             template<typename StreamCipher = stream::chacha<64, 128, 20>,
-                     typename MessageAuthenticationCode = mac::hmac<hashes::sha2<256>>>
+                    typename MessageAuthenticationCode = mac::hmac<hashes::sha2<256>>>
             struct chacha : private boost::noncopyable {
                 typedef StreamCipher stream_cipher_type;
                 typedef MessageAuthenticationCode mac_type;
-                typedef typename mac_type::key_type key_type;
+                typedef mac::mac_key<mac_type> key_type;
 
                 typedef std::vector<std::uint8_t> result_type;
 
@@ -87,22 +87,24 @@ namespace nil {
                 static BOOST_CONSTEXPR std::size_t min BOOST_PREVENT_MACRO_SUBSTITUTION() {
                     return 0;
                 }
+
                 /** Returns the largest value that the \random_device can produce. */
                 static BOOST_CONSTEXPR std::size_t max BOOST_PREVENT_MACRO_SUBSTITUTION() {
                     return ~0u;
                 }
 
                 /** Constructs a @c random_device, optionally using the default device. */
-                BOOST_RANDOM_DECL chacha() : cnt(0) {
+                BOOST_RANDOM_DECL chacha() : cnt(0), mac_key({0}) {
                     mac_key.fill(0);
                 }
+
                 /**
                  * Constructs a @c random_device, optionally using the given token as an
                  * access specification (for example, a URL) to some implementation-defined
                  * service for monitoring a stochastic process.
                  */
                 template<typename SeedSinglePassRange>
-                BOOST_RANDOM_DECL explicit chacha(const SeedSinglePassRange &token) : cnt(0) {
+                BOOST_RANDOM_DECL explicit chacha(const SeedSinglePassRange &token) : cnt(0), mac_key({0}) {
                     mac_key.fill(0);
                 }
 
@@ -122,7 +124,7 @@ namespace nil {
                     update(first, last);
 
                     if (CHAR_BIT * std::distance(first, last) *
-                            sizeof(typename std::iterator_traits<InputIterator>::value_type) >=
+                        sizeof(typename std::iterator_traits<InputIterator>::value_type) >=
                         reseed_interval) {
                         cnt = 0;
                     }

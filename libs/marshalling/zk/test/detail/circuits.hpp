@@ -83,8 +83,8 @@ namespace nil {
                 //  0  |  --  |  x  |  y  |  z  |   0   |   0   |
                 //  1  | ADD  |  x  |  y  |  z  |   1   |   0   |
                 // ... | ADD  |  x  |  y  |  z  |   1   |   0   |
-                // k-2 | MUL  |  x  |  y  |  z  |   0   |   1   |
-                // k-1 | MUL  |  x  |  y  |  z  |   0   |   1   |
+                // K-2 | MUL  |  x  |  y  |  z  |   0   |   1   |
+                // K-1 | MUL  |  x  |  y  |  z  |   0   |   1   |
                 //
                 // ADD: x + y = z
                 // MUL: x * y = z
@@ -216,8 +216,8 @@ namespace nil {
                 //  0  |  --  |  x  |  y  |  z  |   p1   |   0   |   0   |
                 //  1  | ADD  |  x  |  y  |  z  |   0    |   1   |   0   |
                 // ... | ADD  |  x  |  y  |  z  |   0    |   1   |   0   |
-                // k-2 | MUL  |  x  |  y  |  z  |   0    |   0   |   1   |
-                // k-1 | MUL  |  x  |  y  |  z  |   0    |   0   |   1   |
+                // K-2 | MUL  |  x  |  y  |  z  |   0    |   0   |   1   |
+                // K-1 | MUL  |  x  |  y  |  z  |   0    |   0   |   1   |
                 //
                 // ADD: x + y = z, copy(prev(z), y)
                 // MUL: x * y + prev(x) = z, copy(p1u, y)
@@ -643,8 +643,8 @@ namespace nil {
                 //  0  |  --  |  f(0)   |   a    |   0   |
                 //  1  | FIB  |  f(1)   |   b    |   1   |
                 // ... | FIB  |         |   0    |   1   |
-                // k-2 | FIB  |  f(k-2) |   0    |   0   |
-                // k-1 |  --  |  f(k-1) |   0    |   0   |
+                // K-2 | FIB  |  f(K-2) |   0    |   0   |
+                // K-1 |  --  |  f(K-1) |   0    |   0   |
                 //
                 // public input is copy constrainted to f(0) and f(1)
                 // FIB: w_0(i-1) + w_0(i) == w_0(i+1)

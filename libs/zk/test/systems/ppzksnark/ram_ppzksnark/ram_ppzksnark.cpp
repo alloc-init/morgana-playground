@@ -40,7 +40,7 @@ using namespace nil::crypto3::zk::snark;
 
 template<typename CurveType>
 void test_ram_ppzksnark(const std::size_t w,
-                        const std::size_t k,
+                        const std::size_t K,
                         const std::size_t program_size,
                         const std::size_t input_size,
                         const std::size_t time_bound) {
@@ -48,7 +48,7 @@ void test_ram_ppzksnark(const std::size_t w,
     const std::size_t boot_trace_size_bound = program_size + input_size;
     const bool satisfiable = true;
 
-    const ram_ppzksnark_architecture_params<CurveType> ap(w, k);
+    const ram_ppzksnark_architecture_params<CurveType> ap(w, K);
     const ram_example<machine_ppT> example =
         gen_ram_example_complex<machine_ppT>(ap, boot_trace_size_bound, time_bound, satisfiable);
 

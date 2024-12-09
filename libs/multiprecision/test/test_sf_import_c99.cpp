@@ -2125,9 +2125,9 @@ void test_c99_appendix_F_tgammaq_addon_for_float128() {
 
         T tgamma_control(tgamma_third);
 
-        for (unsigned int k = 0U; k < static_cast<unsigned int>(n); ++k) {
+        for (unsigned int K = 0U; K < static_cast<unsigned int>(n); ++K) {
             tgamma_control *= -3;
-            tgamma_control /= ((3U * (k + 1U)) - 1U);
+            tgamma_control /= ((3U * (K + 1U)) - 1U);
         }
 
         BOOST_CHECK_CLOSE_FRACTION(tgamma_val, tgamma_control, tgamma_tol);
@@ -2139,9 +2139,9 @@ void test_c99_appendix_F_tgammaq_addon_for_float128() {
 
         T tgamma_control(tgamma_third);
 
-        for (unsigned int k = 0U; k < n; ++k) {
+        for (unsigned int K = 0U; K < n; ++K) {
             tgamma_control /= 3;
-            tgamma_control *= ((3U * (k + 1U)) - 2U);
+            tgamma_control *= ((3U * (K + 1U)) - 2U);
         }
 
         BOOST_CHECK_CLOSE_FRACTION(tgamma_val, tgamma_control, tgamma_tol);

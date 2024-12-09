@@ -13,7 +13,7 @@
     "osx": "10.7"
   },
   "source": {
-    "git": "https://github.com/nilfoundation/kdf.git",
+    "git": "https://github.com/alloc-init/kdf.git",
     "branch": "master"
   },
   "xcconfig": {

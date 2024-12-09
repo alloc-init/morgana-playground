@@ -22,14 +22,14 @@
 // SOFTWARE.
 //---------------------------------------------------------------------------//
 
-#ifndef CRYPTO3_ALGEBRA_TOTIENT_HPP
-#define CRYPTO3_ALGEBRA_TOTIENT_HPP
+#ifndef CRYPTO3_MATH_TOTIENT_HPP
+#define CRYPTO3_MATH_TOTIENT_HPP
 
 #include <nil/crypto3/algebra/primes.hpp>
 
 namespace nil {
     namespace crypto3 {
-        namespace algebra {
+        namespace math {
             /**
              * Returns the totient value phi of a number n.
              *
@@ -72,7 +72,7 @@ namespace nil {
 
                 return result;
             }
-        }    // namespace algebra
-    }        // namespace crypto3
-}    // namespace nil
+        } // namespace algebra
+    } // namespace crypto3
+} // namespace nil
 #endif    // CRYPTO3_ALGEBRA_RANDOM_ELEMENT_HPP

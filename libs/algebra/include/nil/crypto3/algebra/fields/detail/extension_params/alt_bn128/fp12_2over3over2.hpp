@@ -32,17 +32,14 @@
 #include <nil/crypto3/algebra/fields/fp2.hpp>
 
 
-
 namespace nil {
     namespace crypto3 {
         namespace algebra {
             namespace fields {
-
                 template<typename BaseField>
                 class fp12_2over3over2;
 
                 namespace detail {
-
                     template<typename BaseField>
                     class fp12_2over3over2_extension_params;
 
@@ -53,8 +50,7 @@ namespace nil {
 
                     template<std::size_t Version>
                     class fp12_2over3over2_extension_params<fields::alt_bn128<Version>>
-                        : public params<fields::alt_bn128<Version>> {
-
+                            : public params<fields::alt_bn128<Version>> {
                         typedef fields::alt_bn128<Version> base_field_type;
                         typedef params<base_field_type> policy_type;
 
@@ -116,7 +112,8 @@ namespace nil {
                             0x59E26BCEA0D48BACD4F263F1ACDB5C4F5763473177FFFFFF_cppui_modular191,
                             0x00,
                             0x290C83BF3D14634DB120850727BB392D6A86D50BD34B19B929BC44B896723B38_cppui_modular254,
-                            0x23BD9E3DA9136A739F668E1ADC9EF7F0F575EC93F71A8DF953C846338C32A1AB_cppui_modular254};
+                            0x23BD9E3DA9136A739F668E1ADC9EF7F0F575EC93F71A8DF953C846338C32A1AB_cppui_modular254
+                        };
 
                         constexpr static const non_residue_type non_residue = non_residue_type(0x09, 0x01);
                     };
@@ -124,18 +121,17 @@ namespace nil {
                     template<std::size_t Version>
                     constexpr typename fp12_2over3over2_extension_params<
                         alt_bn128_base_field<Version>>::non_residue_type const
-                        fp12_2over3over2_extension_params<alt_bn128_base_field<Version>>::non_residue;
+                    fp12_2over3over2_extension_params<alt_bn128_base_field<Version>>::non_residue;
 
                     template<std::size_t Version>
                     constexpr std::array<
                         typename fp12_2over3over2_extension_params<alt_bn128_base_field<Version>>::integral_type,
                         12 * 2> const
-                        fp12_2over3over2_extension_params<alt_bn128_base_field<Version>>::Frobenius_coeffs_c1;
-
-                }    // namespace detail
-            }        // namespace fields
-        }            // namespace algebra
-    }                // namespace crypto3
-}    // namespace nil
+                    fp12_2over3over2_extension_params<alt_bn128_base_field<Version>>::Frobenius_coeffs_c1;
+                } // namespace detail
+            } // namespace fields
+        } // namespace algebra
+    } // namespace crypto3
+} // namespace nil
 
 #endif    // CRYPTO3_ALGEBRA_FIELDS_ALT_BN128_FP12_2OVER3OVER2_EXTENSION_PARAMS_HPP

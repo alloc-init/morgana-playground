@@ -25,8 +25,8 @@ macro(define_threshold_test name)
     set_target_properties(threshold_${name}_test PROPERTIES CXX_STANDARD 17)
 endmacro()
 
-set(TESTS_NAMES 
-#threshold
+set(TESTS_NAMES
+        threshold
 )
 
 foreach(TEST_NAME ${TESTS_NAMES})

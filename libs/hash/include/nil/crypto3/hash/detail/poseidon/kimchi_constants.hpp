@@ -20,7 +20,7 @@ namespace nil {
         namespace hashes {
             namespace detail {
 
-                template<typename poseidon_policy_type>
+                template<typename PolicyType>
                 struct poseidon_kimchi_constants_data;
 
                 // All kimchi constants are taken from the Mina implementation(https://github.com/o1-labs/proof-systems/blob/a36c088b3e81d17f5720abfff82a49cf9cb1ad5b/poseidon/src/pasta/) and converted from dec to hex.
@@ -34,7 +34,8 @@ namespace nil {
                     constexpr static const std::size_t state_words = 3;
                     constexpr static const std::size_t round_count = 55;
 
-                    constexpr static const std::array<std::array<typename FieldType::value_type, state_words>, state_words> mds_matrix =
+                    typedef std::array<std::array<typename FieldType::value_type, state_words>, state_words> mds_matrix_type;
+                    constexpr static const mds_matrix_type mds_matrix =
                             {{
                                      {{
                                               0x1a9bd250757e29ef4959b9bef59b4e60e20a56307d6491e7b7ea1fac679c7903_cppui_modular253,
@@ -54,7 +55,8 @@ namespace nil {
                              }};
 
 
-                    constexpr static const std::array<std::array<typename FieldType::value_type, state_words>, round_count> round_constants =
+                    typedef std::array<std::array<typename FieldType::value_type, state_words>, round_count> round_constants_type;
+                    constexpr static const round_constants_type round_constants =
                             {{
                                      {{
                                               0x2ec559cd1a1f2f6889fc8ae5f07757f202b364429677c8ff6603fd6d93659b47_cppui_modular253,
@@ -641,11 +643,11 @@ namespace nil {
                              }};
                 };
 
-                template<typename poseidon_policy_type>
+                template<typename PolicyType>
                 struct poseidon_kimchi_constants_data
                         : poseidon_kimchi_constants_data_base<
-                                typename poseidon_policy_type::field_type,
-                                poseidon_policy_type::block_words> {
+                                typename PolicyType::field_type,
+                                PolicyType::block_words> {
                 };
 
             }    // namespace detail

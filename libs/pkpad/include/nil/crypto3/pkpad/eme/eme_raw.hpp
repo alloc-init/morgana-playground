@@ -31,8 +31,8 @@ namespace nil {
     namespace crypto3 {
         namespace pubkey {
             namespace padding {
-                template<typename Scheme, typename Hash>
-                class eme_raw : public eme<Scheme, Hash> {
+                template<typename SchemeType, typename HashType>
+                class eme_raw : public eme<SchemeType, HashType> {
                 public:
                     virtual size_t maximum_input_size(std::size_t key_bits) const override {
                         return key_bits / 8;

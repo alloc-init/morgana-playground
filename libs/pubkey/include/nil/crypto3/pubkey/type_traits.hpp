@@ -34,65 +34,74 @@
 namespace nil {
     namespace crypto3 {
         namespace pubkey {
-
             using namespace boost::mpl::placeholders;
 
             BOOST_TTI_TRAIT_HAS_STATIC_MEMBER_DATA(has_eddsa_context, context)
+
             template<typename T>
             struct is_eddsa_params {
                 static constexpr bool value = has_eddsa_context<T, const typename T::context_type>::value;
                 typedef T type;
             };
 
-            template<typename PublicParams, template<typename, typename> class BlsVersion,
-                     template<typename> class BlsScheme, typename CurveType>
+            template<typename PublicParams, template<typename, typename> class VersionType,
+                     template<typename> class SchemeType, typename CurveType>
             struct bls;
 
             template<typename T>
-            struct is_bls : std::bool_constant<false> { };
+            struct is_bls : std::bool_constant<false> {
+            };
 
-            template<typename PublicParams, template<typename, typename> class BlsVersion,
-                     template<typename> class BlsScheme, typename CurveType>
-            struct is_bls<bls<PublicParams, BlsVersion, BlsScheme, CurveType>> : std::bool_constant<true> { };
+            template<typename PublicParams, template<typename, typename> class VersionType,
+                     template<typename> class SchemeType, typename CurveType>
+            struct is_bls<bls<PublicParams, VersionType, SchemeType, CurveType>> : std::bool_constant<true> {
+            };
 
-            template<typename Group>
+            template<typename GroupType>
             struct shamir_sss;
 
-            template<typename Group>
+            template<typename GroupType>
             struct feldman_sss;
 
-            template<typename Group>
+            template<typename GroupType>
             struct pedersen_dkg;
 
-            template<typename Group>
+            template<typename GroupType>
             struct weighted_shamir_sss;
 
             template<typename T>
-            struct is_shamir_sss : std::bool_constant<false> { };
+            struct is_shamir_sss : std::bool_constant<false> {
+            };
 
-            template<typename Group>
-            struct is_shamir_sss<shamir_sss<Group>> : std::bool_constant<true> { };
-
-            template<typename T>
-            struct is_feldman_sss : std::bool_constant<false> { };
-
-            template<typename Group>
-            struct is_feldman_sss<feldman_sss<Group>> : std::bool_constant<true> { };
+            template<typename GroupType>
+            struct is_shamir_sss<shamir_sss<GroupType>> : std::bool_constant<true> {
+            };
 
             template<typename T>
-            struct is_pedersen_dkg : std::bool_constant<false> { };
+            struct is_feldman_sss : std::bool_constant<false> {
+            };
 
-            template<typename Group>
-            struct is_pedersen_dkg<pedersen_dkg<Group>> : std::bool_constant<true> { };
+            template<typename GroupType>
+            struct is_feldman_sss<feldman_sss<GroupType>> : std::bool_constant<true> {
+            };
 
             template<typename T>
-            struct is_weighted_shamir_sss : std::bool_constant<false> { };
+            struct is_pedersen_dkg : std::bool_constant<false> {
+            };
 
-            template<typename Group>
-            struct is_weighted_shamir_sss<weighted_shamir_sss<Group>> : std::bool_constant<true> { };
+            template<typename GroupType>
+            struct is_pedersen_dkg<pedersen_dkg<GroupType>> : std::bool_constant<true> {
+            };
 
-        }    // namespace pubkey
-    }        // namespace crypto3
-}    // namespace nil
+            template<typename T>
+            struct is_weighted_shamir_sss : std::bool_constant<false> {
+            };
+
+            template<typename GroupType>
+            struct is_weighted_shamir_sss<weighted_shamir_sss<GroupType>> : std::bool_constant<true> {
+            };
+        } // namespace pubkey
+    } // namespace crypto3
+} // namespace nil
 
 #endif    // CRYPTO3_PUBKEY_TYPE_TRAITS_HPP

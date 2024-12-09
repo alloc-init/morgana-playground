@@ -35,13 +35,13 @@ namespace nil {
         namespace hashes {
             namespace detail {
                 /// See definition of \p c in https://zips.z.cash/protocol/protocol.pdf#concretepedersenhash
-                template<typename Field>
+                template<typename FieldType>
                 constexpr std::size_t chunks_per_base_point(std::size_t chunk_bits) {
-                    typename Field::extended_integral_type two(2);
+                    typename FieldType::extended_integral_type two(2);
                     std::size_t c = 1;
                     std::size_t prev_c = 0;
                     /// (Fr - 1) / 2
-                    typename Field::extended_integral_type upper_bound = (Field::modulus - 1) / 2;
+                    typename FieldType::extended_integral_type upper_bound = (FieldType::modulus - 1) / 2;
                     // TODO: first multiplier should be verified
                     /// (chunk_bits + 1) * ((2^(c * (chunk_bits + 1)) - 1) / (2^(chunk_bits + 1) - 1))
                     auto get_test_value = [&](auto i) {

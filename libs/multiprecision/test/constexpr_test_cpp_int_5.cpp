@@ -111,10 +111,10 @@ int main() {
         multiply(nc, si1, si2);
         BOOST_CHECK_EQUAL(nc, i1);
 
-        constexpr std::int64_t k = big_mul<std::int64_t>(i, j);
+        constexpr std::int64_t K = big_mul<std::int64_t>(i, j);
         std::int64_t ii;
         boost::multiprecision::multiply(ii, i, j);
-        BOOST_CHECK_EQUAL(ii, k);
+        BOOST_CHECK_EQUAL(ii, K);
     }
     // Add:
     {
@@ -123,10 +123,10 @@ int main() {
         add(nc, si1, si2);
         BOOST_CHECK_EQUAL(nc, i1);
 
-        constexpr std::int64_t k = big_add<std::int64_t>(i, j);
+        constexpr std::int64_t K = big_add<std::int64_t>(i, j);
         std::int64_t ii;
         boost::multiprecision::add(ii, i, j);
-        BOOST_CHECK_EQUAL(ii, k);
+        BOOST_CHECK_EQUAL(ii, K);
     }
     // Subtract:
     {
@@ -135,10 +135,10 @@ int main() {
         subtract(nc, si1, -si2);
         BOOST_CHECK_EQUAL(nc, i1);
 
-        constexpr std::int64_t k = big_sub<std::int64_t>(i, -j);
+        constexpr std::int64_t K = big_sub<std::int64_t>(i, -j);
         std::int64_t ii;
         boost::multiprecision::subtract(ii, i, -j);
-        BOOST_CHECK_EQUAL(ii, k);
+        BOOST_CHECK_EQUAL(ii, K);
     }
     // divide_qr:
     {
@@ -147,10 +147,10 @@ int main() {
         divide_qr(si1, si2, nc, nc2);
         BOOST_CHECK_EQUAL(nc, i1);
 
-        constexpr std::int64_t k = div_qr_d(i, j);
+        constexpr std::int64_t K = div_qr_d(i, j);
         std::int32_t ii, ij;
         boost::multiprecision::divide_qr(i, j, ii, ij);
-        BOOST_CHECK_EQUAL(ii, k);
+        BOOST_CHECK_EQUAL(ii, K);
     }
     // divide_qr:
     {
@@ -159,10 +159,10 @@ int main() {
         divide_qr(si1, si2, nc, nc2);
         BOOST_CHECK_EQUAL(nc2, i1);
 
-        constexpr std::int64_t k = div_qr_r(i, j);
+        constexpr std::int64_t K = div_qr_r(i, j);
         std::int32_t ii, ij;
         boost::multiprecision::divide_qr(i, j, ii, ij);
-        BOOST_CHECK_EQUAL(ij, k);
+        BOOST_CHECK_EQUAL(ij, K);
     }
     // integer_modulus:
     {
@@ -171,10 +171,10 @@ int main() {
         int r = integer_modulus(nc, 67);
         BOOST_CHECK_EQUAL(r, i1);
 
-        constexpr std::int32_t k = boost::multiprecision::integer_modulus(i, j);
+        constexpr std::int32_t K = boost::multiprecision::integer_modulus(i, j);
         std::int32_t ii(i);
         r = boost::multiprecision::integer_modulus(ii, j);
-        BOOST_CHECK_EQUAL(r, k);
+        BOOST_CHECK_EQUAL(r, K);
     }
     // powm:
     {
@@ -183,10 +183,10 @@ int main() {
         nc = powm(nc, si2, si2);
         BOOST_CHECK_EQUAL(nc, i1);
 
-        constexpr std::int32_t k = boost::multiprecision::powm(i, j, j);
+        constexpr std::int32_t K = boost::multiprecision::powm(i, j, j);
         std::int32_t ii(i);
         ii = boost::multiprecision::powm(ii, j, j);
-        BOOST_CHECK_EQUAL(ii, k);
+        BOOST_CHECK_EQUAL(ii, K);
     }
     // lsb:
     {
@@ -195,10 +195,10 @@ int main() {
         int nci = lsb(nc);
         BOOST_CHECK_EQUAL(nci, i1);
 
-        constexpr std::int32_t k = boost::multiprecision::lsb(i);
+        constexpr std::int32_t K = boost::multiprecision::lsb(i);
         std::int32_t ii(i);
         ii = boost::multiprecision::lsb(ii);
-        BOOST_CHECK_EQUAL(ii, k);
+        BOOST_CHECK_EQUAL(ii, K);
     }
     // msb:
     {
@@ -207,18 +207,18 @@ int main() {
         int nci = msb(nc);
         BOOST_CHECK_EQUAL(nci, i1);
 
-        constexpr std::int32_t k = boost::multiprecision::msb(i);
+        constexpr std::int32_t K = boost::multiprecision::msb(i);
         std::int32_t ii(i);
         ii = boost::multiprecision::msb(ii);
-        BOOST_CHECK_EQUAL(ii, k);
+        BOOST_CHECK_EQUAL(ii, K);
     }
     // bit_test:
     {
         constexpr bool b = bit_test(si1, 1);
         static_assert(b);
 
-        constexpr bool k = boost::multiprecision::bit_test(i, 1);
-        static_assert(k);
+        constexpr bool K = boost::multiprecision::bit_test(i, 1);
+        static_assert(K);
     }
     // bit_set:
     {
@@ -256,9 +256,9 @@ int main() {
         BOOST_CHECK_EQUAL(nc, r);
 
         constexpr int jj = boost::multiprecision::sqrt(i);
-        int k = i;
-        k = boost::multiprecision::sqrt(k);
-        BOOST_CHECK_EQUAL(jj, k);
+        int K = i;
+        K = boost::multiprecision::sqrt(K);
+        BOOST_CHECK_EQUAL(jj, K);
     }
     {
         // swap:
@@ -268,10 +268,10 @@ int main() {
     {
         // gcd:
         constexpr int_backend i(si1), j(si1 / 3);
-        constexpr int_backend k = gcd(i, j);
+        constexpr int_backend K = gcd(i, j);
 
         int_backend ii(i), jj(j);
-        BOOST_CHECK_EQUAL(k, gcd(ii, jj));
+        BOOST_CHECK_EQUAL(K, gcd(ii, jj));
 
         constexpr unsigned_backend ui(i), uj(j);
         constexpr unsigned_backend uk = gcd(ui, uj);

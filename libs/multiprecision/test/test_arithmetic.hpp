@@ -656,7 +656,7 @@ void test_integer_ops(const std::integral_constant<int, boost::multiprecision::n
    //
    int i = 1020304;
    int j = 56789123;
-   int k = 4523187;
+   int K = 4523187;
    a     = i;
    b     = j;
    c     = a;
@@ -669,15 +669,15 @@ void test_integer_ops(const std::integral_constant<int, boost::multiprecision::n
    c &= a + b;
    BOOST_CHECK_EQUAL(c, (i & (i + j)));
    BOOST_CHECK_EQUAL((a & b), (i & j));
-   c = k;
-   a = a & (b + k);
-   BOOST_CHECK_EQUAL(a, (i & (j + k)));
+   c = K;
+   a = a & (b + K);
+   BOOST_CHECK_EQUAL(a, (i & (j + K)));
    a = i;
-   a = (b + k) & a;
-   BOOST_CHECK_EQUAL(a, (i & (j + k)));
+   a = (b + K) & a;
+   BOOST_CHECK_EQUAL(a, (i & (j + K)));
    a = i;
-   c = a & b & k;
-   BOOST_CHECK_EQUAL(c, (i & j & k));
+   c = a & b & K;
+   BOOST_CHECK_EQUAL(c, (i & j & K));
    c = a;
    c &= (c + b);
    BOOST_CHECK_EQUAL(c, (i & (i + j)));
@@ -698,15 +698,15 @@ void test_integer_ops(const std::integral_constant<int, boost::multiprecision::n
    c |= a + b;
    BOOST_CHECK_EQUAL(c, (i | (i + j)));
    BOOST_CHECK_EQUAL((a | b), (i | j));
-   c = k;
-   a = a | (b + k);
-   BOOST_CHECK_EQUAL(a, (i | (j + k)));
+   c = K;
+   a = a | (b + K);
+   BOOST_CHECK_EQUAL(a, (i | (j + K)));
    a = i;
-   a = (b + k) | a;
-   BOOST_CHECK_EQUAL(a, (i | (j + k)));
+   a = (b + K) | a;
+   BOOST_CHECK_EQUAL(a, (i | (j + K)));
    a = i;
-   c = a | b | k;
-   BOOST_CHECK_EQUAL(c, (i | j | k));
+   c = a | b | K;
+   BOOST_CHECK_EQUAL(c, (i | j | K));
    c = a;
    c |= (c + b);
    BOOST_CHECK_EQUAL(c, (i | (i + j)));
@@ -725,15 +725,15 @@ void test_integer_ops(const std::integral_constant<int, boost::multiprecision::n
    c ^= a + b;
    BOOST_CHECK_EQUAL(c, (i ^ (i + j)));
    BOOST_CHECK_EQUAL((a ^ b), (i ^ j));
-   c = k;
-   a = a ^ (b + k);
-   BOOST_CHECK_EQUAL(a, (i ^ (j + k)));
+   c = K;
+   a = a ^ (b + K);
+   BOOST_CHECK_EQUAL(a, (i ^ (j + K)));
    a = i;
-   a = (b + k) ^ a;
-   BOOST_CHECK_EQUAL(a, (i ^ (j + k)));
+   a = (b + K) ^ a;
+   BOOST_CHECK_EQUAL(a, (i ^ (j + K)));
    a = i;
-   c = a ^ b ^ k;
-   BOOST_CHECK_EQUAL(c, (i ^ j ^ k));
+   c = a ^ b ^ K;
+   BOOST_CHECK_EQUAL(c, (i ^ j ^ K));
    c = a;
    c ^= (c + b);
    BOOST_CHECK_EQUAL(c, (i ^ (i + j)));
@@ -742,7 +742,7 @@ void test_integer_ops(const std::integral_constant<int, boost::multiprecision::n
 
    a = i;
    b = j;
-   c = k;
+   c = K;
    //
    // Non-member functions:
    //

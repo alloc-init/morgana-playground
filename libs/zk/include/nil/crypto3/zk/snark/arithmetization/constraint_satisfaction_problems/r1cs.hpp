@@ -113,7 +113,7 @@ namespace nil {
                 /**
                  * A system of R1CS constraints looks like
                  *
-                 *     { < A_k , X > * < B_k , X > = < C_k , X > }_{k=1}^{n}  .
+                 *     { < A_k , X > * < B_k , X > = < C_k , X > }_{K=1}^{n}  .
                  *
                  * In other words, the system is satisfied if and only if there exist a
                  * USCS variable assignment for which each R1CS constraint is satisfied.

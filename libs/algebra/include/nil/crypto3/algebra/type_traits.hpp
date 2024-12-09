@@ -57,22 +57,35 @@ namespace nil {
             BOOST_TTI_HAS_TYPE(group_type)
 
             BOOST_TTI_HAS_STATIC_MEMBER_DATA(value_bits)
+
             BOOST_TTI_HAS_STATIC_MEMBER_DATA(modulus_bits)
+
             BOOST_TTI_HAS_STATIC_MEMBER_DATA(base_field_modulus)
+
             BOOST_TTI_HAS_STATIC_MEMBER_DATA(scalar_field_modulus)
+
             BOOST_TTI_HAS_STATIC_MEMBER_DATA(arity)
+
             BOOST_TTI_HAS_STATIC_MEMBER_DATA(p)
+
             BOOST_TTI_HAS_STATIC_MEMBER_DATA(q)
 
             BOOST_TTI_HAS_FUNCTION(to_affine)
+
             BOOST_TTI_HAS_FUNCTION(to_special)
+
             BOOST_TTI_HAS_FUNCTION(is_special)
 
             BOOST_TTI_HAS_STATIC_MEMBER_FUNCTION(zero)
+
             BOOST_TTI_HAS_STATIC_MEMBER_FUNCTION(one)
+
             BOOST_TTI_HAS_FUNCTION(is_zero)
+
             BOOST_TTI_HAS_FUNCTION(is_well_formed)
+
             BOOST_TTI_HAS_FUNCTION(double_inplace)
+
             BOOST_TTI_HAS_FUNCTION(mixed_add)
 
             template<typename T>
@@ -95,10 +108,11 @@ namespace nil {
             template<typename T>
             struct is_field {
                 static const bool value =
-                    has_type_value_type<T>::value && has_static_member_data_value_bits<T, const std::size_t>::value &&
-                    has_type_integral_type<T>::value &&
-                    has_static_member_data_modulus_bits<T, const std::size_t>::value &&
-                    has_type_modular_type<T>::value && has_static_member_data_arity<T, const std::size_t>::value;
+                        has_type_value_type<T>::value &&
+                        has_static_member_data_value_bits<T, const std::size_t>::value &&
+                        has_type_integral_type<T>::value &&
+                        has_static_member_data_modulus_bits<T, const std::size_t>::value &&
+                        has_type_modular_type<T>::value && has_static_member_data_arity<T, const std::size_t>::value;
                 typedef T type;
             };
 
@@ -114,17 +128,29 @@ namespace nil {
             };
 
             template<typename T>
+            struct is_curve_element {
+                static const bool value =
+                        has_type_field_type<T>::value &&
+                        has_type_group_type<T>::value &&
+                        has_static_member_function_zero<T, T>::value &&
+                        has_static_member_function_one<T, T>::value &&
+                        has_function_is_zero<const T, bool>::value &&
+                        has_function_is_well_formed<const T, bool>::value &&
+                        has_function_double_inplace<T, void>::value;
+            };
+
+            template<typename T>
             struct is_group_element {
                 static const bool value =
-                    has_type_field_type<T>::value && has_type_group_type<T>::value &&
-                    has_static_member_function_zero<T, T>::value && has_static_member_function_one<T, T>::value &&
-                    has_function_is_zero<T, bool>::value && has_function_is_well_formed<T, bool>::value &&
-                    has_function_double_inplace<T, T&>::value;
+                        has_type_field_type<T>::value && has_type_group_type<T>::value &&
+                        has_static_member_function_zero<T, T>::value && has_static_member_function_one<T, T>::value &&
+                        has_function_is_zero<T, bool>::value && has_function_is_well_formed<T, bool>::value &&
+                        has_function_double_inplace<T, T &>::value;
             };
 
             template<typename T>
             struct has_mixed_add {
-                static const bool value = has_function_mixed_add<T, void, boost::mpl::vector<T const&>>::value;
+                static const bool value = has_function_mixed_add<T, void, boost::mpl::vector<T const &>>::value;
             };
 
             namespace curves {
@@ -247,26 +273,28 @@ namespace nil {
             template<typename T>
             struct is_g1_group_element {
                 static const bool value =
-                    boost::is_same<
-                        typename T::group_type::curve_type::template g1_type<typename T::coordinates, typename T::form>,
-                        typename T::group_type
-                    >::value;
+                        boost::is_same<
+                                typename T::group_type::curve_type::template g1_type<typename T::coordinates, typename T::form>,
+                                typename T::group_type
+                        >::value;
             };
 
 
             template<typename T>
             struct is_g2_group_element {
                 static const bool value =
-                    boost::is_same<
-                        typename T::group_type::curve_type::template g2_type<typename T::coordinates, typename T::form>,
-                        typename T::group_type
-                    >::value;
+                        boost::is_same<
+                                typename T::group_type::curve_type::template g2_type<typename T::coordinates, typename T::form>,
+                                typename T::group_type
+                        >::value;
             };
 
             template<typename T>
-            struct is_complex : std::false_type { };
+            struct is_complex : std::false_type {
+            };
             template<typename T>
-            struct is_complex<std::complex<T>> : std::true_type { };
+            struct is_complex<std::complex<T>> : std::true_type {
+            };
             template<typename T>
             constexpr bool is_complex_v = is_complex<T>::value;
 

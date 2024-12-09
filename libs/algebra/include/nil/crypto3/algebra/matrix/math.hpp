@@ -29,8 +29,6 @@
 
 #include <algorithm>
 
-#include <nil/crypto3/detail/assert.hpp>
-
 #include <nil/crypto3/algebra/vector/vector.hpp>
 #include <nil/crypto3/algebra/vector/math.hpp>
 
@@ -66,7 +64,8 @@ namespace nil {
              *  Computes the elementwise real of a matrix
              */
             template<typename T, std::size_t M, std::size_t N>
-            constexpr matrix<nil::crypto3::algebra::remove_complex_t<T>, M, N> real(const matrix<T, M, N> &m) {
+            constexpr matrix<typename remove_complex<T>::type, M, N> real(
+                const matrix<T, M, N> &m) {
                 return elementwise([](auto i) { return std::real(i); }, m);
             }
 
@@ -78,7 +77,7 @@ namespace nil {
              *  Computes the elementwise imag of a matrix
              */
             template<typename T, std::size_t M, std::size_t N>
-            constexpr matrix<nil::crypto3::algebra::remove_complex_t<T>, M, N> imag(const matrix<T, M, N> &m) {
+            constexpr matrix<typename remove_complex<T>::type, M, N> imag(const matrix<T, M, N> &m) {
                 return elementwise([](auto i) { return std::imag(i); }, m);
             }
 
@@ -127,7 +126,9 @@ namespace nil {
              */
             template<typename T, std::size_t M, std::size_t N>
             constexpr vector<T, N> vectmatmul(const vector<T, M> &v, const matrix<T, M, N> &m) {
-                return generate<N>([&v, &m](auto i) { return sum(v * m.column(i)); });
+                return generate<N>([&v, &m](auto i) {
+                    return sum(v * m.column(i));
+                });
             }
 
             /*!
@@ -138,7 +139,9 @@ namespace nil {
              */
             template<typename T, std::size_t M, std::size_t N>
             constexpr vector<T, M> matvectmul(const matrix<T, M, N> &m, const vector<T, N> &v) {
-                return generate<M>([&v, &m](auto i) { return sum(m.row(i) * v); });
+                return generate<M>([&v, &m](auto i) {
+                    return sum(m.row(i) * v);
+                });
             }
 
             /** @brief Computes the kronecker tensor product
@@ -212,19 +215,23 @@ namespace nil {
                     if (!negligible(m[i][j])) {
                         // Scale m_ij to 1
                         auto s = m[i][j];
-                        for (std::size_t jp = 0; jp < N; ++jp)
+                        for (std::size_t jp = 0; jp < N; ++jp) {
                             m[i][jp] /= s;
+                        }
                         det /= s;
 
                         // Eliminate other values in the column
                         for (std::size_t ip = 0; ip < M; ++ip) {
-                            if (ip == i)
+                            if (ip == i) {
                                 continue;
+                            }
                             if (!negligible(m[ip][j])) {
                                 auto s = m[ip][j];
-                                [&]() {    // wrap this in a lambda to get around a gcc bug
-                                    for (std::size_t jp = 0; jp < N; ++jp)
+                                [&]() {
+                                    // wrap this in a lambda to get around a gcc bug
+                                    for (std::size_t jp = 0; jp < N; ++jp) {
                                         m[ip][jp] -= s * m[i][jp];
+                                    }
                                 }();
                             }
                         }
@@ -328,9 +335,8 @@ namespace nil {
             }
 
             /** }@*/
-
-        }    // namespace algebra
-    }        // namespace crypto3
-}    // namespace nil
+        } // namespace algebra
+    } // namespace crypto3
+} // namespace nil
 
 #endif    // CRYPTO3_ALGEBRA_MATRIX_MATH_HPP

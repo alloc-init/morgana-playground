@@ -61,11 +61,11 @@ void fields_fp_basic_math_examples() {
     using policy_type = FpField;
     typedef typename policy_type::value_type value_type;
 
-    std::cout << "Field module value: " << policy_type::modulus << std::endl;
+    std::cout << "FieldType module value: " << policy_type::modulus << std::endl;
 
     value_type e1 = value_type(76749407), e2(44410867), e3 = value_type::one(), e4(121160274);
 
-    std::cout << "Field element values: " << std::endl;
+    std::cout << "FieldType element values: " << std::endl;
     std::cout << "e1 value: " << e1 << std::endl;
 
     std::cout << "e2 value: " << e2 << std::endl;
@@ -121,7 +121,7 @@ void fields_fp2_basic_math_examples() {
     using policy_type = Fp2Field;
     typedef typename policy_type::value_type value_type;
 
-    std::cout << "Field module value: " << policy_type::modulus << std::endl;
+    std::cout << "FieldType module value: " << policy_type::modulus << std::endl;
 
     value_type e1 = value_type(76749407, 44410867), e2(44410867, 1), e3 = value_type::one(), e4(121160274, 7);
 
@@ -131,7 +131,7 @@ void fields_fp2_basic_math_examples() {
 
     std::cout << "Non residue: " << e1.non_residue.data << std::endl;
 
-    std::cout << "Field element values: " << std::endl;
+    std::cout << "FieldType element values: " << std::endl;
     std::cout << "e1 value: " << e1 << std::endl;
 
     e1 += e2;
@@ -188,7 +188,7 @@ void fields_fp3_basic_math_examples() {
     using policy_type = Fp3Field;
     typedef typename policy_type::value_type value_type;
 
-    std::cout << "Field module value: " << policy_type::modulus << std::endl;
+    std::cout << "FieldType module value: " << policy_type::modulus << std::endl;
 
     value_type e1 = value_type(76749407, 44410867, 44410867), e2(44410867, 44410867, 1), e3 = value_type::one(),
                e4(121160274, 7, 121160274);
@@ -199,7 +199,7 @@ void fields_fp3_basic_math_examples() {
 
     std::cout << "Non residue: " << e1.non_residue.data << std::endl;
 
-    std::cout << "Field element values: " << std::endl;
+    std::cout << "FieldType element values: " << std::endl;
     std::cout << "e1 value: " << e1 << std::endl;
 
     e1 += e2;

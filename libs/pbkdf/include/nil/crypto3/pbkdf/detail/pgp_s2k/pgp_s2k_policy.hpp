@@ -31,9 +31,9 @@ namespace nil {
     namespace crypto3 {
         namespace pbkdf {
             namespace detail {
-                template<typename Hash>
+                template<typename HashType>
                 struct pgp_s2k_policy {
-                    typedef Hash hash_type;
+                    typedef HashType hash_type;
 
                     constexpr static const std::size_t rounds = 256;
                     typedef typename boost::uint_t<CHAR_BIT * 4>::exact round_constant_type;
@@ -43,7 +43,7 @@ namespace nil {
                      * Thus it can only actually take on one of 256 values, based on the
                      * formula in RFC 4880 section 3.6.1.3
                      */
-                    constexpr static const round_constants_type round_constants = {
+                    constexpr static const round_constants_type constants = {
                         1024,     1088,     1152,     1216,     1280,     1344,     1408,     1472,     1536,
                         1600,     1664,     1728,     1792,     1856,     1920,     1984,     2048,     2176,
                         2304,     2432,     2560,     2688,     2816,     2944,     3072,     3200,     3328,

@@ -62,8 +62,7 @@ namespace nil {
                 public:
                     typedef typename policy_type::primary_input_type primary_input_type;
                     typedef typename policy_type::auxiliary_input_type auxiliary_input_type;
-                    typedef typename policy_type::proving_key_type proving_key_type;
-                    ;
+                    typedef typename policy_type::proving_key_type proving_key_type;;
                     typedef typename policy_type::proof_type proof_type;
 
                     static inline proof_type process(const proving_key_type &proving_key,
@@ -71,66 +70,64 @@ namespace nil {
                                                      const auxiliary_input_type &auxiliary_input) {
 
                         const typename CurveType::scalar_field_type::value_type d =
-                            algebra::random_element<typename CurveType::scalar_field_type>();
+                                algebra::random_element<typename CurveType::scalar_field_type>();
 
                         const ssp_witness<typename CurveType::scalar_field_type> ssp_wit =
-                            reductions::uscs_to_ssp<typename CurveType::scalar_field_type>::witness_map(
-                                proving_key.constraint_system, primary_input, auxiliary_input, d);
+                                reductions::uscs_to_ssp<typename CurveType::scalar_field_type>::witness_map(
+                                        proving_key.constraint_system, primary_input, auxiliary_input, d);
 
                         /* sanity checks */
-                        assert(proving_key.constraint_system.is_satisfied(primary_input, auxiliary_input));
-                        assert(proving_key.V_g1_query.size() == ssp_wit.num_variables + 2 - ssp_wit.num_inputs - 1);
-                        assert(proving_key.alpha_V_g1_query.size() ==
-                               ssp_wit.num_variables + 2 - ssp_wit.num_inputs - 1);
-                        assert(proving_key.H_g1_query.size() == ssp_wit.degree + 1);
-                        assert(proving_key.V_g2_query.size() == ssp_wit.num_variables + 2);
+                        BOOST_ASSERT(proving_key.constraint_system.is_satisfied(primary_input, auxiliary_input));
+                        BOOST_ASSERT(
+                                proving_key.V_g1_query.size() == ssp_wit.num_variables + 2 - ssp_wit.num_inputs - 1);
+                        BOOST_ASSERT(proving_key.alpha_V_g1_query.size() ==
+                                     ssp_wit.num_variables + 2 - ssp_wit.num_inputs - 1);
+                        BOOST_ASSERT(proving_key.H_g1_query.size() == ssp_wit.degree + 1);
+                        BOOST_ASSERT(proving_key.V_g2_query.size() == ssp_wit.num_variables + 2);
 
                         typename g1_type::value_type V_g1 =
-                            ssp_wit.d * proving_key.V_g1_query[proving_key.V_g1_query.size() - 1];
+                                ssp_wit.d * proving_key.V_g1_query[proving_key.V_g1_query.size() - 1];
                         typename g1_type::value_type alpha_V_g1 =
-                            ssp_wit.d * proving_key.alpha_V_g1_query[proving_key.alpha_V_g1_query.size() - 1];
+                                ssp_wit.d * proving_key.alpha_V_g1_query[proving_key.alpha_V_g1_query.size() - 1];
                         typename g1_type::value_type H_g1 = g1_type::value_type::zero();
                         typename g2_type::value_type V_g2 =
-                            proving_key.V_g2_query[0] +
-                            ssp_wit.d * proving_key.V_g2_query[proving_key.V_g2_query.size() - 1];
+                                proving_key.V_g2_query[0] +
+                                ssp_wit.d * proving_key.V_g2_query[proving_key.V_g2_query.size() - 1];
 
-#ifdef MULTICORE
-                        const std::size_t chunks = omp_get_max_threads();    // to override, set OMP_NUM_THREADS env
-                                                                             // var or call omp_set_num_threads()
-#else
+
                         const std::size_t chunks = 1;
-#endif
 
                         // MAYBE LATER: do queries 1,2,4 at once for slightly better speed
 
                         V_g1 = V_g1 + algebra::multiexp_with_mixed_addition<algebra::policies::multiexp_method_BDLO12>(
-                                          proving_key.V_g1_query.begin(),
-                                          proving_key.V_g1_query.begin() + (ssp_wit.num_variables - ssp_wit.num_inputs),
-                                          ssp_wit.coefficients_for_Vs.begin() + ssp_wit.num_inputs,
-                                          ssp_wit.coefficients_for_Vs.begin() + ssp_wit.num_variables, chunks);
-
-                        alpha_V_g1 =
-                            alpha_V_g1 +
-                            algebra::multiexp_with_mixed_addition<algebra::policies::multiexp_method_BDLO12>(
-                                proving_key.alpha_V_g1_query.begin(),
-                                proving_key.alpha_V_g1_query.begin() + (ssp_wit.num_variables - ssp_wit.num_inputs),
+                                proving_key.V_g1_query.begin(),
+                                proving_key.V_g1_query.begin() + (ssp_wit.num_variables - ssp_wit.num_inputs),
                                 ssp_wit.coefficients_for_Vs.begin() + ssp_wit.num_inputs,
                                 ssp_wit.coefficients_for_Vs.begin() + ssp_wit.num_variables, chunks);
 
+                        alpha_V_g1 =
+                                alpha_V_g1 +
+                                algebra::multiexp_with_mixed_addition<algebra::policies::multiexp_method_BDLO12>(
+                                        proving_key.alpha_V_g1_query.begin(),
+                                        proving_key.alpha_V_g1_query.begin() +
+                                        (ssp_wit.num_variables - ssp_wit.num_inputs),
+                                        ssp_wit.coefficients_for_Vs.begin() + ssp_wit.num_inputs,
+                                        ssp_wit.coefficients_for_Vs.begin() + ssp_wit.num_variables, chunks);
+
                         H_g1 = H_g1 + algebra::multiexp<algebra::policies::multiexp_method_BDLO12>(
-                                          proving_key.H_g1_query.begin(),
-                                          proving_key.H_g1_query.begin() + ssp_wit.degree + 1,
-                                          ssp_wit.coefficients_for_H.begin(),
-                                          ssp_wit.coefficients_for_H.begin() + ssp_wit.degree + 1, chunks);
+                                proving_key.H_g1_query.begin(),
+                                proving_key.H_g1_query.begin() + ssp_wit.degree + 1,
+                                ssp_wit.coefficients_for_H.begin(),
+                                ssp_wit.coefficients_for_H.begin() + ssp_wit.degree + 1, chunks);
 
                         V_g2 = V_g2 + algebra::multiexp<algebra::policies::multiexp_method_BDLO12>(
-                                          proving_key.V_g2_query.begin() + 1,
-                                          proving_key.V_g2_query.begin() + ssp_wit.num_variables + 1,
-                                          ssp_wit.coefficients_for_Vs.begin(),
-                                          ssp_wit.coefficients_for_Vs.begin() + ssp_wit.num_variables, chunks);
+                                proving_key.V_g2_query.begin() + 1,
+                                proving_key.V_g2_query.begin() + ssp_wit.num_variables + 1,
+                                ssp_wit.coefficients_for_Vs.begin(),
+                                ssp_wit.coefficients_for_Vs.begin() + ssp_wit.num_variables, chunks);
 
                         proof_type proof =
-                            proof_type(std::move(V_g1), std::move(alpha_V_g1), std::move(H_g1), std::move(V_g2));
+                                proof_type(std::move(V_g1), std::move(alpha_V_g1), std::move(H_g1), std::move(V_g2));
 
                         return proof;
                     }

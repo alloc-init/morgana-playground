@@ -65,44 +65,43 @@ namespace boost {
             //    }
             //};
 
-        }    // namespace tt_detail
-    }        // namespace test_tools
-}    // namespace boost
+        } // namespace tt_detail
+    }     // namespace test_tools
+}         // namespace boost
 
 template<typename field_type>
-void test_mina_poseidon(std::vector<typename field_type::value_type> input,
+void test_mina_poseidon(const std::vector<typename field_type::value_type> &input,
                         typename field_type::value_type expected_result) {
-    using policy = mina_poseidon_policy<field_type>;
-    using hash_t = hashes::original_poseidon<policy>;
+    using policy_type = mina_poseidon_policy<field_type>;
+    using hash_type = hashes::original_poseidon<policy_type>;
 
-    typename policy::digest_type d = hash<hash_t>(input);
+    typename policy_type::digest_type d = hash<hash_type>(input);
     BOOST_CHECK_EQUAL(d, expected_result);
 
-    accumulator_set<hash_t> acc;
+    accumulator_set<hash_type> acc;
 
     for (auto &val: input) {
         acc(val);
     }
-    typename hash_t::digest_type d_acc = extract::hash<hash_t>(acc);
+    typename hash_type::digest_type d_acc = extract::hash<hash_type>(acc);
     BOOST_CHECK_EQUAL(d_acc, expected_result);
 }
 
 template<typename FieldType, size_t Rate>
-void test_poseidon_permutation(
-        typename poseidon_policy<FieldType, 128, Rate>::state_type input,
-        typename poseidon_policy<FieldType, 128, Rate>::state_type expected_result) {
-    using policy = poseidon_policy<FieldType, 128, Rate>;
+void test_poseidon_permutation(typename poseidon_policy<FieldType, 128, Rate>::state_type input,
+                               typename poseidon_policy<FieldType, 128, Rate>::state_type expected_result) {
+    using policy_type = poseidon_policy<FieldType, 128, Rate>;
 
     // This permutes in place.
-    poseidon_permutation<policy>::permute(input);
+    poseidon_permutation<policy_type>::permute(input);
     BOOST_CHECK_EQUAL(input, expected_result);
 }
 
 BOOST_AUTO_TEST_SUITE(poseidon_tests)
 
-// Test data for Mina version was taken from https://github.com/o1-labs/proof-systems/blob/a36c088b3e81d17f5720abfff82a49cf9cb1ad5b/poseidon/src/tests/test_vectors/kimchi.json.
-// For some reason bytes in their test data are in Big Endian, while we need in Small Endian, I.E. you need to reverse the order of bytes to create our test data.
-// We have NO TESTS for Vesta Field so far, since Mina code doesn't have tests and test vectors for it.
+//    // Test data for Mina version was taken from https://github.com/o1-labs/proof-systems/blob/a36c088b3e81d17f5720abfff82a49cf9cb1ad5b/poseidon/src/tests/test_vectors/kimchi.json.
+//    // For some reason bytes in their test data are in Big Endian, while we need in Small Endian, I.E. you need to reverse the order of bytes to create our test data.
+//    // We have NO TESTS for Vesta Field so far, since Mina code doesn't have tests and test vectors for it.
     BOOST_AUTO_TEST_CASE(poseidon_kimchi_test_0) {
         test_mina_poseidon<fields::pallas_base_field>(
                 {}, 0x2FADBE2852044D028597455BC2ABBD1BC873AF205DFABB8A304600F3E09EEBA8_cppui_modular254);
@@ -114,7 +113,8 @@ BOOST_AUTO_TEST_SUITE(poseidon_tests)
                 0x3D4F050775295C04619E72176746AD1290D391D73FF4955933F9075CF69259FB_cppui_modular254
         );
     }
-// works up to this
+
+    // works up to this
     BOOST_AUTO_TEST_CASE(poseidon_kimchi_test_2) {
         test_mina_poseidon<fields::pallas_base_field>(
                 {0x3793E30AC691700012BAF26BB813D6D70BD379BEED8050A1DEEE3C188F1C3FBD_cppui_modular254,
@@ -151,8 +151,8 @@ BOOST_AUTO_TEST_SUITE(poseidon_tests)
                 0x0CA2C3342C2959D7CD94B5C9D4DC55900F5F60B345F714827C8B907752D5A209_cppui_modular254);
     }
 
-// Poseidon permutation test vectors are taken from:
-//   https://extgit.iaik.tugraz.at/krypto/hadeshash/-/blob/208b5a164c6a252b137997694d90931b2bb851c5/code/test_vectors.txt
+    // Poseidon permutation test vectors are taken from:
+    //   https://extgit.iaik.tugraz.at/krypto/hadeshash/-/blob/208b5a164c6a252b137997694d90931b2bb851c5/code/test_vectors.txt
     BOOST_AUTO_TEST_CASE(poseidon_permutation_254_2) {
         test_poseidon_permutation<fields::alt_bn128_scalar_field<254>, 2>(
                 {0x0000000000000000000000000000000000000000000000000000000000000000_cppui_modular254,
@@ -213,26 +213,26 @@ BOOST_AUTO_TEST_SUITE(poseidon_tests)
         );
     }
 
-    BOOST_AUTO_TEST_CASE(nil_poseidon_accumulator_255_4) {
+    BOOST_AUTO_TEST_CASE(poseidon_accumulator_255_4) {
         using policy = poseidon_policy<fields::bls12_scalar_field<381>, 128, /*Rate=*/ 4>;
-        using hash_t = hashes::poseidon<policy>;
-        accumulator_set<hash_t> acc;
+        using hash_type = hashes::poseidon<policy>;
+        accumulator_set<hash_type> acc;
 
         policy::word_type val = 0u;
 
         acc(val);
 
-        hash_t::digest_type s = extract::hash<hash_t>(acc);
+        hash_type::digest_type s = extract::hash<hash_type>(acc);
 
         BOOST_CHECK_EQUAL(s, 0x20CDA7B88718C51A894AE697F804FACD408616B1A7811A55023EA0E6060AA61C_cppui_modular255);
     }
 
-    BOOST_AUTO_TEST_CASE(nil_poseidon_stream_255_4) {
+    BOOST_AUTO_TEST_CASE(poseidon_stream_255_4) {
         // Since we don't have any test vectors for such a custom structure, just make sure
         // it produces something consistent
         using field_type = fields::bls12_scalar_field<381>;
         using policy = poseidon_policy<field_type, 128, /*Rate=*/ 4>;
-        using hash_t = hashes::poseidon<policy>;
+        using hash_type = hashes::poseidon<policy>;
 
         std::vector<typename field_type::value_type> input = {
                 0x0_cppui_modular255,
@@ -242,7 +242,7 @@ BOOST_AUTO_TEST_SUITE(poseidon_tests)
                 0x0_cppui_modular255
         };
 
-        typename policy::digest_type d = hash<hash_t>(input);
+        typename policy::digest_type d = hash<hash_type>(input);
         BOOST_CHECK_EQUAL(d, 0x44753e7f86d80790e762345ff8cb156be18eb0318f8846641193f815fbd64038_cppui_modular255);
 
         input = {
@@ -253,15 +253,15 @@ BOOST_AUTO_TEST_SUITE(poseidon_tests)
                 0x03ff622da276830b9451b88b85e6184fd6ae15c8ab3ee25a5667be8592cce3b1_cppui_modular255
         };
 
-        d = hash<hash_t>(input);
+        d = hash<hash_type>(input);
         BOOST_CHECK_EQUAL(d, 0x44bff12d3a4713b18bd79c17eaabf8e69e29ce45ca48d7afb702baa1c37f3695_cppui_modular255);
     }
 
-    BOOST_AUTO_TEST_CASE(nil_poseidon_wrapped_255_4) {
+    BOOST_AUTO_TEST_CASE(poseidon_wrapped_255_4) {
         // Make sure nil_block_poseidon converts non-field input to field elements as we expect
         using field_type = fields::bls12_scalar_field<381>;
         using policy = poseidon_policy<field_type, 128, /*Rate=*/ 4>;
-        using hash_t = hashes::poseidon<policy>;
+        using hash_type = hashes::poseidon<policy>;
 
         std::vector<std::uint8_t> uint8_input = {
                 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF,
@@ -278,21 +278,21 @@ BOOST_AUTO_TEST_SUITE(poseidon_tests)
                 0x00000000000000000000000000000000000000000000000000000000000000EF_cppui_modular255,
         };
 
-        typename policy::digest_type d_uint8 = hash<hash_t>(
-                hashes::conditional_block_to_field_elements_wrapper<hash_t::word_type, decltype(uint8_input)>(
+        typename policy::digest_type d_uint8 = hash<hash_type>(
+                hashes::conditional_block_to_field_elements_wrapper<hash_type::word_type, decltype(uint8_input)>(
                         uint8_input)
         );
-        typename policy::digest_type d_field = hash<hash_t>(field_input);
+        typename policy::digest_type d_field = hash<hash_type>(field_input);
         BOOST_CHECK_EQUAL(d_uint8, d_field);
     }
 
-// This test can be useful for constants generation in the future.
-//BOOST_AUTO_TEST_CASE(poseidon_generate_pallas_constants) {
-//
-//    typedef poseidon_policy<nil::crypto3::algebra::fields::pallas_base_field, 128, 2> PolicyType;
-//    typedef poseidon_constants_generator<PolicyType> generator_type;
-//    generator_type generator;
-//    auto constants = generator.generate_constants();
-//}
+    // This test can be useful for constants generation in the future.
+    //BOOST_AUTO_TEST_CASE(poseidon_generate_pallas_constants) {
+    //
+    //    typedef poseidon_policy<nil::crypto3::algebra::fields::pallas_base_field, 128, 2> PolicyType;
+    //    typedef poseidon_constants_generator<PolicyType> generator_type;
+    //    generator_type generator;
+    //    auto constants = generator.generate_constants();
+    //}
 
 BOOST_AUTO_TEST_SUITE_END()

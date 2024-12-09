@@ -41,13 +41,13 @@ namespace nil {
                  * @param sh Stream hash function instance
                  */
                 template<
-                    typename Hash, typename InputIterator, typename OutputIterator,
-                    typename StreamHash = typename Hash::template stream_hash<
+                    typename HashType, typename InputIterator, typename OutputIterator,
+                    typename StreamHash = typename HashType::template stream_hash<
                         std::numeric_limits<typename std::iterator_traits<InputIterator>::value_type>::digits +
                         std::numeric_limits<typename std::iterator_traits<InputIterator>::value_type>::is_signed>::type>
                 OutputIterator mgf1_mask(InputIterator first, InputIterator last, OutputIterator out,
                                          StreamHash sh = StreamHash()) {
-                    typename Hash::digest_type result;
+                    typename HashType::digest_type result;
 
                     while (out) {
                         sh.update(first, last);
@@ -55,7 +55,7 @@ namespace nil {
 
                         out =
                             std::transform(result.begin(), result.end(), out,
-                                           [&](const typename Hash::digest_type::value_type &v) { *out++ = v ^ *out; });
+                                           [&](const typename HashType::digest_type::value_type &v) { *out++ = v ^ *out; });
                     }
 
                     return out;

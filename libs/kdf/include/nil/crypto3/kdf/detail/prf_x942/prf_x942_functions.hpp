@@ -31,9 +31,9 @@ namespace nil {
     namespace crypto3 {
         namespace kdf {
             namespace detail {
-                template<typename Hash>
-                struct prf_x942_functions : public prf_x942_policy<Hash> {
-                    typedef prf_x942_policy<Hash> policy_type;
+                template<typename HashType>
+                struct prf_x942_functions : public prf_x942_policy<HashType> {
+                    typedef prf_x942_policy<HashType> policy_type;
 
                     typedef typename policy_type::hash_type hash_type;
 

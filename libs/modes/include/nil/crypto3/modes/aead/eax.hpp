@@ -208,9 +208,9 @@ namespace nil {
                         }
                     };
 
-                    template<typename Policy>
+                    template<typename PolicyType>
                     class eax {
-                        typedef Policy policy_type;
+                        typedef PolicyType policy_type;
 
                     public:
                         typedef typename policy_type::cipher_type cipher_type;
@@ -301,9 +301,9 @@ namespace nil {
                         decryption_policy;
 
                     template<template<typename, typename, std::size_t, typename, typename, template<typename> class>
-                             class Policy>
+                             class PolicyType>
                     struct bind {
-                        typedef detail::eax<Policy<cipher_type, padding_type, TagBits, MessageAuthenticationCode,
+                        typedef detail::eax<PolicyType<cipher_type, padding_type, TagBits, MessageAuthenticationCode,
                                                    StreamCipher, Allocator>>
                             type;
                     };

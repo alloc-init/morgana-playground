@@ -93,7 +93,8 @@ namespace nil {
                             g.double_inplace();
                             h.double_inplace();
                         }
-                        element_kc& operator+=(const element_kc &other) {
+
+                        element_kc &operator+=(const element_kc &other) {
                             g += other.g;
                             h += other.h;
                             return *this;
@@ -189,8 +190,9 @@ namespace nil {
                             typename Type2,
                             typename Backend,
                             boost::multiprecision::expression_template_option ExpressionTemplates>
-                    element_kc<Type1, Type2> operator*(const boost::multiprecision::number <Backend, ExpressionTemplates> &lhs,
-                                                       const element_kc<Type1, Type2> &rhs) {
+                    element_kc<Type1, Type2>
+                    operator*(const boost::multiprecision::number<Backend, ExpressionTemplates> &lhs,
+                              const element_kc<Type1, Type2> &rhs) {
                         return element_kc<Type1, Type2>(lhs * rhs.g, lhs * rhs.h);
                     }
 
@@ -200,7 +202,7 @@ namespace nil {
                             boost::multiprecision::expression_template_option ExpressionTemplates>
                     element_kc<Type1, Type2>
                     operator*(const element_kc<Type1, Type2> &lhs,
-                              const boost::multiprecision::number <Backend, ExpressionTemplates> &rhs) {
+                              const boost::multiprecision::number<Backend, ExpressionTemplates> &rhs) {
                         return element_kc<Type1, Type2>(rhs * lhs.g, rhs * lhs.h);
                     }
 

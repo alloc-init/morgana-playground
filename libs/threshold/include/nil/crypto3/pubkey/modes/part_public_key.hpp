@@ -39,7 +39,7 @@ namespace nil {
            * person in the form of his refusal to sign the document.
            *
            */
-            template<typename Scheme, typename = void>
+            template<typename SchemeType, typename = void>
             struct part_public_key;
         }    // namespace pubkey
     }        // namespace crypto3

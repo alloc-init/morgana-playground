@@ -100,7 +100,7 @@ struct round_constants_generator {
         }
     }
 
-    constexpr static integral_type get_round_constant(std::size_t constant_number) {
+    constexpr static integral_type round_constant(std::size_t constant_number) {
         integral_type constant = 0x0_cppui_modular255;
 
         state_type lfsr_state = get_lfsr_init_state();

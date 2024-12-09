@@ -33,15 +33,15 @@
 namespace nil {
     namespace crypto3 {
         namespace pubkey {
-            template<typename Group>
-            struct feldman_sss : public shamir_sss<Group> {
-                typedef shamir_sss<Group> base_type;
+            template<typename GroupType>
+            struct feldman_sss : public shamir_sss<GroupType> {
+                typedef shamir_sss<GroupType> base_type;
             };
 
-            template<typename Group>
-            struct public_share_sss<feldman_sss<Group>> : public public_share_sss<shamir_sss<Group>> {
-                typedef public_share_sss<shamir_sss<Group>> base_type;
-                typedef feldman_sss<Group> scheme_type;
+            template<typename GroupType>
+            struct public_share_sss<feldman_sss<GroupType>> : public public_share_sss<shamir_sss<GroupType>> {
+                typedef public_share_sss<shamir_sss<GroupType>> base_type;
+                typedef feldman_sss<GroupType> scheme_type;
                 typedef typename scheme_type::indexed_public_element_type public_share_type;
 
                 public_share_sss() = default;
@@ -56,21 +56,22 @@ namespace nil {
                 }
 
                 //
-                //  0 <= k < t
+                //  0 <= K < t
                 //
                 inline void update(const typename scheme_type::public_coeff_type &public_coeff, std::size_t exp) {
                     assert(scheme_type::check_exp(exp));
 
                     this->public_share.second =
-                        this->public_share.second +
-                        typename scheme_type::private_element_type(this->public_share.first).pow(exp) * public_coeff;
+                            this->public_share.second +
+                            typename scheme_type::private_element_type(this->public_share.first).pow(exp) *
+                            public_coeff;
                 }
             };
 
-            template<typename Group>
-            struct share_sss<feldman_sss<Group>> : public share_sss<shamir_sss<Group>> {
-                typedef share_sss<shamir_sss<Group>> base_type;
-                typedef feldman_sss<Group> scheme_type;
+            template<typename GroupType>
+            struct share_sss<feldman_sss<GroupType>> : public share_sss<shamir_sss<GroupType>> {
+                typedef share_sss<shamir_sss<GroupType>> base_type;
+                typedef feldman_sss<GroupType> scheme_type;
                 typedef typename scheme_type::indexed_private_element_type share_type;
 
                 share_sss() = default;
@@ -85,10 +86,10 @@ namespace nil {
                 }
             };
 
-            template<typename Group>
-            struct public_secret_sss<feldman_sss<Group>> : public public_secret_sss<shamir_sss<Group>> {
-                typedef public_secret_sss<shamir_sss<Group>> base_type;
-                typedef feldman_sss<Group> scheme_type;
+            template<typename GroupType>
+            struct public_secret_sss<feldman_sss<GroupType>> : public public_secret_sss<shamir_sss<GroupType>> {
+                typedef public_secret_sss<shamir_sss<GroupType>> base_type;
+                typedef feldman_sss<GroupType> scheme_type;
                 typedef typename scheme_type::public_element_type public_secret_type;
                 typedef typename scheme_type::indexes_type indexes_type;
 
@@ -101,20 +102,20 @@ namespace nil {
                 }
 
                 template<typename PublicShares>
-                public_secret_sss(const PublicShares &public_shares, const indexes_type &indexes) :
-                    base_type(public_shares, indexes) {
+                public_secret_sss(const PublicShares &public_shares, const indexes_type &indexes) : base_type(
+                    public_shares, indexes) {
                 }
 
                 template<typename PublicShareIt>
-                public_secret_sss(PublicShareIt first, PublicShareIt last, const indexes_type &indexes) :
-                    base_type(first, last, indexes) {
+                public_secret_sss(PublicShareIt first, PublicShareIt last, const indexes_type &indexes) : base_type(
+                    first, last, indexes) {
                 }
             };
 
-            template<typename Group>
-            struct secret_sss<feldman_sss<Group>> : public secret_sss<shamir_sss<Group>> {
-                typedef secret_sss<shamir_sss<Group>> base_type;
-                typedef feldman_sss<Group> scheme_type;
+            template<typename GroupType>
+            struct secret_sss<feldman_sss<GroupType>> : public secret_sss<shamir_sss<GroupType>> {
+                typedef secret_sss<shamir_sss<GroupType>> base_type;
+                typedef feldman_sss<GroupType> scheme_type;
                 typedef typename scheme_type::private_element_type secret_type;
                 typedef typename scheme_type::indexes_type indexes_type;
 
@@ -135,34 +136,35 @@ namespace nil {
                 }
             };
 
-            template<typename Group>
-            struct deal_shares_op<feldman_sss<Group>> : public deal_shares_op<shamir_sss<Group>> {
-                typedef deal_shares_op<shamir_sss<Group>> base_type;
-                typedef feldman_sss<Group> scheme_type;
+            template<typename GroupType>
+            struct deal_shares_op<feldman_sss<GroupType>> : public deal_shares_op<shamir_sss<GroupType>> {
+                typedef deal_shares_op<shamir_sss<GroupType>> base_type;
+                typedef feldman_sss<GroupType> scheme_type;
                 typedef share_sss<scheme_type> share_type;
                 typedef std::vector<share_type> shares_type;
-                typedef shares_type internal_accumulator_type;
+
+                typedef shares_type accumulator_type;
                 typedef shares_type result_type;
 
-                static inline void init_accumulator(internal_accumulator_type &acc, std::size_t n, std::size_t t) {
+                static inline void init_accumulator(accumulator_type &acc, std::size_t n, std::size_t t) {
                     base_type::template _init_accumulator<share_type>(acc, n, t);
                 }
 
-                static inline void update(internal_accumulator_type &acc, std::size_t exp,
+                static inline void update(accumulator_type &acc, std::size_t exp,
                                           const typename scheme_type::coeff_type &coeff) {
                     base_type::template _update<scheme_type>(acc, exp, coeff);
                 }
 
-                static inline result_type process(internal_accumulator_type &acc) {
+                static inline result_type process(accumulator_type &acc) {
                     return base_type::template _process<result_type>(acc);
                 }
             };
 
-            template<typename Group>
-            struct verify_share_op<feldman_sss<Group>> {
-                typedef feldman_sss<Group> scheme_type;
+            template<typename GroupType>
+            struct verify_share_op<feldman_sss<GroupType>> {
+                typedef feldman_sss<GroupType> scheme_type;
                 typedef public_share_sss<scheme_type> public_share_type;
-                typedef public_share_type internal_accumulator_type;
+                typedef public_share_type accumulator_type;
                 typedef bool result_type;
 
             protected:
@@ -171,9 +173,9 @@ namespace nil {
                     acc = InternalAccumulator(i);
                 }
 
-                template<typename Scheme, typename InternalAccumulator>
+                template<typename SchemeType, typename InternalAccumulator>
                 static inline void _update(InternalAccumulator &acc, std::size_t exp,
-                                           const typename Scheme::public_coeff_type &public_coeff) {
+                                           const typename SchemeType::public_coeff_type &public_coeff) {
                     acc.update(public_coeff, exp);
                 }
 
@@ -183,68 +185,65 @@ namespace nil {
                 }
 
             public:
-                static inline void init_accumulator(internal_accumulator_type &acc, std::size_t i) {
+                static inline void init_accumulator(accumulator_type &acc, std::size_t i) {
                     _init_accumulator(acc, i);
                 }
 
-                static inline void update(internal_accumulator_type &acc, std::size_t exp,
+                static inline void update(accumulator_type &acc, std::size_t exp,
                                           const typename scheme_type::public_coeff_type &public_coeff) {
                     _update<scheme_type>(acc, exp, public_coeff);
                 }
 
-                static inline result_type process(const internal_accumulator_type &acc,
+                static inline result_type process(const accumulator_type &acc,
                                                   const public_share_type &verified_public_share) {
                     return _process(acc, verified_public_share);
                 }
             };
 
-            template<typename Group>
-            struct reconstruct_public_secret_op<feldman_sss<Group>>
-                : public reconstruct_public_secret_op<shamir_sss<Group>> {
-                typedef reconstruct_public_secret_op<shamir_sss<Group>> base_type;
-                typedef feldman_sss<Group> scheme_type;
+            template<typename GroupType>
+            struct reconstruct_public_secret_op<feldman_sss<GroupType>>
+                    : public reconstruct_public_secret_op<shamir_sss<GroupType>> {
+                typedef reconstruct_public_secret_op<shamir_sss<GroupType>> base_type;
+                typedef feldman_sss<GroupType> scheme_type;
                 typedef public_share_sss<scheme_type> public_share_type;
                 typedef public_secret_sss<scheme_type> public_secret_type;
-                typedef std::pair<typename scheme_type::indexes_type, std::set<public_share_type>>
-                    internal_accumulator_type;
+                typedef std::pair<typename scheme_type::indexes_type, std::set<public_share_type>> accumulator_type;
                 typedef public_secret_type result_type;
 
-            public:
                 static inline void init_accumulator() {
                 }
 
-                static inline void update(internal_accumulator_type &acc, const public_share_type &public_share) {
+                static inline void update(accumulator_type &acc, const public_share_type &public_share) {
                     base_type::_update(acc, public_share);
                 }
 
-                static inline public_secret_type process(internal_accumulator_type &acc) {
+                static inline public_secret_type process(accumulator_type &acc) {
                     return base_type::template _process<result_type>(acc);
                 }
             };
 
-            template<typename Group>
-            struct reconstruct_secret_op<feldman_sss<Group>> : public reconstruct_secret_op<shamir_sss<Group>> {
-                typedef reconstruct_secret_op<shamir_sss<Group>> base_type;
-                typedef feldman_sss<Group> scheme_type;
+            template<typename GroupType>
+            struct reconstruct_secret_op<feldman_sss<GroupType>> : public reconstruct_secret_op<shamir_sss<GroupType>> {
+                typedef reconstruct_secret_op<shamir_sss<GroupType>> base_type;
+                typedef feldman_sss<GroupType> scheme_type;
                 typedef share_sss<scheme_type> share_type;
                 typedef secret_sss<scheme_type> secret_type;
-                typedef std::pair<typename scheme_type::indexes_type, std::set<share_type>> internal_accumulator_type;
+                typedef std::pair<typename scheme_type::indexes_type, std::set<share_type>> accumulator_type;
                 typedef secret_type result_type;
 
-            public:
                 static inline void init_accumulator() {
                 }
 
-                static inline void update(internal_accumulator_type &acc, const share_type &share) {
+                static inline void update(accumulator_type &acc, const share_type &share) {
                     base_type::_update(acc, share);
                 }
 
-                static inline result_type process(internal_accumulator_type &acc) {
+                static inline result_type process(accumulator_type &acc) {
                     return base_type::template _process<result_type>(acc);
                 }
             };
-        }    // namespace pubkey
-    }        // namespace crypto3
-}    // namespace nil
+        } // namespace pubkey
+    } // namespace crypto3
+} // namespace nil
 
 #endif    // CRYPTO3_PUBKEY_FELDMAN_SSS_HPP

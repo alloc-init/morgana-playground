@@ -31,11 +31,11 @@ namespace nil {
     namespace crypto3 {
         namespace pbkdf {
             namespace detail {
-                template<typename Hash>
-                struct pgp_s2k_functions : public pgp_s2k_policy<Hash> {
-                    typedef typename pgp_s2k_policy<Hash>::hash_type hash_type;
+                template<typename HashType>
+                struct pgp_s2k_functions : public pgp_s2k_policy<HashType> {
+                    typedef typename pgp_s2k_policy<HashType>::hash_type hash_type;
 
-                    typedef pgp_s2k_policy<Hash> policy_type;
+                    typedef pgp_s2k_policy<HashType> policy_type;
 
                     constexpr static const std::size_t round_constants_size = policy_type::round_constants_size;
                     typedef typename policy_type::round_constants_type round_constants_type;
@@ -48,7 +48,7 @@ namespace nil {
                     Only 256 different iterations are actually representable in OpenPGP format ...
                     */
                         for (std::size_t c = 0; c < policy_type::round_constants_size; ++c) {
-                            const uint32_t decoded_iter = policy_type::round_constants[c];
+                            const uint32_t decoded_iter = policy_type::constants[c];
                             if (decoded_iter >= iterations) {
                                 return static_cast<uint8_t>(c);
                             }
@@ -58,7 +58,7 @@ namespace nil {
                     }
 
                     static std::size_t decode_count(std::uint8_t encoded_iter) {
-                        return policy_type::round_constants[encoded_iter];
+                        return policy_type::constants[encoded_iter];
                     }
                 };
             }    // namespace detail

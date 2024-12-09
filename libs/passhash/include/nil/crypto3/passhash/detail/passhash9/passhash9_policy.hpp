@@ -43,7 +43,7 @@ namespace nil {
         }    // namespace hashes
 
         namespace mac {
-            template<typename Hash>
+            template<typename HashType>
             struct hmac;
 
             template<typename BlockCipher>

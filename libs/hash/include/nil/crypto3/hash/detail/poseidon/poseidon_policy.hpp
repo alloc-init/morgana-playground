@@ -26,21 +26,26 @@ namespace nil {
                  * @tparam Capacity Capacity or inner part of Poseidon permutation in field elements
                  * @tparam Security mode of Poseidon permutation
                  */
-                // base_poseidon_policy<FieldType, 128, 4, 1, 5, 8, 60, false> {};
-                template<typename FieldType, std::size_t Security, std::size_t Rate, std::size_t Capacity, std::size_t SBoxPower, std::size_t FullRounds, std::size_t PartRounds, bool MinaVersion>
+                // base_poseidon_policy<FieldType, 128, 4, 1, 5, 8, 60> {};
+                template<typename FieldType, std::size_t Security, std::size_t Rate,
+                        std::size_t Capacity,
+                        std::size_t SBoxPower,
+                        std::size_t FullRounds,
+                        std::size_t PartRounds>
                 struct base_poseidon_policy {
-                    using field_type = FieldType;
+                    typedef FieldType field_type;
 
+                    constexpr static const std::size_t word_bits = field_type::value_bits;
                     using word_type = typename field_type::value_type;
 
                     constexpr static const std::size_t block_words = Rate;
-
-                    using block_type = std::array<word_type, block_words>;
+                    typedef std::array<word_type, block_words> block_type;
 
                     constexpr static const std::size_t state_words = Rate + Capacity;
-                    using state_type = std::array<word_type, state_words>;
+                    typedef std::array<word_type, state_words> state_type;
 
-                    using digest_type = word_type;
+                    constexpr static const std::size_t digest_bits = word_bits;
+                    typedef word_type digest_type;
 
                     constexpr static const std::size_t full_rounds = FullRounds;
                     constexpr static const std::size_t half_full_rounds = FullRounds >> 1;
@@ -51,10 +56,8 @@ namespace nil {
                     constexpr static const std::size_t capacity = Capacity;
                     constexpr static const std::size_t sbox_power = SBoxPower;
 
-                    constexpr static const bool mina_version = MinaVersion;
-
                     struct iv_generator {
-                        // TODO: maybe it would be done in constexpr way
+                        // TODO: maybe it could be done in constexpr way
                         static state_type generate() {
                             static const state_type H0 = []() {
                                 state_type H;
@@ -78,30 +81,36 @@ namespace nil {
 
                 template<typename FieldType, std::size_t Rate>
                 struct poseidon_policy<FieldType, 80, Rate,
-                        std::enable_if_t<Rate == 1 || Rate == 2 >> :
-                    base_poseidon_policy<FieldType, 80, Rate, 1, 5, 8, 33, false> {};
+                        typename std::enable_if<Rate == 1 || Rate == 2>::type> :
+                        base_poseidon_policy<FieldType, 80, Rate, 1, 5, 8, 33> {
+                };
 
                 template<typename FieldType>
                 struct poseidon_policy<FieldType, 80, 4> :
-                    base_poseidon_policy<FieldType, 80, 4, 1, 5, 8, 35, false> {};
+                        base_poseidon_policy<FieldType, 80, 4, 1, 5, 8, 35> {
+                };
 
                 template<typename FieldType, std::size_t Rate>
                 struct poseidon_policy<FieldType, 128, Rate,
-                        std::enable_if_t<Rate == 1 || Rate == 2 >> :
-                    base_poseidon_policy<FieldType, 128, Rate, 1, 5, 8, 57, false> {};
+                        typename std::enable_if<Rate == 1 || Rate == 2>::type> :
+                        base_poseidon_policy<FieldType, 128, Rate, 1, 5, 8, 57> {
+                };
 
                 template<typename FieldType>
                 struct poseidon_policy<FieldType, 128, 4> :
-                    base_poseidon_policy<FieldType, 128, 4, 1, 5, 8, 60, false> {};
+                        base_poseidon_policy<FieldType, 128, 4, 1, 5, 8, 60> {
+                };
 
                 template<typename FieldType>
                 struct poseidon_policy<FieldType, 128, 8> :
-                    base_poseidon_policy<FieldType, 128, 4, 1, 5, 8, 63, false> {};
+                        base_poseidon_policy<FieldType, 128, 4, 1, 5, 8, 63> {
+                };
 
                 template<typename FieldType, std::size_t Rate>
                 struct poseidon_policy<FieldType, 256, Rate,
-                        std::enable_if_t<Rate <= 4 >> :
-                    base_poseidon_policy<FieldType, 256, Rate, 1, 5, 8, 120, false> {};
+                        std::enable_if_t<Rate <= 4>> :
+                        base_poseidon_policy<FieldType, 256, Rate, 1, 5, 8, 120> {
+                };
 
                 /*!
                  * @brief Policy class for Mina implementation.
@@ -112,11 +121,11 @@ namespace nil {
                  * @tparam FieldType Type of the field.
                  */
                 template<typename FieldType>
-                struct mina_poseidon_policy : base_poseidon_policy<FieldType, 128, 2, 1, 7, 55, 0, true> {};
-
-            }    // namespace detail
-        }        // namespace hashes
-    }            // namespace crypto3
-}    // namespace nil
+                struct mina_poseidon_policy : base_poseidon_policy<FieldType, 128, 2, 1, 7, 55, 0> {
+                };
+            } // namespace detail
+        } // namespace hashes
+    } // namespace crypto3
+} // namespace nil
 
 #endif    // CRYPTO3_HASH_POSEIDON_POLICY_HPP

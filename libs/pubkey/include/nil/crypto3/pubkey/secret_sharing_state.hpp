@@ -42,23 +42,23 @@ namespace nil {
         namespace pubkey {
             template<typename ProcessingMode>
             using shares_dealing_accumulator_set = boost::accumulators::accumulator_set<
-                typename ProcessingMode::result_type,
-                boost::accumulators::features<accumulators::tag::deal_shares<ProcessingMode>>>;
+                    typename ProcessingMode::result_type,
+                    boost::accumulators::features<accumulators::tag::deal_shares<ProcessingMode>>>;
 
             template<typename ProcessingMode>
             using share_verification_accumulator_set = boost::accumulators::accumulator_set<
-                typename ProcessingMode::result_type,
-                boost::accumulators::features<accumulators::tag::verify_share<ProcessingMode>>>;
+                    typename ProcessingMode::result_type,
+                    boost::accumulators::features<accumulators::tag::verify_share<ProcessingMode>>>;
 
             template<typename ProcessingMode>
             using reconstructing_accumulator_set = boost::accumulators::accumulator_set<
-                typename ProcessingMode::result_type,
-                boost::accumulators::features<accumulators::tag::reconstruct<ProcessingMode>>>;
+                    typename ProcessingMode::result_type,
+                    boost::accumulators::features<accumulators::tag::reconstruct<ProcessingMode>>>;
 
             template<typename ProcessingMode>
             using share_dealing_accumulator_set = boost::accumulators::accumulator_set<
-                typename ProcessingMode::result_type,
-                boost::accumulators::features<accumulators::tag::deal_share<ProcessingMode>>>;
+                    typename ProcessingMode::result_type,
+                    boost::accumulators::features<accumulators::tag::deal_share<ProcessingMode>>>;
         }    // namespace pubkey
     }        // namespace crypto3
 }    // namespace nil

@@ -53,7 +53,7 @@ namespace nil {
                     protected:
                         typedef ProcessingMode processing_mode_type;
                         typedef typename processing_mode_type::key_type key_type;
-                        typedef typename processing_mode_type::internal_accumulator_type internal_accumulator_type;
+                        typedef typename processing_mode_type::accumulator_type accumulator_type;
 
                     public:
                         typedef typename processing_mode_type::result_type result_type;
@@ -66,7 +66,7 @@ namespace nil {
                         template<typename Args>
                         inline void operator()(const Args &args) {
                             resolve_type(args[boost::accumulators::sample | nullptr],
-                                         args[::nil::crypto3::accumulators::iterator_last | nullptr]);
+                                         args[crypto3::accumulators::iterator_last | nullptr]);
                         }
 
                         inline result_type result(boost::accumulators::dont_care) const {
@@ -91,9 +91,9 @@ namespace nil {
                         }
 
                         key_type key;
-                        mutable internal_accumulator_type acc;
+                        mutable accumulator_type acc;
                     };
-                }    // namespace impl
+                } // namespace impl
 
                 namespace tag {
                     template<typename ProcessingMode>
@@ -103,20 +103,20 @@ namespace nil {
                         /// INTERNAL ONLY
                         ///
 
-                        typedef boost::mpl::always<accumulators::impl::sign_impl<processing_mode_type>> impl;
+                        typedef boost::mpl::always<impl::sign_impl<processing_mode_type>> impl;
                     };
-                }    // namespace tag
+                } // namespace tag
 
                 namespace extract {
                     template<typename ProcessingMode, typename AccumulatorSet>
                     typename boost::mpl::apply<AccumulatorSet, tag::sign<ProcessingMode>>::type::result_type
-                        sign(const AccumulatorSet &acc) {
+                    sign(const AccumulatorSet &acc) {
                         return boost::accumulators::extract_result<tag::sign<ProcessingMode>>(acc);
                     }
-                }    // namespace extract
-            }        // namespace accumulators
-        }            // namespace pubkey
-    }                // namespace crypto3
-}    // namespace nil
+                } // namespace extract
+            } // namespace accumulators
+        } // namespace pubkey
+    } // namespace crypto3
+} // namespace nil
 
 #endif    // CRYPTO3_ACCUMULATORS_PUBKEY_SIGN_HPP

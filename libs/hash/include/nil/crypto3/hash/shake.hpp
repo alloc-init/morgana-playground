@@ -76,7 +76,7 @@ namespace nil {
                         type;
                 };
 
-                constexpr static detail::stream_processor_type stream_processor = detail::stream_processor_type::Block;
+                constexpr static detail::stream_processor_type stream_processor = detail::stream_processor_type::block;
                 using accumulator_tag = accumulators::tag::hash<shake<HalfCapacity, DigestBits>>;
             };
         }    // namespace hashes

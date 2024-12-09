@@ -82,7 +82,7 @@ namespace nil {
                         A = algebra::matvectmul(mds_matrix, A);
 
                         for (int i = 0; i < state_words; ++i) {
-                            A[i] += lsfr.round_constants[round * state_words + i];
+                            A[i] += lsfr.constants[round * state_words + i];
                         }
                     }
 
@@ -139,7 +139,7 @@ namespace nil {
                         for (int i = 0; i < state_words; ++i) {
 
                             bucket_type temp_bucket = decompose(A[i]);
-                            for (auto &a : temp_bucket) {
+                            for (auto &a: temp_bucket) {
                                 a = S(a);
                             }
                             A[i] = compose(temp_bucket);

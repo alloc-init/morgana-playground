@@ -40,7 +40,7 @@ namespace nil {
              * @tparam Hash
              * @ingroup mac
              */
-            template<typename BlockCipher, typename Hash = hashes::ghash>
+            template<typename BlockCipher, typename HashType = hashes::ghash>
             class gmac {
                 typedef detail::gmac_policy<BlockCipher, Hash> policy_type;
 

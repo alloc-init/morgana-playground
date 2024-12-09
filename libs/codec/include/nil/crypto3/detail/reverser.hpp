@@ -74,25 +74,25 @@ namespace nil {
             /*!
              * @brief bit_in_unit_byte_reverser transforms the sequence of bits in each byte of
              * the input unit into reversed sequence of bits in each byte of the output unit.
-             * The function reverse is recursively invoked and the parameter k is used to track
+             * The function reverse is recursively invoked and the parameter K is used to track
              * the number of already processed input bytes. The recursion ends, when all input
-             * bytes have been processed, i.e. when k == UnitBits.
+             * bytes have been processed, i.e. when K == UnitBits.
              *
              * @ingroup reverser
              *
              * @tparam UnitBits
-             * @tparam k
+             * @tparam K
              */
-            template<int UnitBits, int k = 0>
+            template<int UnitBits, int K = 0>
             struct bit_in_unit_byte_reverser {
 
                 BOOST_STATIC_ASSERT(!(UnitBits % CHAR_BIT));
 
-                typedef bit_in_unit_byte_reverser<UnitBits, k + CHAR_BIT> next_type;
+                typedef bit_in_unit_byte_reverser<UnitBits, K + CHAR_BIT> next_type;
                 typedef typename boost::uint_t<UnitBits>::exact UnitType;
 
                 inline static void reverse(UnitType &in, UnitType &out) {
-                    int const shift = UnitBits - (CHAR_BIT + k);
+                    int const shift = UnitBits - (CHAR_BIT + K);
                     byte_type byte = byte_type(low_bits<CHAR_BIT>(unbounded_shr(in, shift)));
                     reverse_byte(byte);
                     out |= unbounded_shl(low_bits<CHAR_BIT>(UnitType(byte)), shift);
@@ -157,27 +157,27 @@ namespace nil {
             /*!
              * @brief bit_in_unit_reverser transforms the sequence of bits in each unit of
              * the input value into reversed sequence of bits in each unit of the output value.
-             * The function reverse is recursively invoked and the parameter k is used to track
+             * The function reverse is recursively invoked and the parameter K is used to track
              * the number of already processed input units. The recursion ends, when all input
-             * units have been processed, i.e. when k == InputBits.
+             * units have been processed, i.e. when K == InputBits.
              *
              * @ingroup reverser
              *
              * @tparam InputBits
              * @tparam UnitBits
-             * @tparam k
+             * @tparam K
              */
-            template<int InputBits, int UnitBits, int k = 0>
+            template<int InputBits, int UnitBits, int K = 0>
             struct bit_in_unit_reverser {
 
                 BOOST_STATIC_ASSERT(!(InputBits % UnitBits) && !(UnitBits % CHAR_BIT));
 
-                typedef bit_in_unit_reverser<InputBits, UnitBits, k + UnitBits> next_type;
+                typedef bit_in_unit_reverser<InputBits, UnitBits, K + UnitBits> next_type;
                 typedef typename boost::uint_t<UnitBits>::exact UnitType;
 
                 template<typename ValueType>
                 inline static void reverse(ValueType &in, ValueType &out) {
-                    int const shift = InputBits - (UnitBits + k);
+                    int const shift = InputBits - (UnitBits + K);
                     UnitType unit = UnitType(low_bits<UnitBits>(unbounded_shr(in, shift)));
                     reverse_bits(unit);
                     out |= unbounded_shl(low_bits<UnitBits>(ValueType(unit)), shift);
@@ -318,27 +318,27 @@ namespace nil {
             /*!
              * @brief byte_in_unit_reverser transforms the sequence of bytes in each unit of
              * the input value into reversed sequence of bytes in each unit of the output value.
-             * The function reverse is recursively invoked and the parameter k is used to track
+             * The function reverse is recursively invoked and the parameter K is used to track
              * the number of already processed input units. The recursion ends, when all input
-             * units have been processed, i.e. when k == InputBits.
+             * units have been processed, i.e. when K == InputBits.
              *
              * @ingroup reverser
              *
              * @tparam InputBits
              * @tparam UnitBits
-             * @tparam k
+             * @tparam K
              */
-            template<int InputBits, int UnitBits, int k = 0>
+            template<int InputBits, int UnitBits, int K = 0>
             struct byte_in_unit_reverser {
 
                 BOOST_STATIC_ASSERT(!(InputBits % UnitBits) && !(UnitBits % CHAR_BIT));
 
-                typedef byte_in_unit_reverser<InputBits, UnitBits, k + UnitBits> next_type;
+                typedef byte_in_unit_reverser<InputBits, UnitBits, K + UnitBits> next_type;
                 typedef typename boost::uint_t<UnitBits>::exact UnitType;
 
                 template<typename ValueType>
                 inline static void reverse(ValueType &in, ValueType &out) {
-                    int const shift = InputBits - (UnitBits + k);
+                    int const shift = InputBits - (UnitBits + K);
                     UnitType unit = UnitType(low_bits<UnitBits>(unbounded_shr(in, shift)));
                     boost::endian::endian_reverse_inplace(unit);
                     out |= unbounded_shl(low_bits<UnitBits>(ValueType(unit)), shift);

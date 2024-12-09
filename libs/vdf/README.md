@@ -1,6 +1,6 @@
-# Verifiable Delay Functions for =nil; Foundation's Cryptography Suite
+# Verifiable Delay Functions for [[alloc] init]'s Cryptography Suite
 
-Verifiable delay functions for =nil; Foundation's cryptography suite
+Verifiable delay functions for [[alloc] init]'s cryptography suite
 
 ## Building
 
@@ -11,7 +11,7 @@ library in a project it is required to:
 2. Add all the internal dependencies using [CMake Modules](https://github.com/BoostCMake/cmake_modules.git) as
    submodules to target project repository.
 3. Initialize parent project with [CMake Modules](https://github.com/BoostCMake/cmake_modules.git) (Look
-   at [crypto3](https://github.com/nilfoundation/crypto3.git) for the example)
+   at [crypto3](https://github.com/alloc-init/crypto3.git) for the example)
 
 ## Dependencies
 

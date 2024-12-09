@@ -29,13 +29,13 @@
 namespace nil {
     namespace crypto3 {
         namespace pubkey {
-          /*!
-           * @brief 
-           * 
-           * @ingroup pubkey_algorithms
-           *
-           */
-            template<typename Scheme, typename = void>
+            /*!
+             * @brief
+             *
+             * @ingroup pubkey_algorithms
+             *
+             */
+            template<typename SchemeType, typename T = void>
             struct verification_key;
         }    // namespace pubkey
     }        // namespace crypto3

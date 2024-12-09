@@ -13,7 +13,7 @@
     "osx": "10.7"
   },
   "source": {
-    "git": "https://github.com/nilfoundation/fft.git",
+    "git": "https://github.com/alloc-init/fft.git",
     "branch": "master"
   },
   "xcconfig": {

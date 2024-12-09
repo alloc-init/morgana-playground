@@ -46,16 +46,16 @@
 namespace nil {
     namespace crypto3 {
         namespace pubkey {
-            template<typename Scheme, template<typename> class SecretSharingScheme>
+            template<typename SchemeType, template<typename> class SecretSharingScheme>
             struct part_public_key<
-                detail::threshold_scheme<Scheme, SecretSharingScheme>,
+                detail::threshold_scheme<SchemeType, SecretSharingScheme>,
                 typename std::enable_if<
-                    is_bls<Scheme>::value &&
-                    (is_shamir_sss<SecretSharingScheme<typename public_key<Scheme>::public_key_group_type>>::value ||
-                     is_feldman_sss<SecretSharingScheme<typename public_key<Scheme>::public_key_group_type>>::value ||
-                     is_pedersen_dkg<SecretSharingScheme<typename public_key<Scheme>::public_key_group_type>>::value)>::
+                    is_bls<SchemeType>::value &&
+                    (is_shamir_sss<SecretSharingScheme<typename public_key<SchemeType>::public_key_group_type>>::value ||
+                     is_feldman_sss<SecretSharingScheme<typename public_key<SchemeType>::public_key_group_type>>::value ||
+                     is_pedersen_dkg<SecretSharingScheme<typename public_key<SchemeType>::public_key_group_type>>::value)>::
                     type> {
-                typedef detail::threshold_scheme<Scheme, SecretSharingScheme> scheme_type;
+                typedef detail::threshold_scheme<SchemeType, SecretSharingScheme> scheme_type;
                 typedef typename scheme_type::base_scheme_type base_scheme_type;
 
                 typedef private_key<base_scheme_type> base_scheme_private_key_type;
@@ -70,7 +70,7 @@ namespace nil {
                 typedef std::pair<std::size_t, base_scheme_public_key_type> part_public_key_type;
                 typedef public_share_sss<sss_signature_group_type> part_signature_type;
 
-                typedef typename base_scheme_public_key_type::internal_accumulator_type internal_accumulator_type;
+                typedef typename base_scheme_public_key_type::accumulator_type accumulator_type;
 
                 part_public_key() = default;
 
@@ -81,21 +81,21 @@ namespace nil {
                     part_pubkey(key_data.get_index(), base_scheme_public_key_type(key_data.get_value())) {
                 }
 
-                inline void init_accumulator(internal_accumulator_type &acc) const {
+                inline void init_accumulator(accumulator_type &acc) const {
                     part_pubkey.second.init_accumulator(acc);
                 }
 
                 template<typename InputRange>
-                static inline void update(internal_accumulator_type &acc, const InputRange &range) {
+                static inline void update(accumulator_type &acc, const InputRange &range) {
                     base_scheme_public_key_type::update(acc, range);
                 }
 
                 template<typename InputIterator>
-                static inline void update(internal_accumulator_type &acc, InputIterator first, InputIterator last) {
+                static inline void update(accumulator_type &acc, InputIterator first, InputIterator last) {
                     base_scheme_public_key_type::update(acc, first, last);
                 }
 
-                inline bool part_verify(internal_accumulator_type &acc, const part_signature_type &part_sig) const {
+                inline bool part_verify(accumulator_type &acc, const part_signature_type &part_sig) const {
                     assert(part_pubkey.first == part_sig.get_index());
                     return part_pubkey.second.verify(acc, part_sig.get_value());
                 }
@@ -105,16 +105,16 @@ namespace nil {
                 part_public_key_type part_pubkey;
             };
 
-            template<typename Scheme, template<typename> class SecretSharingScheme>
+            template<typename SchemeType, template<typename> class SecretSharingScheme>
             struct public_key<
-                detail::threshold_scheme<Scheme, SecretSharingScheme>,
+                detail::threshold_scheme<SchemeType, SecretSharingScheme>,
                 typename std::enable_if<
-                    is_bls<Scheme>::value &&
-                    (is_shamir_sss<SecretSharingScheme<typename public_key<Scheme>::public_key_group_type>>::value ||
-                     is_feldman_sss<SecretSharingScheme<typename public_key<Scheme>::public_key_group_type>>::value ||
-                     is_pedersen_dkg<SecretSharingScheme<typename public_key<Scheme>::public_key_group_type>>::value)>::
+                    is_bls<SchemeType>::value &&
+                    (is_shamir_sss<SecretSharingScheme<typename public_key<SchemeType>::public_key_group_type>>::value ||
+                     is_feldman_sss<SecretSharingScheme<typename public_key<SchemeType>::public_key_group_type>>::value ||
+                     is_pedersen_dkg<SecretSharingScheme<typename public_key<SchemeType>::public_key_group_type>>::value)>::
                     type> {
-                typedef detail::threshold_scheme<Scheme, SecretSharingScheme> scheme_type;
+                typedef detail::threshold_scheme<SchemeType, SecretSharingScheme> scheme_type;
                 typedef typename scheme_type::base_scheme_type base_scheme_type;
 
                 typedef private_key<base_scheme_type> base_scheme_private_key_type;
@@ -126,10 +126,10 @@ namespace nil {
                 typedef typename scheme_type::template sss_type<public_key_group_type> sss_public_key_group_type;
                 typedef typename scheme_type::template sss_type<signature_group_type> sss_signature_group_type;
 
-                typedef base_scheme_public_key_type public_key_type;
+                typedef base_scheme_public_key_type schedule_type;
                 typedef typename base_scheme_public_key_type::signature_type signature_type;
 
-                typedef typename base_scheme_public_key_type::internal_accumulator_type internal_accumulator_type;
+                typedef typename base_scheme_public_key_type::accumulator_type accumulator_type;
 
                 public_key() = default;
 
@@ -139,39 +139,39 @@ namespace nil {
                 public_key(const typename public_key_group_type::value_type &key) : pubkey(key) {
                 }
 
-                inline void init_accumulator(internal_accumulator_type &acc) const {
+                inline void init_accumulator(accumulator_type &acc) const {
                     pubkey.init_accumulator(acc);
                 }
 
                 template<typename InputRange>
-                static inline void update(internal_accumulator_type &acc, const InputRange &range) {
+                static inline void update(accumulator_type &acc, const InputRange &range) {
                     base_scheme_public_key_type::update(acc, range);
                 }
 
                 template<typename InputIterator>
-                static inline void update(internal_accumulator_type &acc, InputIterator first, InputIterator last) {
+                static inline void update(accumulator_type &acc, InputIterator first, InputIterator last) {
                     base_scheme_public_key_type::update(acc, first, last);
                 }
 
-                inline bool verify(internal_accumulator_type &acc, const signature_type &sig) const {
+                inline bool verify(accumulator_type &acc, const signature_type &sig) const {
                     return pubkey.verify(acc, sig);
                 }
 
                 // TODO: make private
             protected:
-                public_key_type pubkey;
+                schedule_type pubkey;
             };
 
-            template<typename Scheme, template<typename> class SecretSharingScheme>
+            template<typename SchemeType, template<typename> class SecretSharingScheme>
             struct private_key<
-                detail::threshold_scheme<Scheme, SecretSharingScheme>,
+                detail::threshold_scheme<SchemeType, SecretSharingScheme>,
                 typename std::enable_if<
-                    is_bls<Scheme>::value &&
-                    (is_shamir_sss<SecretSharingScheme<typename public_key<Scheme>::public_key_group_type>>::value ||
-                     is_feldman_sss<SecretSharingScheme<typename public_key<Scheme>::public_key_group_type>>::value ||
-                     is_pedersen_dkg<SecretSharingScheme<typename public_key<Scheme>::public_key_group_type>>::value)>::
-                    type> : part_public_key<detail::threshold_scheme<Scheme, SecretSharingScheme>> {
-                typedef part_public_key<detail::threshold_scheme<Scheme, SecretSharingScheme>> base_type;
+                    is_bls<SchemeType>::value &&
+                    (is_shamir_sss<SecretSharingScheme<typename public_key<SchemeType>::public_key_group_type>>::value ||
+                     is_feldman_sss<SecretSharingScheme<typename public_key<SchemeType>::public_key_group_type>>::value ||
+                     is_pedersen_dkg<SecretSharingScheme<typename public_key<SchemeType>::public_key_group_type>>::value)>::
+                    type> : part_public_key<detail::threshold_scheme<SchemeType, SecretSharingScheme>> {
+                typedef part_public_key<detail::threshold_scheme<SchemeType, SecretSharingScheme>> base_type;
                 typedef typename base_type::scheme_type scheme_type;
                 typedef typename base_type::base_scheme_type base_scheme_type;
                 typedef typename base_type::base_scheme_private_key_type base_scheme_private_key_type;
@@ -182,7 +182,7 @@ namespace nil {
                 typedef std::pair<std::size_t, base_scheme_private_key_type> private_key_type;
                 typedef typename base_type::part_signature_type part_signature_type;
 
-                typedef typename base_scheme_private_key_type::internal_accumulator_type internal_accumulator_type;
+                typedef typename base_scheme_private_key_type::accumulator_type accumulator_type;
 
                 private_key() = default;
 
@@ -192,21 +192,21 @@ namespace nil {
                     base_type(key_data) {
                 }
 
-                inline void init_accumulator(internal_accumulator_type &acc) const {
+                inline void init_accumulator(accumulator_type &acc) const {
                     privkey.second.init_accumulator(acc);
                 }
 
                 template<typename InputRange>
-                static inline void update(internal_accumulator_type &acc, const InputRange &range) {
+                static inline void update(accumulator_type &acc, const InputRange &range) {
                     base_scheme_private_key_type::update(acc, range);
                 }
 
                 template<typename InputIterator>
-                static inline void update(internal_accumulator_type &acc, InputIterator first, InputIterator last) {
+                static inline void update(accumulator_type &acc, InputIterator first, InputIterator last) {
                     base_scheme_private_key_type::update(acc, first, last);
                 }
 
-                inline part_signature_type sign(internal_accumulator_type &acc) const {
+                inline part_signature_type sign(accumulator_type &acc) const {
                     return part_signature_type(privkey.first, privkey.second.sign(acc));
                 }
 
@@ -221,16 +221,16 @@ namespace nil {
                 private_key_type privkey;
             };
 
-            template<typename Scheme, template<typename> class SecretSharingScheme>
+            template<typename SchemeType, template<typename> class SecretSharingScheme>
             struct aggregate_op<
-                detail::threshold_scheme<Scheme, SecretSharingScheme>,
+                detail::threshold_scheme<SchemeType, SecretSharingScheme>,
                 typename std::enable_if<
-                    is_bls<Scheme>::value &&
-                    (is_shamir_sss<SecretSharingScheme<typename public_key<Scheme>::public_key_group_type>>::value ||
-                     is_feldman_sss<SecretSharingScheme<typename public_key<Scheme>::public_key_group_type>>::value ||
-                     is_pedersen_dkg<SecretSharingScheme<typename public_key<Scheme>::public_key_group_type>>::value)>::
+                    is_bls<SchemeType>::value &&
+                    (is_shamir_sss<SecretSharingScheme<typename public_key<SchemeType>::public_key_group_type>>::value ||
+                     is_feldman_sss<SecretSharingScheme<typename public_key<SchemeType>::public_key_group_type>>::value ||
+                     is_pedersen_dkg<SecretSharingScheme<typename public_key<SchemeType>::public_key_group_type>>::value)>::
                     type> {
-                typedef detail::threshold_scheme<Scheme, SecretSharingScheme> scheme_type;
+                typedef detail::threshold_scheme<SchemeType, SecretSharingScheme> scheme_type;
                 typedef typename scheme_type::base_scheme_type base_scheme_type;
 
                 typedef public_key<scheme_type> scheme_public_key_type;
@@ -244,9 +244,9 @@ namespace nil {
 
                 typedef typename modes::isomorphic<sss_signature_group_type>::template bind<
                     public_secret_reconstructing_policy<sss_signature_group_type>>::type acc_processing_mode;
-                typedef reconstructing_accumulator_set<acc_processing_mode> internal_accumulator_type;
+                typedef reconstructing_accumulator_set<acc_processing_mode> accumulator_type;
 
-                static inline void init_accumulator(internal_accumulator_type &acc) {
+                static inline void init_accumulator(accumulator_type &acc) {
                 }
 
                 template<typename PartSignatures>
@@ -254,7 +254,7 @@ namespace nil {
                     std::is_same<part_signature_type,
                                  typename std::remove_cv<typename std::remove_reference<typename std::iterator_traits<
                                      typename PartSignatures::iterator>::value_type>::type>::type>::value>::type
-                    update(internal_accumulator_type &acc, const PartSignatures &s) {
+                    update(accumulator_type &acc, const PartSignatures &s) {
                     nil::crypto3::reconstruct_public_secret<sss_signature_group_type>(s, acc);
                 }
 
@@ -263,23 +263,23 @@ namespace nil {
                     std::is_same<part_signature_type,
                                  typename std::remove_cv<typename std::remove_reference<typename std::iterator_traits<
                                      PartSignatureIt>::value_type>::type>::type>::value>::type
-                    update(internal_accumulator_type &acc, PartSignatureIt first, PartSignatureIt last) {
+                    update(accumulator_type &acc, PartSignatureIt first, PartSignatureIt last) {
                     nil::crypto3::reconstruct_public_secret<sss_signature_group_type>(first, last, acc);
                 }
 
-                static inline signature_type aggregate(const internal_accumulator_type &acc) {
+                static inline signature_type aggregate(const accumulator_type &acc) {
                     return nil::crypto3::pubkey::accumulators::extract::reconstruct<acc_processing_mode>(acc)
                         .get_value();
                 }
             };
 
-            template<typename Scheme, template<typename> class SecretSharingScheme>
+            template<typename SchemeType, template<typename> class SecretSharingScheme>
             struct part_public_key<
-                detail::threshold_scheme<Scheme, SecretSharingScheme>,
-                typename std::enable_if<is_bls<Scheme>::value &&
+                detail::threshold_scheme<SchemeType, SecretSharingScheme>,
+                typename std::enable_if<is_bls<SchemeType>::value &&
                                         is_weighted_shamir_sss<SecretSharingScheme<
-                                            typename public_key<Scheme>::public_key_group_type>>::value>::type> {
-                typedef detail::threshold_scheme<Scheme, SecretSharingScheme> scheme_type;
+                                            typename public_key<SchemeType>::public_key_group_type>>::value>::type> {
+                typedef detail::threshold_scheme<SchemeType, SecretSharingScheme> scheme_type;
                 typedef typename scheme_type::base_scheme_type base_scheme_type;
 
                 typedef private_key<base_scheme_type> base_scheme_private_key_type;
@@ -297,8 +297,8 @@ namespace nil {
                 typedef public_share_sss<_sss_signature_group_type> part_signature_type;
                 typedef typename sss_public_key_group_type::weights_type weights_type;
 
-                typedef std::pair<weights_type, typename base_scheme_private_key_type::internal_accumulator_type>
-                    internal_accumulator_type;
+                typedef std::pair<weights_type, typename base_scheme_private_key_type::accumulator_type>
+                    accumulator_type;
 
                 part_public_key() = default;
 
@@ -308,7 +308,7 @@ namespace nil {
                 part_public_key(const public_share_sss<sss_public_key_group_type> &key_data) : part_pubkey(key_data) {
                 }
 
-                inline void init_accumulator(internal_accumulator_type &acc,
+                inline void init_accumulator(accumulator_type &acc,
                                              const weights_type &confirmed_weights) const {
                     // TODO: somehow mark that such type of key cannot pre-initialize accumulator
                     //  because set of users aggregating final signature is not known at the moment of part key creating
@@ -316,16 +316,16 @@ namespace nil {
                 }
 
                 template<typename InputRange>
-                static inline void update(internal_accumulator_type &acc, const InputRange &range) {
+                static inline void update(accumulator_type &acc, const InputRange &range) {
                     base_scheme_public_key_type::update(acc.second, range);
                 }
 
                 template<typename InputIterator>
-                static inline void update(internal_accumulator_type &acc, InputIterator first, InputIterator last) {
+                static inline void update(accumulator_type &acc, InputIterator first, InputIterator last) {
                     base_scheme_public_key_type::update(acc.second, first, last);
                 }
 
-                inline bool part_verify(internal_accumulator_type &acc, const part_signature_type &part_sig) const {
+                inline bool part_verify(accumulator_type &acc, const part_signature_type &part_sig) const {
                     assert(part_pubkey.get_index() == part_sig.get_index());
                     base_scheme_public_key_type VK_i(part_pubkey.to_shamir(acc.first).get_value());
                     return VK_i.verify(acc.second, part_sig.get_value());
@@ -347,12 +347,12 @@ namespace nil {
                 part_public_key_type part_pubkey;
             };
 
-            template<typename Scheme, template<typename> class SecretSharingScheme>
-            struct public_key<detail::threshold_scheme<Scheme, SecretSharingScheme>,
-                              typename std::enable_if<is_bls<Scheme>::value &&
+            template<typename SchemeType, template<typename> class SecretSharingScheme>
+            struct public_key<detail::threshold_scheme<SchemeType, SecretSharingScheme>,
+                              typename std::enable_if<is_bls<SchemeType>::value &&
                                                       is_weighted_shamir_sss<SecretSharingScheme<typename public_key<
-                                                          Scheme>::public_key_group_type>>::value>::type> {
-                typedef detail::threshold_scheme<Scheme, SecretSharingScheme> scheme_type;
+                                                          SchemeType>::public_key_group_type>>::value>::type> {
+                typedef detail::threshold_scheme<SchemeType, SecretSharingScheme> scheme_type;
                 typedef typename scheme_type::base_scheme_type base_scheme_type;
 
                 typedef private_key<base_scheme_type> base_scheme_private_key_type;
@@ -366,10 +366,10 @@ namespace nil {
                 typedef shamir_sss<public_key_group_type> _sss_public_key_group_type;
                 typedef shamir_sss<signature_group_type> _sss_signature_group_type;
 
-                typedef base_scheme_public_key_type public_key_type;
+                typedef base_scheme_public_key_type schedule_type;
                 typedef typename base_scheme_public_key_type::signature_type signature_type;
 
-                typedef typename base_scheme_public_key_type::internal_accumulator_type internal_accumulator_type;
+                typedef typename base_scheme_public_key_type::accumulator_type accumulator_type;
 
                 public_key() {
                 }
@@ -380,35 +380,35 @@ namespace nil {
                 public_key(const typename public_key_group_type::value_type &key) : pubkey(key) {
                 }
 
-                inline void init_accumulator(internal_accumulator_type &acc) const {
+                inline void init_accumulator(accumulator_type &acc) const {
                     pubkey.init_accumulator(acc);
                 }
 
                 template<typename InputRange>
-                static inline void update(internal_accumulator_type &acc, const InputRange &range) {
+                static inline void update(accumulator_type &acc, const InputRange &range) {
                     base_scheme_public_key_type::update(acc, range);
                 }
 
                 template<typename InputIterator>
-                static inline void update(internal_accumulator_type &acc, InputIterator first, InputIterator last) {
+                static inline void update(accumulator_type &acc, InputIterator first, InputIterator last) {
                     base_scheme_public_key_type::update(acc, first, last);
                 }
 
-                inline bool verify(internal_accumulator_type &acc, const signature_type &sig) const {
+                inline bool verify(accumulator_type &acc, const signature_type &sig) const {
                     return pubkey.verify(acc, sig);
                 }
 
             protected:
-                public_key_type pubkey;
+                schedule_type pubkey;
             };
 
-            template<typename Scheme, template<typename> class SecretSharingScheme>
-            struct private_key<detail::threshold_scheme<Scheme, SecretSharingScheme>,
-                               typename std::enable_if<is_bls<Scheme>::value &&
+            template<typename SchemeType, template<typename> class SecretSharingScheme>
+            struct private_key<detail::threshold_scheme<SchemeType, SecretSharingScheme>,
+                               typename std::enable_if<is_bls<SchemeType>::value &&
                                                        is_weighted_shamir_sss<SecretSharingScheme<typename public_key<
-                                                           Scheme>::public_key_group_type>>::value>::type>
-                : part_public_key<detail::threshold_scheme<Scheme, SecretSharingScheme>> {
-                typedef part_public_key<detail::threshold_scheme<Scheme, SecretSharingScheme>> base_type;
+                                                           SchemeType>::public_key_group_type>>::value>::type>
+                : part_public_key<detail::threshold_scheme<SchemeType, SecretSharingScheme>> {
+                typedef part_public_key<detail::threshold_scheme<SchemeType, SecretSharingScheme>> base_type;
                 typedef typename base_type::scheme_type scheme_type;
                 typedef typename base_type::base_scheme_type base_scheme_type;
                 typedef typename base_type::base_scheme_private_key_type base_scheme_private_key_type;
@@ -420,7 +420,7 @@ namespace nil {
                 typedef typename base_type::part_signature_type part_signature_type;
                 typedef typename base_type::weights_type weights_type;
 
-                typedef typename base_type::internal_accumulator_type internal_accumulator_type;
+                typedef typename base_type::accumulator_type accumulator_type;
 
                 private_key() {
                 }
@@ -429,7 +429,7 @@ namespace nil {
                     privkey(key_data), base_type(key_data) {
                 }
 
-                inline void init_accumulator(internal_accumulator_type &acc,
+                inline void init_accumulator(accumulator_type &acc,
                                              const weights_type &confirmed_weights) const {
                     // TODO: somehow mark that such type of key cannot pre-initialize accumulator
                     //  because set of users aggregating final signature is not known at the moment of part key creating
@@ -437,16 +437,16 @@ namespace nil {
                 }
 
                 template<typename InputRange>
-                static inline void update(internal_accumulator_type &acc, const InputRange &range) {
+                static inline void update(accumulator_type &acc, const InputRange &range) {
                     base_scheme_private_key_type::update(acc.second, range);
                 }
 
                 template<typename InputIterator>
-                static inline void update(internal_accumulator_type &acc, InputIterator first, InputIterator last) {
+                static inline void update(accumulator_type &acc, InputIterator first, InputIterator last) {
                     base_scheme_private_key_type::update(acc.second, first, last);
                 }
 
-                inline part_signature_type sign(internal_accumulator_type &acc) const {
+                inline part_signature_type sign(accumulator_type &acc) const {
                     base_scheme_private_key_type s_i(privkey.to_shamir(acc.first).get_value());
                     return part_signature_type(privkey.get_index(), s_i.sign(acc.second));
                 }
@@ -455,12 +455,12 @@ namespace nil {
                 private_key_type privkey;
             };
 
-            template<typename Scheme, template<typename> class SecretSharingScheme>
-            struct aggregate_op<detail::threshold_scheme<Scheme, SecretSharingScheme>,
-                                typename std::enable_if<is_bls<Scheme>::value &&
+            template<typename SchemeType, template<typename> class SecretSharingScheme>
+            struct aggregate_op<detail::threshold_scheme<SchemeType, SecretSharingScheme>,
+                                typename std::enable_if<is_bls<SchemeType>::value &&
                                                         is_weighted_shamir_sss<SecretSharingScheme<typename public_key<
-                                                            Scheme>::public_key_group_type>>::value>::type> {
-                typedef detail::threshold_scheme<Scheme, SecretSharingScheme> scheme_type;
+                                                            SchemeType>::public_key_group_type>>::value>::type> {
+                typedef detail::threshold_scheme<SchemeType, SecretSharingScheme> scheme_type;
                 typedef typename scheme_type::base_scheme_type base_scheme_type;
 
                 typedef public_key<scheme_type> scheme_public_key_type;
@@ -472,9 +472,9 @@ namespace nil {
                 typedef typename scheme_part_public_key_type::part_signature_type part_signature_type;
                 typedef typename scheme_public_key_type::signature_type signature_type;
 
-                typedef signature_type internal_accumulator_type;
+                typedef signature_type accumulator_type;
 
-                static inline void init_accumulator(internal_accumulator_type &acc) {
+                static inline void init_accumulator(accumulator_type &acc) {
                     acc = signature_type::zero();
                 }
 
@@ -483,7 +483,7 @@ namespace nil {
                     std::is_same<part_signature_type,
                                  typename std::remove_cv<typename std::remove_reference<typename std::iterator_traits<
                                      typename PartSignatures::iterator>::value_type>::type>::type>::value>::type
-                    update(internal_accumulator_type &acc, const PartSignatures &s) {
+                    update(accumulator_type &acc, const PartSignatures &s) {
                     for (const auto &s_i : s) {
                         acc = acc + s_i.get_value();
                     }
@@ -494,13 +494,13 @@ namespace nil {
                     std::is_same<part_signature_type,
                                  typename std::remove_cv<typename std::remove_reference<typename std::iterator_traits<
                                      PartSignatureIt>::value_type>::type>::type>::value>::type
-                    update(internal_accumulator_type &acc, PartSignatureIt first, PartSignatureIt last) {
+                    update(accumulator_type &acc, PartSignatureIt first, PartSignatureIt last) {
                     for (auto iter = first; iter != last; ++iter) {
                         acc = acc + iter->get_value();
                     }
                 }
 
-                static inline signature_type aggregate(const internal_accumulator_type &acc) {
+                static inline signature_type aggregate(const accumulator_type &acc) {
                     return acc;
                 }
             };

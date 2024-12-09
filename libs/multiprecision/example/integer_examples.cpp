@@ -25,7 +25,7 @@ fancy iostream formatting of the results:
 */
 
 void print_factorials() {
-    using nil::crypto3::multiprecision::cpp_int;
+    using boost::multiprecision::cpp_int;
     //
     // Print all the factorials that will fit inside a 128-bit integer.
     //
@@ -128,7 +128,7 @@ we'll start with an often needed calculation of ['2[super n] - 1], which we coul
 implement like this:
 */
 
-using nil::crypto3::multiprecision::cpp_int;
+using boost::multiprecision::cpp_int;
 
 cpp_int b1(unsigned n) {
     cpp_int r(1);

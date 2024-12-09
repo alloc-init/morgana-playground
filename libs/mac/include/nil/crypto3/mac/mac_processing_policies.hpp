@@ -46,7 +46,7 @@ namespace nil {
                     typedef typename basic_policy<Mac>::mac_type mac_type;
 
                     typedef mac_key<mac_type> key_type;
-                    typedef typename key_type::internal_accumulator_type internal_accumulator_type;
+                    typedef typename key_type::accumulator_type accumulator_type;
                     typedef typename key_type::digest_type result_type;
 
                     template<typename... Args>
@@ -70,7 +70,7 @@ namespace nil {
                     typedef typename basic_policy<Mac>::mac_type mac_type;
 
                     typedef mac_key<mac_type> key_type;
-                    typedef typename key_type::internal_accumulator_type internal_accumulator_type;
+                    typedef typename key_type::accumulator_type accumulator_type;
                     typedef bool result_type;
 
                     template<typename... Args>

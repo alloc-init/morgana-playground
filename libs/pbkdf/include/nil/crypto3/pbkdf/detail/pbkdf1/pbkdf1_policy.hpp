@@ -29,9 +29,9 @@ namespace nil {
     namespace crypto3 {
         namespace pbkdf {
             namespace detail {
-                template<typename Hash>
+                template<typename HashType>
                 struct pkcs5_pkbdf1_policy {
-                    typedef Hash hash_type;
+                    typedef HashType hash_type;
 
                     constexpr static const std::size_t digest_bits = hash_type::digest_bits;
                     typedef typename hash_type::digest_type digest_type;

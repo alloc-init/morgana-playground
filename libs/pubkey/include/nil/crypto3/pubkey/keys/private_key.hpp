@@ -43,8 +43,10 @@ namespace nil {
          *
          */
 
-            template<typename Scheme, typename = void>
-            struct private_key;
+            template<typename SchemeType, typename T = void>
+            struct private_key {
+                typedef SchemeType scheme_type;
+            };
         }    // namespace pubkey
     }        // namespace crypto3
 }    // namespace nil

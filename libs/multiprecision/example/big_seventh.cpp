@@ -57,7 +57,7 @@ int main() {
     /*`Using a `typedef` like `cpp_bin_float_50` hides the complexity of multiprecision, and
     allows us to define variables with 50 decimal digit precision just like __fundamental `double`.
     */
-    using nil::crypto3::multiprecision::cpp_bin_float_50;
+    using boost::multiprecision::cpp_bin_float_50;
 
     cpp_bin_float_50 seventh = cpp_bin_float_50(1) / 7;    // 1 / 7
 

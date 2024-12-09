@@ -27,6 +27,7 @@
 #define CRYPTO3_USCS_PPZKSNARK_VERIFICATION_KEY_HPP
 
 #include <nil/crypto3/container/accumulation_vector.hpp>
+#include <nil/crypto3/algebra/pairing/pairing_policy.hpp>
 
 namespace nil {
     namespace crypto3 {
@@ -51,12 +52,13 @@ namespace nil {
                     container::accumulation_vector<g1_type> encoded_IC_query;
 
                     uscs_ppzksnark_verification_key() = default;
+
                     uscs_ppzksnark_verification_key(const typename g2_type::value_type &tilde_g2,
                                                     const typename g2_type::value_type &alpha_tilde_g2,
                                                     const typename g2_type::value_type &Z_g2,
                                                     const container::accumulation_vector<g1_type> &eIC) :
-                        tilde_g2(tilde_g2),
-                        alpha_tilde_g2(alpha_tilde_g2), Z_g2(Z_g2), encoded_IC_query(eIC) {};
+                            tilde_g2(tilde_g2),
+                            alpha_tilde_g2(alpha_tilde_g2), Z_g2(Z_g2), encoded_IC_query(eIC) {};
 
                     std::size_t G1_size() const {
                         return encoded_IC_query.size();

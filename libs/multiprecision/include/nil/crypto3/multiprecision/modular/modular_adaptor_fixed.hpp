@@ -17,12 +17,12 @@
 namespace boost {
     namespace multiprecision {
         namespace backends {
-            template<typename Backend, typename StorageType>
+            template<typename Backend, typename ParamsType>
             class modular_adaptor;
 
             // fixed precision modular backend which supports compile-time execution
-            template<unsigned Bits, typename StorageType>
-            class modular_adaptor<cpp_int_modular_backend<Bits>, StorageType> : public StorageType {
+            template<unsigned Bits, typename ParamsType>
+            class modular_adaptor<cpp_int_modular_backend<Bits>, ParamsType> : public ParamsType {
             protected:
                 typedef cpp_int_modular_backend<Bits> Backend;
 

@@ -59,8 +59,8 @@ namespace nil {
                         return output;
                     }
                 }    // namespace detail
-                template<typename Scheme, typename Hash>
-                struct emsa_x931 : public emsa<Scheme, Hash> {
+                template<typename SchemeType, typename HashType>
+                struct emsa_x931 : public emsa<SchemeType, HashType> {
                     template<typename InputIterator1, typename InputIterator2>
                     bool verify(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2,
                                 InputIterator2 last2, std::size_t key_bits) const {
@@ -106,7 +106,7 @@ namespace nil {
                         *(out + output_length - 3 - empty_hash_size) = 0xBA;
                         set_mem(&output[1], output_length - 4 - empty_hash_size, 0xBB);
                         buffer_insert(output, output_length - (empty_hash_size + 2), msg.data(), msg.size());
-                        output[output_length - 2] = Hash::policy_type::ieee1363_hash_id;
+                        output[output_length - 2] = HashType::policy_type::ieee1363_hash_id;
                         output[output_length - 1] = 0xCC;
 
                         return out;

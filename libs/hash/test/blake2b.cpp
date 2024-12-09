@@ -65,7 +65,7 @@ template<std::size_t Size>
 class fixture {
 public:
     accumulator_set<hashes::blake2b<Size>> acc;
-    typedef hashes::blake2b<Size> hash_t;
+    typedef hashes::blake2b<Size> hash_type;
     virtual ~fixture() {
     }
 };

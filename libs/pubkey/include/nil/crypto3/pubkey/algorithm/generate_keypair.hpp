@@ -38,27 +38,27 @@
 namespace nil {
     namespace crypto3 {
         namespace pubkey {
-            template<typename Scheme>
-            using keypair_generation_init_params_type = typename generate_keypair_op<Scheme>::init_params_type;
+            template<typename SchemeType>
+            using keypair_generation_init_params_type = typename generate_keypair_op<SchemeType>::init_params_type;
         }
 
-        template<typename Scheme, typename Mode = pubkey::modes::isomorphic<Scheme>,
+        template<typename SchemeType, typename Mode = pubkey::modes::isomorphic<SchemeType>,
                  typename ProcessingMode = typename Mode::keypair_generation_policy, typename SinglePassRange,
                  typename PubkeyAccumulator = pubkey::pubkey_accumulator_set<ProcessingMode>,
                  typename StreamSchemeImpl = pubkey::detail::value_pubkey_impl<PubkeyAccumulator>,
                  typename SchemeImpl = pubkey::detail::range_pubkey_impl<StreamSchemeImpl>>
         SchemeImpl generate_keypair(const SinglePassRange &range,
-                                    const pubkey::keypair_generation_init_params_type<Scheme> &init_params) {
+                                    const pubkey::keypair_generation_init_params_type<SchemeType> &init_params) {
             return SchemeImpl(range, PubkeyAccumulator(init_params));
         }
 
-        template<typename Scheme, typename Mode = pubkey::modes::isomorphic<Scheme>,
+        template<typename SchemeType, typename Mode = pubkey::modes::isomorphic<SchemeType>,
                  typename ProcessingMode = typename Mode::keypair_generation_policy, typename InputIterator,
                  typename PubkeyAccumulator = pubkey::pubkey_accumulator_set<ProcessingMode>,
                  typename StreamSchemeImpl = pubkey::detail::value_pubkey_impl<PubkeyAccumulator>,
                  typename SchemeImpl = pubkey::detail::range_pubkey_impl<StreamSchemeImpl>>
         SchemeImpl generate_keypair(InputIterator first, InputIterator last,
-                                    const pubkey::keypair_generation_init_params_type<Scheme> &init_params) {
+                                    const pubkey::keypair_generation_init_params_type<SchemeType> &init_params) {
             return SchemeImpl(first, last, PubkeyAccumulator(init_params));
         }
     }    // namespace crypto3

@@ -1,10 +1,10 @@
-# Zero-Knowledge Cryptography Schemes for =nil; Foundation's Cryptography Suite
+# Zero-Knowledge Cryptography Schemes for [[alloc] init]'s Cryptography Suite
 
-Zero-Knowledge cryptography schemes for =nil; Foundation's cryptography suite. 
+Zero-Knowledge cryptography schemes for [[alloc] init]'s cryptography suite. 
 SNARK-alike schemes for now. More trivial Pedersen commitment schemes, STARKs, 
 IOP-based SNARKs, Bulletproofs etc in future.
 
-[![Run tests](https://github.com/NilFoundation/crypto3-zk/actions/workflows/run_tests.yml/badge.svg)](https://github.com/NilFoundation/crypto3-zk/actions/workflows/run_tests.yml)
+[![Run tests](https://github.com/alloc-init/crypto3-zk/actions/workflows/run_tests.yml/badge.svg)](https://github.com/alloc-init/crypto3-zk/actions/workflows/run_tests.yml)
 
 ## Building
 
@@ -15,15 +15,15 @@ library in a project it is required to:
 2. Add all the internal dependencies using [CMake Modules](https://github.com/BoostCMake/cmake_modules.git) as
    submodules to target project repository.
 3. Initialize parent project with [CMake Modules](https://github.com/BoostCMake/cmake_modules.git) (Look
-   at [crypto3](https://github.com/nilfoundation/crypto3.git) for the example)
+   at [crypto3](https://github.com/alloc-init/crypto3.git) for the example)
 
 ## Dependencies
 
 ### Internal
 
-* [Multiprecision](https://github.com/nilfoundation/crypto3-multiprecision.git)
-* [Algebra](https://github.com/nilfoundation/crypto3-algebra.git)
-* [FFT](https://github.com/nilfoundation/crypto3-fft.git)
+* [Multiprecision](https://github.com/alloc-init/crypto3-multiprecision.git)
+* [Algebra](https://github.com/alloc-init/crypto3-algebra.git)
+* [FFT](https://github.com/alloc-init/crypto3-fft.git)
 
 ### External
 

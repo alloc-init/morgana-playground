@@ -14,9 +14,9 @@ Crypto3.Passhash consists of several parts to review:
 
 Internal dependencies:
 
-1. [Crypto3.Mac](https://github.com/nilfoundation/block.git)
-2. [Crypto3.Codec](https://github.com/nilfoundation/codec.git)
-3. [Crypto3.Pbkdf](https://github.com/nilfoundation/pbkdf.git)
+1. [Crypto3.Mac](https://github.com/alloc-init/block.git)
+2. [Crypto3.Codec](https://github.com/alloc-init/codec.git)
+3. [Crypto3.Pbkdf](https://github.com/alloc-init/pbkdf.git)
 
 Outer dependencies:
 1. [Boost](https://boost.org) (>= 1.58)

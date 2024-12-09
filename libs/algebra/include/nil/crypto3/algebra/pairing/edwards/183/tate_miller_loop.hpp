@@ -46,7 +46,7 @@ namespace nil {
                     using curve_type = curves::edwards<183>;
 
                     using params_type = detail::pairing_params<curve_type>;
-                    typedef detail::types_policy<curve_type> policy_type;
+                    typedef detail::types_policy <curve_type> policy_type;
                     using gt_type = typename curve_type::gt_type;
 
                 public:
@@ -59,7 +59,7 @@ namespace nil {
                         std::size_t idx = 0;
                         for (long i = policy_type::scalar_field_bits - 1; i >= 0; --i) {
                             const bool bit =
-                                boost::multiprecision::bit_test(policy_type::scalar_field_modulus, i);
+                                    boost::multiprecision::bit_test(policy_type::scalar_field_modulus, i);
                             if (!found_one) {
                                 /* this skips the MSB itself */
                                 found_one |= bit;
@@ -71,13 +71,13 @@ namespace nil {
                                order */
                             typename policy_type::Fq_conic_coefficients cc = prec_P[idx++];
                             typename gt_type::value_type g_RR_at_Q = typename gt_type::value_type(
-                                Fq3(cc.c_XZ, Fq(0l), Fq(0l)) + cc.c_XY * prec_Q.y0, cc.c_ZZ * prec_Q.eta);
+                                    Fq3(cc.c_XZ, Fq(0l), Fq(0l)) + cc.c_XY * prec_Q.y0, cc.c_ZZ * prec_Q.eta);
                             f = f.squared() * g_RR_at_Q;
                             if (bit) {
                                 cc = prec_P[idx++];
 
                                 typename gt_type::value_type g_RP_at_Q = typename gt_type::value_type(
-                                    Fq3(cc.c_XZ, Fq(0l), Fq(0l)) + cc.c_XY * prec_Q.y0, cc.c_ZZ * prec_Q.eta);
+                                        Fq3(cc.c_XZ, Fq(0l), Fq(0l)) + cc.c_XY * prec_Q.y0, cc.c_ZZ * prec_Q.eta);
                                 f = f * g_RP_at_Q;
                             }
                         }

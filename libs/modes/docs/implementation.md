@@ -76,11 +76,11 @@ As much as such algorithms are implemented as generic ones, hash algorithms
 should follow that too:
  
 ```cpp
-template<typename Hash, typename InputIterator, typename OutputIterator>
+template<typename HashType, typename InputIterator, typename OutputIterator>
 OutputIterator hash(InputIterator first, InputIterator last, OutputIterator out);
 ```
 
-`Hash` is a policy type which represents the particular hash will be used.
+`HashType` is a policy type which represents the particular hash will be used.
 `InputIterator` represents the input data coming to be hashed.
 `OutputIterator` is exactly the same as it was in `std::transform` algorithm - 
 it handles all the output storage operations.
@@ -88,16 +88,16 @@ it handles all the output storage operations.
 The most obvious difference between `std::transform` is a representation of a 
 policy defining the particular behaviour of an algorithm. `std::transform` 
 proposes to pass it as a reference to `Functor`, which is also possible in case 
-of `Hash` policy used in function already pre-scheduled:
+of `HashType` policy used in function already pre-scheduled:
    
 ```cpp
-template<typename Hash, typename InputIterator, typename OutputIterator>
+template<typename HashType, typename InputIterator, typename OutputIterator>
 OutputIterator hash(InputIterator first, InputIterator last, OutputIterator out);
 ```
 
 Algorithms are no more than an internal structures initializer wrapper. In this 
 particular case algorithm would initialize stream processor fed with accumulator 
-set with [`hash` accumulator](@ref accumulators::hash) inside initialized with `Hash`.
+set with [`hash` accumulator](@ref accumulators::hash) inside initialized with `HashType`.
 
 ## Stream Data Processing {#modes_stream}
 
@@ -108,7 +108,7 @@ Input data in the implementation proposed is supposed to be a various-length
 input stream, which length could be not even to block size.
   
 This requires an introduction of stream processor specified with particular 
-parameter set unique for each [`Hash`](@ref modes_concept) type, which takes 
+parameter set unique for each [`HashType`](@ref modes_concept) type, which takes 
 input data stream and gets it split to blocks filled with converted to 
 appropriate size integers (words in the cryptography meaning, not machine words).
   
@@ -169,7 +169,7 @@ struct2:w3 -> struct3:bl0
 
 @enddot
 
-Now with this a [`Hash`](@ref modes_concept) instance of [sha2](@ref nil::crypto3::hashes::sha2) 
+Now with this a [`HashType`](@ref modes_concept) instance of [sha2](@ref nil::crypto3::hashes::sha2) 
 can be fed.
 
 This mechanism is handled with `stream_processor` template class specified for 
@@ -232,7 +232,7 @@ public:
 
 This part is handled internally with ```stream_processor``` configured for each particular cipher. 
    
-## Hash Algorithms {#modes_pol}
+## HashType Algorithms {#modes_pol}
 
 ## Accumulators {#modes_acc}
 

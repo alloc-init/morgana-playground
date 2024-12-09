@@ -34,10 +34,10 @@ namespace nil {
                  * @tparam Scheme
                  * @tparam Hash
                  */
-                template<typename Scheme, typename Hash>
+                template<typename SchemeType, typename HashType>
                 struct eme {
-                    typedef Scheme scheme_type;
-                    typedef Hash hash_type;
+                    typedef SchemeType scheme_type;
+                    typedef HashType hash_type;
 
                     typedef typename scheme_type::key_type key_type;
                 };

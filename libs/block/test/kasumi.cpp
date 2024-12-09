@@ -42,14 +42,15 @@ using namespace nil::crypto3;
 
 BOOST_AUTO_TEST_SUITE(kasumi_test_suite)
 
-BOOST_AUTO_TEST_CASE(kasumi_1) {
+    BOOST_AUTO_TEST_CASE(kasumi_1) {
 
-    std::vector<char> input = {'\xea', '\x02', '\x47', '\x14', '\xad', '\x5c', '\x4d', '\x84'};
-    std::vector<char> key = {'\x2b', '\xd6', '\x45', '\x9f', '\x82', '\xc5', '\xb3', '\x00', '\x95', '\x2c', '\x49', '\x10', '\x48', '\x81', '\xff', '\x48'};
+        std::vector<char> input = {'\xea', '\x02', '\x47', '\x14', '\xad', '\x5c', '\x4d', '\x84'};
+        std::vector<char> key = {'\x2b', '\xd6', '\x45', '\x9f', '\x82', '\xc5', '\xb3', '\x00', '\x95', '\x2c', '\x49',
+                                 '\x10', '\x48', '\x81', '\xff', '\x48'};
 
-    std::string out = encrypt<block::kasumi>(input, key);
-    
-    BOOST_CHECK_EQUAL(out, "df1f9b251c0bf45f");
-}
+        std::string out = encrypt<block::kasumi>(input, key);
+
+        BOOST_CHECK_EQUAL(out, "df1f9b251c0bf45f");
+    }
 
 BOOST_AUTO_TEST_SUITE_END()

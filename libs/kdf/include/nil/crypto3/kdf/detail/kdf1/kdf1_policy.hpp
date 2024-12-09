@@ -31,9 +31,9 @@ namespace nil {
     namespace crypto3 {
         namespace kdf {
             namespace detail {
-                template<typename Hash>
+                template<typename HashType>
                 struct kdf1_policy {
-                    typedef Hash hash_type;
+                    typedef HashType hash_type;
 
                     constexpr static const std::size_t salt_bits = CHAR_BIT;
                     constexpr static const std::size_t salt_size = CHAR_BIT / CHAR_BIT;

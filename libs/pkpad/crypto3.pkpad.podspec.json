@@ -13,7 +13,7 @@
     "osx": "10.7"
   },
   "source": {
-    "git": "https://github.com/nilfoundation/pkpad.git",
+    "git": "https://github.com/alloc-init/pkpad.git",
     "branch": "master"
   },
   "xcconfig": {

@@ -39,9 +39,9 @@ namespace nil {
              * @tparam Hash
              * @ingroup pbkdf
              */
-            template<typename Hash>
+            template<typename HashType>
             class pkcs5_pkbdf1 {
-                typedef detail::pkcs5_pkbdf1_functions<Hash> policy_type;
+                typedef detail::pkcs5_pkbdf1_functions<HashType> policy_type;
 
             public:
                 typedef typename policy_type::hash_type hash_type;

@@ -172,10 +172,10 @@ void get_random_big_uint(RandomEngineType& rng, UnsignedIntegralIteratorType it_
     }
 }
 
-using big_uint_backend_type = nil::crypto3::multiprecision::
-    cpp_int_backend<8192UL << 1U, 8192UL << 1U, nil::crypto3::multiprecision::unsigned_magnitude>;
+using big_uint_backend_type = boost::multiprecision::
+    cpp_int_backend<8192UL << 1U, 8192UL << 1U, boost::multiprecision::unsigned_magnitude>;
 
-using big_uint_type = nil::crypto3::multiprecision::number<big_uint_backend_type>;
+using big_uint_type = boost::multiprecision::number<big_uint_backend_type>;
 
 namespace local {
     std::vector<big_uint_type> a(1024U);

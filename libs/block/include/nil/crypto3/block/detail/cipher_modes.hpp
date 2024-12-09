@@ -83,9 +83,9 @@ namespace nil {
                     }
                 };
 
-                template<typename Policy>
+                template<typename PolicyType>
                 class isomorphic {
-                    typedef Policy policy_type;
+                    typedef PolicyType policy_type;
 
                 public:
                     typedef typename policy_type::cipher_type cipher_type;
@@ -134,9 +134,9 @@ namespace nil {
                     typedef detail::isomorphic_encryption_policy<cipher_type, padding_type> encryption_policy;
                     typedef detail::isomorphic_decryption_policy<cipher_type, padding_type> decryption_policy;
 
-                    template<typename Policy>
+                    template<typename PolicyType>
                     struct bind {
-                        typedef detail::isomorphic<Policy> type;
+                        typedef detail::isomorphic<PolicyType> type;
                     };
                 };
             }    // namespace modes

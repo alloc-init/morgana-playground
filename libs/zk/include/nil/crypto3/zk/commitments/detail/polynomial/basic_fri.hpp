@@ -74,7 +74,7 @@ namespace nil {
                      * <https://eprint.iacr.org/2019/1400.pdf>
                      */
                     template<typename FieldType, typename MerkleTreeHashType, typename TranscriptHashType,
-                        std::size_t M, typename GrindingType = nil::crypto3::zk::commitments::proof_of_work<TranscriptHashType>>
+                            std::size_t M, typename GrindingType = nil::crypto3::zk::commitments::proof_of_work<TranscriptHashType>>
                     struct basic_batched_fri {
                         BOOST_STATIC_ASSERT_MSG(M == 2, "unsupported m value!");
 
@@ -100,7 +100,7 @@ namespace nil {
                         >;
 
                         using merkle_tree_type = containers::merkle_tree<MerkleTreeHashType, 2>;
-                        using merkle_proof_type =  typename containers::merkle_proof<MerkleTreeHashType, 2>;
+                        using merkle_proof_type = typename containers::merkle_proof<MerkleTreeHashType, 2>;
                         using precommitment_type = merkle_tree_type;
                         using commitment_type = typename precommitment_type::value_type;
                         using transcript_type = transcript::fiat_shamir_heuristic_sequential<TranscriptHashType>;
@@ -110,7 +110,7 @@ namespace nil {
 
                             using field_type = FieldType;
                             using merkle_tree_type = containers::merkle_tree<MerkleTreeHashType, 2>;
-                            using merkle_proof_type =  typename containers::merkle_proof<MerkleTreeHashType, 2>;
+                            using merkle_proof_type = typename containers::merkle_proof<MerkleTreeHashType, 2>;
                             using precommitment_type = merkle_tree_type;
                             using commitment_type = typename precommitment_type::value_type;
                             using transcript_type = transcript::fiat_shamir_heuristic_sequential<TranscriptHashType>;
@@ -124,7 +124,8 @@ namespace nil {
                             std::size_t grinding_parameter;
                             constexpr static std::size_t m = M;
 
-                            static std::vector<std::size_t> generate_random_step_list(const std::size_t r, const int max_step) {
+                            static std::vector<std::size_t>
+                            generate_random_step_list(const std::size_t r, const int max_step) {
                                 using dist_type = std::uniform_int_distribution<int>;
                                 static std::random_device random_engine;
 
@@ -148,77 +149,66 @@ namespace nil {
 
                             //params_type(const params_type &other){}
                             // TODO when marshalling will be fine
-                            params_type(
-                                std::size_t max_step,
-                                std::size_t degree_log,
-                                std::size_t lambda,
-                                std::size_t expand_factor,
-                                bool use_grinding = false,
-                                std::size_t grinding_parameter = 16
-                            ): lambda(lambda)
-                              , use_grinding(use_grinding)
-                              , grinding_parameter(grinding_parameter)
-                              , max_degree((1 << degree_log) - 1)
-                              , D(math::calculate_domain_set<FieldType>(degree_log + expand_factor, degree_log - 1))
-                              , r( degree_log - 1 )
-                              , step_list(generate_random_step_list(r, max_step))
-                              , expand_factor(expand_factor)
-                            { }
+                            params_type(std::size_t max_step,
+                                        std::size_t degree_log,
+                                        std::size_t lambda,
+                                        std::size_t expand_factor,
+                                        bool use_grinding = false,
+                                        std::size_t grinding_parameter = 16
+                            ) : lambda(lambda), use_grinding(use_grinding), grinding_parameter(grinding_parameter),
+                                max_degree((1 << degree_log) - 1),
+                                D(math::calculate_domain_set<FieldType>(degree_log + expand_factor, degree_log - 1)),
+                                r(degree_log - 1), step_list(generate_random_step_list(r, max_step)),
+                                expand_factor(expand_factor) {}
 
-                            params_type(
-                                std::vector<std::size_t> step_list_in,
-                                std::size_t degree_log,
-                                std::size_t lambda,
-                                std::size_t expand_factor,
-                                bool use_grinding = false,
-                                std::size_t grinding_parameter = 16
-                            ): lambda(lambda)
-                              , use_grinding(use_grinding)
-                              , grinding_parameter(grinding_parameter)
-                              , max_degree((1 << degree_log) - 1)
-                              , D(math::calculate_domain_set<FieldType>(degree_log + expand_factor, std::accumulate(step_list_in.begin(), step_list_in.end(), 0)))
-                              , r(std::accumulate(step_list_in.begin(), step_list_in.end(), 0))
-                              , step_list(step_list_in)
-                              , expand_factor(expand_factor)
-                            { }
+                            params_type(std::vector<std::size_t> step_list_in,
+                                        std::size_t degree_log,
+                                        std::size_t lambda,
+                                        std::size_t expand_factor,
+                                        bool use_grinding = false,
+                                        std::size_t grinding_parameter = 16
+                            ) : lambda(lambda), use_grinding(use_grinding), grinding_parameter(grinding_parameter),
+                                max_degree((1 << degree_log) - 1),
+                                D(math::calculate_domain_set<FieldType>(degree_log + expand_factor,
+                                                                        std::accumulate(step_list_in.begin(),
+                                                                                        step_list_in.end(), 0))),
+                                r(std::accumulate(step_list_in.begin(), step_list_in.end(), 0)),
+                                step_list(step_list_in), expand_factor(expand_factor) {}
 
-                            params_type(
-                                std::size_t max_degree,
-                                std::vector<std::shared_ptr<math::evaluation_domain<FieldType>>> D,
-                                std::vector<std::size_t> step_list_in,
-                                std::size_t expand_factor,
-                                std::size_t lambda,
-                                bool use_grinding = false,
-                                std::size_t grinding_parameter = 16
-                            ) : lambda(lambda)
-                              , use_grinding(use_grinding)
-                              , grinding_parameter(grinding_parameter)
-                              , max_degree(max_degree)
-                              , D(D)
-                              , r(std::accumulate(step_list_in.begin(), step_list_in.end(), 0))
-                              , step_list(step_list_in)
-                              , expand_factor(expand_factor)
-                            {}
+                            params_type(std::size_t max_degree,
+                                        std::vector<std::shared_ptr<math::evaluation_domain<FieldType>>> D,
+                                        std::vector<std::size_t> step_list_in,
+                                        std::size_t expand_factor,
+                                        std::size_t lambda,
+                                        bool use_grinding = false,
+                                        std::size_t grinding_parameter = 16) : lambda(lambda),
+                                                                               use_grinding(use_grinding),
+                                                                               grinding_parameter(grinding_parameter),
+                                                                               max_degree(max_degree), D(D),
+                                                                               r(std::accumulate(step_list_in.begin(),
+                                                                                                 step_list_in.end(),
+                                                                                                 0)),
+                                                                               step_list(step_list_in),
+                                                                               expand_factor(expand_factor) {}
 
                             bool operator==(const params_type &rhs) const {
-                                if( D.size() != rhs.D.size() ){
+                                if (D.size() != rhs.D.size()) {
                                     return false;
                                 }
-                                for( std::size_t i = 0; i < D.size(); i++){
-                                    if( D[i]->get_domain_element(1) != rhs.D[i]->get_domain_element(1) ){
+                                for (std::size_t i = 0; i < D.size(); i++) {
+                                    if (D[i]->get_domain_element(1) != rhs.D[i]->get_domain_element(1)) {
                                         return false;
                                     }
                                 }
-                                if(use_grinding && rhs.use_grinding && grinding_parameter != rhs.grinding_parameter){
+                                if (use_grinding && rhs.use_grinding && grinding_parameter != rhs.grinding_parameter) {
                                     return false;
                                 }
                                 return r == rhs.r
-                                    && max_degree == rhs.max_degree
-                                    && step_list == rhs.step_list
-                                    && expand_factor == rhs.expand_factor
-                                    && lambda == rhs.lambda
-                                    && use_grinding == rhs.use_grinding
-                                ;
+                                       && max_degree == rhs.max_degree
+                                       && step_list == rhs.step_list
+                                       && expand_factor == rhs.expand_factor
+                                       && lambda == rhs.lambda
+                                       && use_grinding == rhs.use_grinding;
                             }
 
                             bool operator!=(const params_type &rhs) const {
@@ -247,8 +237,8 @@ namespace nil {
                             }
 
                             // For the last round it's final_polynomial's values
-                            polynomial_values_type               y;                         // Values for the next round.
-                            merkle_proof_type                    p;                         // Merkle proof(values[i-1], T_i)
+                            polynomial_values_type y;                         // Values for the next round.
+                            merkle_proof_type p;                         // Merkle proof(values[i-1], T_i)
                         };
 
                         struct initial_proof_type {
@@ -272,6 +262,7 @@ namespace nil {
                             bool operator!=(const query_proof_type &rhs) const {
                                 return !(rhs == *this);
                             }
+
                             std::map<std::size_t, initial_proof_type> initial_proof;
                             std::vector<round_proof_type> round_proofs;
                         };
@@ -290,10 +281,10 @@ namespace nil {
                                 return !(rhs == *this);
                             }
 
-                            std::vector<commitment_type>                        fri_roots;        // 0,..step_list.size()
-                            math::polynomial<typename field_type::value_type>   final_polynomial;
-                            std::vector<query_proof_type>                       query_proofs;     // 0...lambda - 1
-                            typename GrindingType::output_type                  proof_of_work;
+                            std::vector<commitment_type> fri_roots;        // 0,..step_list.size()
+                            math::polynomial<typename field_type::value_type> final_polynomial;
+                            std::vector<query_proof_type> query_proofs;     // 0...lambda - 1
+                            typename GrindingType::output_type proof_of_work;
                         };
                     };
                 }    // namespace detail
@@ -301,40 +292,40 @@ namespace nil {
 
             namespace algorithms {
                 namespace detail {
-                    template <typename FRI>
+                    template<typename FRI>
                     using fri_field_element_consumer = ::nil::crypto3::zk::detail::field_element_consumer<
-                        typename FRI::field_type,
-                        typename FRI::merkle_tree_hash_type::word_type,
-                        typename FRI::field_element_type
+                            typename FRI::field_type,
+                            typename FRI::merkle_tree_hash_type::word_type,
+                            typename FRI::field_element_type
                     >;
                 }    // namespace detail
 
                 template<typename FRI,
-                    typename std::enable_if<
-                        std::is_base_of<
-                            commitments::detail::basic_batched_fri<
-                                typename FRI::field_type, typename FRI::merkle_tree_hash_type,
-                                typename FRI::transcript_hash_type, FRI::m,
-                                typename FRI::grinding_type
-                            >,
-                            FRI
-                        >::value,
-                        bool
-                    >::type = true>
+                        typename std::enable_if<
+                                std::is_base_of<
+                                        commitments::detail::basic_batched_fri<
+                                                typename FRI::field_type, typename FRI::merkle_tree_hash_type,
+                                                typename FRI::transcript_hash_type, FRI::m,
+                                                typename FRI::grinding_type
+                                        >,
+                                        FRI
+                                >::value,
+                                bool
+                        >::type = true>
                 static typename FRI::commitment_type commit(const typename FRI::precommitment_type &P) {
                     return P.root();
                 }
 
                 template<typename FRI, std::size_t list_size,
-                    typename std::enable_if<
-                        std::is_base_of<
-                            commitments::detail::basic_batched_fri<
-                                typename FRI::field_type, typename FRI::merkle_tree_hash_type,
-                                typename FRI::transcript_hash_type, FRI::m,
-                                typename FRI::grinding_type
-                            >,
-                            FRI>::value,
-                        bool>::type = true>
+                        typename std::enable_if<
+                                std::is_base_of<
+                                        commitments::detail::basic_batched_fri<
+                                                typename FRI::field_type, typename FRI::merkle_tree_hash_type,
+                                                typename FRI::transcript_hash_type, FRI::m,
+                                                typename FRI::grinding_type
+                                        >,
+                                        FRI>::value,
+                                bool>::type = true>
                 static std::array<typename FRI::commitment_type, list_size>
                 commit(const std::array<typename FRI::precommitment_type, list_size> &P) {
 
@@ -351,16 +342,16 @@ namespace nil {
                 }
 
                 template<typename FRI,
-                    typename std::enable_if<
-                        std::is_base_of<
-                            commitments::detail::basic_batched_fri<
-                                typename FRI::field_type,
-                                typename FRI::merkle_tree_hash_type,
-                                typename FRI::transcript_hash_type,
-                                FRI::m, typename FRI::grinding_type
-                            >,
-                            FRI>::value,
-                        bool>::type = true>
+                        typename std::enable_if<
+                                std::is_base_of<
+                                        commitments::detail::basic_batched_fri<
+                                                typename FRI::field_type,
+                                                typename FRI::merkle_tree_hash_type,
+                                                typename FRI::transcript_hash_type,
+                                                FRI::m, typename FRI::grinding_type
+                                        >,
+                                        FRI>::value,
+                                bool>::type = true>
                 static typename FRI::precommitment_type
                 precommit(math::polynomial_dfs<typename FRI::field_type::value_type> &f,
                           std::shared_ptr<math::evaluation_domain<typename FRI::field_type>> D,
@@ -373,8 +364,8 @@ namespace nil {
                     std::size_t coset_size = 1 << fri_step;
                     std::size_t leafs_number = domain_size / coset_size;
                     std::vector<detail::fri_field_element_consumer<FRI>> y_data(
-                        leafs_number,
-                        detail::fri_field_element_consumer<FRI>(coset_size)
+                            leafs_number,
+                            detail::fri_field_element_consumer<FRI>(coset_size)
                     );
 
                     for (std::size_t x_index = 0; x_index < leafs_number; x_index++) {
@@ -382,7 +373,7 @@ namespace nil {
                         s_indices[0][0] = x_index;
                         s_indices[0][1] = get_paired_index<FRI>(x_index, domain_size);
 
-                        auto& element_consumer = y_data[x_index].reset_cursor();
+                        auto &element_consumer = y_data[x_index].reset_cursor();
                         element_consumer.consume(f[s_indices[0][0]]);
                         element_consumer.consume(f[s_indices[0][1]]);
 
@@ -459,12 +450,12 @@ namespace nil {
                     std::size_t coset_size = 1 << fri_step;
                     std::size_t leafs_number = domain_size / coset_size;
                     std::vector<detail::fri_field_element_consumer<FRI>> y_data(
-                        leafs_number,
-                        detail::fri_field_element_consumer<FRI>(coset_size * list_size)
+                            leafs_number,
+                            detail::fri_field_element_consumer<FRI>(coset_size * list_size)
                     );
 
                     for (std::size_t x_index = 0; x_index < leafs_number; x_index++) {
-                        auto& element_consumer = y_data[x_index].reset_cursor();
+                        auto &element_consumer = y_data[x_index].reset_cursor();
                         for (std::size_t polynom_index = 0; polynom_index < list_size; polynom_index++) {
                             std::vector<std::array<std::size_t, FRI::m>> s_indices(coset_size / FRI::m);
                             s_indices[0][0] = x_index;
@@ -664,21 +655,21 @@ namespace nil {
                 }
 
                 template<typename FRI, typename PolynomialType,
-                    typename std::enable_if<
-                            std::is_base_of<
-                                    commitments::detail::basic_batched_fri<
-                                            typename FRI::field_type, typename FRI::merkle_tree_hash_type,
-                                            typename FRI::transcript_hash_type,
-                                            FRI::m, typename FRI::grinding_type>,
-                                    FRI>::value,
-                            bool>::type = true>
+                        typename std::enable_if<
+                                std::is_base_of<
+                                        commitments::detail::basic_batched_fri<
+                                                typename FRI::field_type, typename FRI::merkle_tree_hash_type,
+                                                typename FRI::transcript_hash_type,
+                                                FRI::m, typename FRI::grinding_type>,
+                                        FRI>::value,
+                                bool>::type = true>
                 static typename FRI::proof_type proof_eval(
-                    const std::map<std::size_t, std::vector<PolynomialType>> &g,
-                    const PolynomialType combined_Q,
-                    const std::map<std::size_t, typename FRI::precommitment_type> &precommitments,
-                    const typename FRI::precommitment_type &combined_Q_precommitment,
-                    const typename FRI::params_type &fri_params,
-                    typename FRI::transcript_type &transcript
+                        const std::map<std::size_t, std::vector<PolynomialType>> &g,
+                        const PolynomialType combined_Q,
+                        const std::map<std::size_t, typename FRI::precommitment_type> &precommitments,
+                        const typename FRI::precommitment_type &combined_Q_precommitment,
+                        const typename FRI::params_type &fri_params,
+                        typename FRI::transcript_type &transcript
                 ) {
                     typename FRI::proof_type proof;
 
@@ -692,11 +683,11 @@ namespace nil {
 
                     //if constexpr (std::is_same<math::polynomial_dfs<typename FRI::field_type::value_type>, PolynomialType>::value) {
                     //    for( auto const &it:g ){
-                    //        auto k = it.first;
-                    //        for (int i = 0; i < g[k].size(); ++i ){
+                    //        auto K = it.first;
+                    //        for (int i = 0; i < g[K].size(); ++i ){
                     //            // If LPC works properly this if is never executed.
-                    //            if (g[k][i].size() != fri_params.D[0]->size()) {
-                    //                g[k][i].resize(fri_params.D[0]->size());
+                    //            if (g[K][i].size() != fri_params.D[0]->size()) {
+                    //                g[K][i].resize(fri_params.D[0]->size());
                     //            }
                     //        }
                     //    }
@@ -740,7 +731,7 @@ namespace nil {
                     }
 
                     // Grinding
-                    if( fri_params.use_grinding ){
+                    if (fri_params.use_grinding) {
                         proof.proof_of_work = FRI::grinding_type::generate(transcript, fri_params.grinding_parameter);
                     }
 
@@ -753,22 +744,23 @@ namespace nil {
                     // For lambda = 20 and 2^20 rows in assignment table, it's faster and uses less RAM.
                     std::map<std::size_t, std::vector<math::polynomial<typename FRI::field_type::value_type>>> g_coeffs;
                     if constexpr (std::is_same<
-                        math::polynomial_dfs<typename FRI::field_type::value_type>,
-                        PolynomialType>::value
-                    ) {
+                            math::polynomial_dfs<typename FRI::field_type::value_type>,
+                            PolynomialType>::value
+                            ) {
                         std::unordered_map<std::size_t,
-                                           std::shared_ptr<math::evaluation_domain<typename FRI::field_type>>> d_cache;
+                                std::shared_ptr<math::evaluation_domain<typename FRI::field_type>>> d_cache;
                         for (const auto &[key, poly_vector]: g) {
-                            for (const auto& poly: poly_vector) {
+                            for (const auto &poly: poly_vector) {
                                 if (poly.size() != fri_params.D[0]->size()) {
                                     if (d_cache.find(poly.size()) == d_cache.end()) {
                                         d_cache[poly.size()] =
-                                            math::make_evaluation_domain<typename FRI::field_type>(poly.size());
+                                                math::make_evaluation_domain<typename FRI::field_type>(poly.size());
                                     }
                                     g_coeffs[key].emplace_back(poly.coefficients(d_cache[poly.size()]));
                                 } else {
                                     // These polynomials won't be used
-                                    g_coeffs[key].emplace_back(math::polynomial<typename FRI::field_type::value_type>());
+                                    g_coeffs[key].emplace_back(
+                                            math::polynomial<typename FRI::field_type::value_type>());
                                 }
                             }
                         }
@@ -777,10 +769,10 @@ namespace nil {
                     for (std::size_t query_id = 0; query_id < fri_params.lambda; query_id++) {
                         std::size_t domain_size = fri_params.D[0]->size();
                         typename FRI::field_type::value_type x = transcript.template challenge<typename FRI::field_type>();
-                        x = x.pow((FRI::field_type::modulus - 1)/domain_size);
+                        x = x.pow((FRI::field_type::modulus - 1) / domain_size);
                         std::uint64_t x_index = 0;
-                        for( x_index = 0; x_index < domain_size; x_index++ ){
-                            if( fri_params.D[0]->get_domain_element(x_index) == x ){
+                        for (x_index = 0; x_index < domain_size; x_index++) {
+                            if (fri_params.D[0]->get_domain_element(x_index) == x) {
                                 break;
                             }
                         }
@@ -802,14 +794,14 @@ namespace nil {
 
                             //Fill values
                             t = 0;
-                            const auto& g_k = it.second; // g[k]
+                            const auto &g_k = it.second; // g[K]
 
                             for (std::size_t polynomial_index = 0; polynomial_index < g_k.size(); ++polynomial_index) {
                                 initial_proof[k].values[polynomial_index].resize(coset_size / FRI::m);
                                 if constexpr (std::is_same<
-                                            math::polynomial_dfs<typename FRI::field_type::value_type>,
-                                            PolynomialType>::value
-                                    ) {
+                                        math::polynomial_dfs<typename FRI::field_type::value_type>,
+                                        PolynomialType>::value
+                                        ) {
                                     if (g_k[polynomial_index].size() == fri_params.D[0]->size()) {
                                         for (std::size_t j = 0; j < coset_size / FRI::m; j++) {
                                             std::size_t ind0 = std::min(s_indices[j][0], s_indices[j][1]);
@@ -823,15 +815,17 @@ namespace nil {
                                         for (std::size_t j = 0; j < coset_size / FRI::m; j++) {
                                             typename FRI::field_type::value_type s0;
                                             typename FRI::field_type::value_type s1;
-                                            if( s_indices[j][0] < s_indices[j][1]){
+                                            if (s_indices[j][0] < s_indices[j][1]) {
                                                 s0 = s[j][0];
                                                 s1 = s[j][1];
                                             } else {
                                                 s0 = s[j][1];
                                                 s1 = s[j][0];
                                             }
-                                            initial_proof[k].values[polynomial_index][j][0] = g_coeffs[k][polynomial_index].evaluate(s0);
-                                            initial_proof[k].values[polynomial_index][j][1] = g_coeffs[k][polynomial_index].evaluate(s1);
+                                            initial_proof[k].values[polynomial_index][j][0] = g_coeffs[k][polynomial_index].evaluate(
+                                                    s0);
+                                            initial_proof[k].values[polynomial_index][j][1] = g_coeffs[k][polynomial_index].evaluate(
+                                                    s1);
                                         }
                                     }
                                 } else {
@@ -840,23 +834,25 @@ namespace nil {
                                         typename FRI::field_type::value_type s0;
                                         typename FRI::field_type::value_type s1;
 
-                                        if( s_indices[j][0] < s_indices[j][1]){
+                                        if (s_indices[j][0] < s_indices[j][1]) {
                                             s0 = s[j][0];
                                             s1 = s[j][1];
                                         } else {
                                             s0 = s[j][1];
                                             s1 = s[j][0];
                                         }
-                                        initial_proof[k].values[polynomial_index][j][0] = g_k[polynomial_index].evaluate(s0);
-                                        initial_proof[k].values[polynomial_index][j][1] = g_k[polynomial_index].evaluate(s1);
+                                        initial_proof[k].values[polynomial_index][j][0] = g_k[polynomial_index].evaluate(
+                                                s0);
+                                        initial_proof[k].values[polynomial_index][j][1] = g_k[polynomial_index].evaluate(
+                                                s1);
                                     }
                                 }
                             }
 
                             // Fill merkle proofs
                             initial_proof[k].p = make_proof_specialized<FRI>(
-                                get_folded_index<FRI>(x_index, fri_params.D[0]->size(), fri_params.step_list[0]),
-                                fri_params.D[0]->size(), precommitments.at(k)
+                                    get_folded_index<FRI>(x_index, fri_params.D[0]->size(), fri_params.step_list[0]),
+                                    fri_params.D[0]->size(), precommitments.at(k)
                             );
                         }
 
@@ -878,7 +874,7 @@ namespace nil {
                                 x_index %= fri_params.D[t]->size();
                                 x = fri_params.D[t]->get_domain_element(x_index);
                                 std::tie(s, s_indices) = calculate_s<FRI>(
-                                    x, x_index, fri_params.step_list[i + 1], fri_params.D[t]
+                                        x, x_index, fri_params.step_list[i + 1], fri_params.D[t]
                                 );
 
                                 std::size_t coset_size = 1 << fri_params.step_list[i + 1];
@@ -894,8 +890,10 @@ namespace nil {
                                         round_proofs[i].y[j][0] = fs[i + 1][ind0];
                                         round_proofs[i].y[j][1] = fs[i + 1][ind1];
                                     } else {
-                                        typename FRI::field_type::value_type s0 = (s_indices[j][0] < s_indices[j][1] ? s[j][0] : s[j][1]);
-                                        typename FRI::field_type::value_type s1 = (s_indices[j][0] > s_indices[j][1] ? s[j][0] : s[j][1]);
+                                        typename FRI::field_type::value_type s0 = (s_indices[j][0] < s_indices[j][1]
+                                                                                   ? s[j][0] : s[j][1]);
+                                        typename FRI::field_type::value_type s1 = (s_indices[j][0] > s_indices[j][1]
+                                                                                   ? s[j][0] : s[j][1]);
                                         round_proofs[i].y[j][0] = fs[i + 1].evaluate(s0);
                                         round_proofs[i].y[j][1] = fs[i + 1].evaluate(s1);
                                     }
@@ -912,13 +910,15 @@ namespace nil {
                                 // Then next round values will be written in the straight order if next round index < next domain size - 1
                                 // Otherwise, they will be written in the reverse order.
 
-                                std::size_t ind = (x_index %(fri_params.D[t-1]->size()/2) < fri_params.D[t-1]->size()/4)? 0: 1;
+                                std::size_t ind = (x_index % (fri_params.D[t - 1]->size() / 2) <
+                                                   fri_params.D[t - 1]->size() / 4) ? 0 : 1;
                                 round_proofs[i].y.resize(1);
                                 round_proofs[i].y[0][ind] = final_polynomial.evaluate(x);
-                                round_proofs[i].y[0][1-ind] = final_polynomial.evaluate(-x);
+                                round_proofs[i].y[0][1 - ind] = final_polynomial.evaluate(-x);
                             }
                         }
-                        typename FRI::query_proof_type query_proof = {std::move(initial_proof), std::move(round_proofs)};
+                        typename FRI::query_proof_type query_proof = {std::move(initial_proof),
+                                                                      std::move(round_proofs)};
                         query_proofs[query_id] = std::move(query_proof);
                     }
 
@@ -931,14 +931,14 @@ namespace nil {
 
                 template<typename FRI>
                 static bool verify_eval(
-                    const typename FRI::proof_type                                                      &proof,
-                    const typename FRI::params_type                                                     &fri_params,
-                    const std::map<std::size_t, typename FRI::commitment_type>                          &commitments,
-                    const typename FRI::field_type::value_type                                          theta,
-                    const std::vector<std::vector<std::tuple<std::size_t, std::size_t>>>                &poly_ids,
-                    const std::vector<typename FRI::field_type::value_type>                             &combined_U,
-                    const std::vector<math::polynomial<typename FRI::field_type::value_type>>           &denominators,
-                    typename FRI::transcript_type &transcript
+                        const typename FRI::proof_type &proof,
+                        const typename FRI::params_type &fri_params,
+                        const std::map<std::size_t, typename FRI::commitment_type> &commitments,
+                        const typename FRI::field_type::value_type theta,
+                        const std::vector<std::vector<std::tuple<std::size_t, std::size_t>>> &poly_ids,
+                        const std::vector<typename FRI::field_type::value_type> &combined_U,
+                        const std::vector<math::polynomial<typename FRI::field_type::value_type>> &denominators,
+                        typename FRI::transcript_type &transcript
                 ) {
                     BOOST_ASSERT(check_step_list<FRI>(fri_params));
                     BOOST_ASSERT(combined_U.size() == denominators.size());
@@ -961,7 +961,8 @@ namespace nil {
                         }
                     }
 
-                    if(fri_params.use_grinding && !FRI::grinding_type::verify(transcript, proof.proof_of_work, fri_params.grinding_parameter)){
+                    if (fri_params.use_grinding &&
+                        !FRI::grinding_type::verify(transcript, proof.proof_of_work, fri_params.grinding_parameter)) {
                         return false;
                     }
                     for (std::size_t query_id = 0; query_id < fri_params.lambda; query_id++) {
@@ -970,10 +971,11 @@ namespace nil {
                         std::size_t domain_size = fri_params.D[0]->size();
                         std::size_t coset_size = 1 << fri_params.step_list[0];
                         typename FRI::field_type::value_type x_challenge = transcript.template challenge<typename FRI::field_type>();
-                        typename FRI::field_type::value_type x = x_challenge.pow((FRI::field_type::modulus - 1)/domain_size);
+                        typename FRI::field_type::value_type x = x_challenge.pow(
+                                (FRI::field_type::modulus - 1) / domain_size);
                         std::uint64_t x_index = 0;
-                        for( x_index = 0; x_index < domain_size; x_index++ ){
-                            if( fri_params.D[0]->get_domain_element(x_index) == x ){
+                        for (x_index = 0; x_index < domain_size; x_index++) {
+                            if (fri_params.D[0]->get_domain_element(x_index) == x) {
                                 break;
                             }
                         }
@@ -985,16 +987,17 @@ namespace nil {
                                                                         s_indices);
 
                         // Check initial proof.
-                        for( auto const &it: query_proof.initial_proof ){
+                        for (auto const &it: query_proof.initial_proof) {
                             auto k = it.first;
-                            if (query_proof.initial_proof.at(k).p.root() != commitments.at(k) ) {
+                            if (query_proof.initial_proof.at(k).p.root() != commitments.at(k)) {
                                 return false;
                             }
 
-                            detail::fri_field_element_consumer<FRI> leaf_data(coset_size * query_proof.initial_proof.at(k).values.size());
+                            detail::fri_field_element_consumer<FRI> leaf_data(
+                                    coset_size * query_proof.initial_proof.at(k).values.size());
 
                             for (std::size_t i = 0; i < query_proof.initial_proof.at(k).values.size(); i++) {
-                                for (auto [idx, pair_idx] : correct_order_idx) {
+                                for (auto [idx, pair_idx]: correct_order_idx) {
                                     leaf_data.consume(query_proof.initial_proof.at(k).values[i][idx][0]);
                                     leaf_data.consume(query_proof.initial_proof.at(k).values[i][idx][1]);
                                 }
@@ -1015,13 +1018,15 @@ namespace nil {
                             y[j][0] = FRI::field_type::value_type::zero();
                             y[j][1] = FRI::field_type::value_type::zero();
                         }
-                        for( std::size_t p = 0; p < poly_ids.size(); p++){
+                        for (std::size_t p = 0; p < poly_ids.size(); p++) {
                             typename FRI::polynomial_values_type Q;
                             Q.resize(coset_size / FRI::m);
-                            for( auto const &poly_id: poly_ids[p] ){
+                            for (auto const &poly_id: poly_ids[p]) {
                                 for (size_t j = 0; j < coset_size / FRI::m; j++) {
-                                    Q[j][0] += query_proof.initial_proof.at(std::get<0>(poly_id)).values[std::get<1>(poly_id)][j][0] * theta_acc;
-                                    Q[j][1] += query_proof.initial_proof.at(std::get<0>(poly_id)).values[std::get<1>(poly_id)][j][1] * theta_acc;
+                                    Q[j][0] += query_proof.initial_proof.at(std::get<0>(poly_id)).values[std::get<1>(
+                                            poly_id)][j][0] * theta_acc;
+                                    Q[j][1] += query_proof.initial_proof.at(std::get<0>(poly_id)).values[std::get<1>(
+                                            poly_id)][j][1] * theta_acc;
                                 }
                                 theta_acc *= theta;
                             }
@@ -1065,28 +1070,28 @@ namespace nil {
                                 x_index %= domain_size;
                                 x = fri_params.D[t]->get_domain_element(x_index);
                                 auto [s_next, s_indices_next] = calculate_s<FRI>(
-                                    x *x , x_index% fri_params.D[t+1]->size(),
-                                    fri_params.step_list[i], fri_params.D[t+1]
+                                        x * x, x_index % fri_params.D[t + 1]->size(),
+                                        fri_params.step_list[i], fri_params.D[t + 1]
                                 );
                                 std::tie(s, s_indices) = calculate_s<FRI>(x, x_index, fri_params.step_list[i],
                                                                           fri_params.D[t]);
                                 std::size_t new_domain_size = domain_size;
                                 for (std::size_t y_ind = 0; y_ind < y_next.size(); y_ind++) {
                                     std::size_t ind0 = s_indices[2 * y_ind][0] < s_indices[2 * y_ind][1] ? 0 : 1;
-                                    auto s_ch = s[2*y_ind][ind0];
+                                    auto s_ch = s[2 * y_ind][ind0];
 
                                     std::vector<std::pair<typename FRI::field_type::value_type, typename FRI::field_type::value_type>> interpolation_points_l{
-                                        std::make_pair(s_ch, y[2 * y_ind][0]),
-                                        std::make_pair(-s_ch, y[2 * y_ind][1]),
+                                            std::make_pair(s_ch, y[2 * y_ind][0]),
+                                            std::make_pair(-s_ch, y[2 * y_ind][1]),
                                     };
                                     math::polynomial<typename FRI::field_type::value_type> interpolant_l =
                                             math::lagrange_interpolation(interpolation_points_l);
 
                                     ind0 = s_indices[2 * y_ind + 1][0] < s_indices[2 * y_ind + 1][1] ? 0 : 1;
-                                    s_ch = s[2*y_ind + 1][ind0];
+                                    s_ch = s[2 * y_ind + 1][ind0];
                                     std::vector<std::pair<typename FRI::field_type::value_type, typename FRI::field_type::value_type>> interpolation_points_r{
-                                        std::make_pair(s_ch, y[2 * y_ind + 1][0]),
-                                        std::make_pair(-s_ch, y[2 * y_ind + 1][1]),
+                                            std::make_pair(s_ch, y[2 * y_ind + 1][0]),
+                                            std::make_pair(-s_ch, y[2 * y_ind + 1][1]),
                                     };
                                     math::polynomial<typename FRI::field_type::value_type> interpolant_r =
                                             math::lagrange_interpolation(interpolation_points_r);
@@ -1096,7 +1101,7 @@ namespace nil {
                                     std::size_t interpolant_index_l = s_indices_next[y_ind][0];
                                     std::size_t interpolant_index_r = s_indices_next[y_ind][1];
 
-                                    if( interpolant_index_l < interpolant_index_r){
+                                    if (interpolant_index_l < interpolant_index_r) {
                                         y_next[y_ind][0] = interpolant_l.evaluate(alphas[t]);
                                         y_next[y_ind][1] = interpolant_r.evaluate(alphas[t]);
                                     } else {
@@ -1116,14 +1121,16 @@ namespace nil {
                             std::size_t ind0 = s_indices[0][0] < s_indices[0][1] ? 0 : 1;
                             auto s_ch = s[0][ind0];
                             std::vector<std::pair<typename FRI::field_type::value_type, typename FRI::field_type::value_type>> interpolation_points{
-                                std::make_pair(s_ch, y[0][0]),
-                                std::make_pair(-s_ch, y[0][1]),
+                                    std::make_pair(s_ch, y[0][0]),
+                                    std::make_pair(-s_ch, y[0][1]),
                             };
                             math::polynomial<typename FRI::field_type::value_type> interpolant_poly =
                                     math::lagrange_interpolation(interpolation_points);
                             auto interpolant = interpolant_poly.evaluate(alphas[t]);
 
-                            std::size_t ind = s_indices[0][ind0] % (fri_params.D[t]->size()/2) < fri_params.D[t]->size() / 4 ? 0 : 1;
+                            std::size_t ind =
+                                    s_indices[0][ind0] % (fri_params.D[t]->size() / 2) < fri_params.D[t]->size() / 4 ? 0
+                                                                                                                     : 1;
                             if (interpolant != query_proof.round_proofs[i].y[0][ind]) {
                                 return false;
                             }
@@ -1146,7 +1153,7 @@ namespace nil {
                         if (y[0][ind] != proof.final_polynomial.evaluate(x)) {
                             return false;
                         }
-                        if (y[0][1-ind] != proof.final_polynomial.evaluate(-x)) {
+                        if (y[0][1 - ind] != proof.final_polynomial.evaluate(-x)) {
                             return false;
                         }
                     }

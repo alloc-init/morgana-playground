@@ -66,15 +66,12 @@ namespace nil {
                             nil::marshalling::types::integral<TTypeBase, std::uint64_t>>>;
                 };
 
-                // For Poseidon, Merkle node will contain a Group Element, not a vector of bytes.
+                // For Poseidon, Merkle node will contain a Group element, not a vector of bytes.
                 template<typename TTypeBase, typename GroupElementType>
                 struct merkle_node_value<
                     TTypeBase,
                     GroupElementType,
-                    typename std::enable_if<nil::crypto3::algebra::is_field_element<
-                        GroupElementType
-                    >::value>::type
-                > {
+                    typename std::enable_if<nil::crypto3::algebra::is_field_element<GroupElementType>::value>::type> {
                     using type = field_element<TTypeBase, GroupElementType>;
                 };
 
@@ -170,22 +167,17 @@ namespace nil {
                     return filled_node_value;
                 }
 
-                template<
-                    typename GroupElementType,
-                    typename Endianness,
-                    typename std::enable_if<nil::crypto3::algebra::is_field_element<
-                        GroupElementType
-                    >::value, bool>::type = true>
-                typename merkle_node_value<
-                    nil::marshalling::field_type<Endianness>,
-                    GroupElementType
-                >::type
+                template<typename GroupElementType,
+                         typename Endianness,
+                         typename std::enable_if<nil::crypto3::algebra::is_field_element<GroupElementType>::value,
+                                                 bool>::type = true>
+                typename merkle_node_value<nil::marshalling::field_type<Endianness>, GroupElementType>::type
                     fill_merkle_node_value(const GroupElementType &node_value) {
 
                     using TTypeBase = nil::marshalling::field_type<Endianness>;
 
-                    typename merkle_node_value<nil::marshalling::field_type<Endianness>, GroupElementType>::type filled_node_value =
-                        field_element<TTypeBase, GroupElementType>(node_value);
+                    typename merkle_node_value<nil::marshalling::field_type<Endianness>, GroupElementType>::type
+                        filled_node_value = field_element<TTypeBase, GroupElementType>(node_value);
                     return filled_node_value;
                 }
 
@@ -219,15 +211,13 @@ namespace nil {
                     return node_value;
                 }
 
-                template<
-                    typename GroupElementType,
-                    typename Endianness,
-                    typename std::enable_if<nil::crypto3::algebra::is_field_element<
-                        GroupElementType
-                    >::value, bool>::type = true>
-                GroupElementType make_merkle_node_value(const typename merkle_node_value<
-                    nil::marshalling::field_type<Endianness>, GroupElementType
-                >::type &filled_node_value) {
+                template<typename GroupElementType,
+                         typename Endianness,
+                         typename std::enable_if<nil::crypto3::algebra::is_field_element<GroupElementType>::value,
+                                                 bool>::type = true>
+                GroupElementType make_merkle_node_value(
+                    const typename merkle_node_value<nil::marshalling::field_type<Endianness>, GroupElementType>::type
+                        &filled_node_value) {
                     return filled_node_value.value();
                 }
 
@@ -340,15 +330,16 @@ namespace nil {
                 MerkleProof make_merkle_proof(
                     const merkle_proof<nil::marshalling::field_type<Endianness>, MerkleProof> &filled_merkle_proof) {
 
-                    MerkleProof mp(
-                        std::get<0>(filled_merkle_proof.value()).value(), // mp._li
-                        make_merkle_node_value<MerkleProof, Endianness>(std::get<1>(filled_merkle_proof.value())), // mp._root
-                        make_merkle_proof_path<MerkleProof, Endianness>(std::get<2>(filled_merkle_proof.value())) // mp._path
+                    MerkleProof mp(std::get<0>(filled_merkle_proof.value()).value(),    // mp._li
+                                   make_merkle_node_value<MerkleProof, Endianness>(
+                                       std::get<1>(filled_merkle_proof.value())),    // mp._root
+                                   make_merkle_proof_path<MerkleProof, Endianness>(
+                                       std::get<2>(filled_merkle_proof.value()))    // mp._path
                     );
                     return mp;
                 }
             }    // namespace types
-        }        // namespace marshalling
-    }            // namespace crypto3
+        }    // namespace marshalling
+    }    // namespace crypto3
 }    // namespace nil
 #endif    // CRYPTO3_MARSHALLING_MERKLE_PROOF_HPP

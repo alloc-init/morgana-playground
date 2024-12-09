@@ -62,7 +62,7 @@ namespace nil {
                         typedef ProcessingMode processing_mode_type;
                         typedef typename processing_mode_type::scheme_type scheme_type;
                         typedef typename processing_mode_type::op_type op_type;
-                        typedef typename processing_mode_type::internal_accumulator_type internal_accumulator_type;
+                        typedef typename processing_mode_type::accumulator_type accumulator_type;
 
                     public:
                         typedef typename processing_mode_type::result_type result_type;
@@ -73,13 +73,12 @@ namespace nil {
                         // nil::crypto3::accumulators::threshold_value -- threshold number of participants
                         //
                         template<typename Args>
-                        deal_shares_impl(const Args &args) :
-                            seen_coeffs(0), n(args[boost::accumulators::sample]),
-                            t(args[nil::crypto3::accumulators::threshold_value]) {
+                        deal_shares_impl(const Args &args) : seen_coeffs(0), n(args[boost::accumulators::sample]),
+                                                             t(args[crypto3::accumulators::threshold_value]) {
                             if constexpr (std::is_same<weighted_shamir_sss<typename scheme_type::group_type>,
-                                                       scheme_type>::value) {
+                                scheme_type>::value) {
                                 processing_mode_type::init_accumulator(
-                                    acc, n, t, args[nil::crypto3::accumulators::weights]);
+                                    acc, n, t, args[crypto3::accumulators::weights]);
                             } else {
                                 processing_mode_type::init_accumulator(acc, n, t);
                             }
@@ -98,7 +97,7 @@ namespace nil {
                         template<typename Args>
                         inline void operator()(const Args &args) {
                             resolve_type(args[boost::accumulators::sample],
-                                         args[::nil::crypto3::accumulators::iterator_last | nullptr]);
+                                         args[crypto3::accumulators::iterator_last | nullptr]);
                         }
 
                     protected:
@@ -114,7 +113,7 @@ namespace nil {
 
                         template<typename InputRange>
                         inline void resolve_type(const InputRange &range, std::nullptr_t) {
-                            for (const auto &c : range) {
+                            for (const auto &c: range) {
                                 resolve_type(c);
                             }
                         }
@@ -129,7 +128,7 @@ namespace nil {
                         std::size_t n;
                         std::size_t t;
                         std::size_t seen_coeffs;
-                        mutable internal_accumulator_type acc;
+                        mutable accumulator_type acc;
                     };
 
                     // template<typename ProcessingMode>
@@ -239,7 +238,7 @@ namespace nil {
                     //     coeffs_type coeffs;
                     //     weights_type shares_weights;
                     // };
-                }    // namespace impl
+                } // namespace impl
 
                 namespace tag {
                     template<typename ProcessingMode>
@@ -251,18 +250,18 @@ namespace nil {
 
                         typedef boost::mpl::always<accumulators::impl::deal_shares_impl<mode_type>> impl;
                     };
-                }    // namespace tag
+                } // namespace tag
 
                 namespace extract {
                     template<typename ProcessingMode, typename AccumulatorSet>
                     typename boost::mpl::apply<AccumulatorSet, tag::deal_shares<ProcessingMode>>::type::result_type
-                        deal_shares(const AccumulatorSet &acc) {
+                    deal_shares(const AccumulatorSet &acc) {
                         return boost::accumulators::extract_result<tag::deal_shares<ProcessingMode>>(acc);
                     }
-                }    // namespace extract
-            }        // namespace accumulators
-        }            // namespace pubkey
-    }                // namespace crypto3
-}    // namespace nil
+                } // namespace extract
+            } // namespace accumulators
+        } // namespace pubkey
+    } // namespace crypto3
+} // namespace nil
 
 #endif    // CRYPTO3_ACCUMULATORS_PUBKEY_SSS_DEAL_SHARES_HPP

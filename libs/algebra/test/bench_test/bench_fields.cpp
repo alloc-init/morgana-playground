@@ -58,13 +58,13 @@ using namespace nil::crypto3::algebra;
 
 BOOST_AUTO_TEST_SUITE(fields_manual_tests)
 
-template<class Field>
+template<class FieldType>
 void run_perf_test(std::string const& field_name) {
     using namespace nil::crypto3;
     using namespace nil::crypto3::algebra;
     using namespace nil::crypto3::algebra::fields;
 
-    typedef typename Field::value_type value_type;
+    typedef typename FieldType::value_type value_type;
     std::vector<value_type> points1;
     std::vector<value_type> points2;
 
@@ -72,8 +72,8 @@ void run_perf_test(std::string const& field_name) {
     size_t SAMPLES_COUNT = 4*32*1024/sizeof(value_type);
 
     for (int i = 0; i < SAMPLES_COUNT; ++i) {
-        points1.push_back(algebra::random_element<Field>());
-        points2.push_back(algebra::random_element<Field>());
+        points1.push_back(algebra::random_element<FieldType>());
+        points2.push_back(algebra::random_element<FieldType>());
     }
 
     auto gather_stats = [&points1, &points2]
@@ -160,7 +160,7 @@ void run_perf_test(std::string const& field_name) {
     sprintf(filename,"%s-stats-%03d.csv", field_name.c_str(), MULTIPLICATOR);
 
     std::ofstream f(filename, std::ofstream::out);
-    f << "# " << typeid(Field).name() << std::endl;
+    f << "# " << typeid(FieldType).name() << std::endl;
     f << "sum,mul,sqr,inv" << std::endl;
 
     for(size_t i = 0; i < plus_results.size(); ++i) {

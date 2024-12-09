@@ -131,7 +131,7 @@ BOOST_AUTO_TEST_CASE(test_numeric_limits_snips) {
             /*`and similarly for a much higher precision type:
              */
 
-            using namespace nil::crypto3::multiprecision;
+            using namespace boost::multiprecision;
 
             typedef number<cpp_dec_float<50>> cpp_dec_float_50;    // 50 decimal digits.
 
@@ -329,9 +329,9 @@ BOOST_AUTO_TEST_CASE(test_numeric_limits_snips) {
     {
         //[tolerance_2
 
-        using nil::crypto3::multiprecision::cpp_dec_float;
-        using nil::crypto3::multiprecision::et_off;
-        using nil::crypto3::multiprecision::number;
+        using boost::multiprecision::cpp_dec_float;
+        using boost::multiprecision::et_off;
+        using boost::multiprecision::number;
 
         typedef number<cpp_dec_float<50>, et_off> cpp_dec_float_50;    // 50 decimal digits.
         /*`[note that Boost.Test does not yet allow floating-point comparisons with expression templates on,
@@ -350,7 +350,7 @@ BOOST_AUTO_TEST_CASE(test_numeric_limits_snips) {
     {
         //[tolerance_3
 
-        using nil::crypto3::multiprecision::cpp_bin_float_quad;
+        using boost::multiprecision::cpp_bin_float_quad;
 
         cpp_bin_float_quad tolerance = 3 * std::numeric_limits<cpp_bin_float_quad>::epsilon();
         cpp_bin_float_quad expected = boost::math::constants::two_pi<cpp_bin_float_quad>();
@@ -364,7 +364,7 @@ BOOST_AUTO_TEST_CASE(test_numeric_limits_snips) {
     {
         //[tolerance_4
 
-        using nil::crypto3::multiprecision::cpp_bin_float_oct;
+        using boost::multiprecision::cpp_bin_float_oct;
 
         cpp_bin_float_oct tolerance = 3 * std::numeric_limits<cpp_bin_float_oct>::epsilon();
         cpp_bin_float_oct expected = boost::math::constants::two_pi<cpp_bin_float_oct>();
@@ -380,7 +380,7 @@ BOOST_AUTO_TEST_CASE(test_numeric_limits_snips) {
 
         /*`NaN can be used with binary multiprecision types like `cpp_bin_float_quad`:
          */
-        using nil::crypto3::multiprecision::cpp_bin_float_quad;
+        using boost::multiprecision::cpp_bin_float_quad;
 
         if (std::numeric_limits<cpp_bin_float_quad>::has_quiet_NaN == true) {
             cpp_bin_float_quad NaN = std::numeric_limits<cpp_bin_float_quad>::quiet_NaN();
@@ -412,7 +412,7 @@ BOOST_AUTO_TEST_CASE(test_numeric_limits_snips) {
         Then we can equally well use a multiprecision type cpp_bin_float_quad:
 
         */
-        using nil::crypto3::multiprecision::cpp_bin_float_quad;
+        using boost::multiprecision::cpp_bin_float_quad;
 
         typedef cpp_bin_float_quad T;
 

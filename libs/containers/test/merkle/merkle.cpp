@@ -78,7 +78,7 @@ typename std::enable_if<algebra::is_field_element<ValueType>::value, std::vector
     return v;
 }
 
-template<typename Hash, size_t Arity, typename ValueType, std::size_t N>
+template<typename HashType, size_t Arity, typename ValueType, std::size_t N>
 void testing_validate_template_random_data(std::size_t leaf_number) {
     std::array<ValueType, N> data_not_in_tree = {0u};
     auto data = generate_random_data<ValueType, N>(leaf_number);
@@ -94,7 +94,7 @@ void testing_validate_template_random_data(std::size_t leaf_number) {
     BOOST_CHECK(!wrong_data_validate);
 }
 
-template<typename Hash, size_t Arity, typename Element>
+template<typename HashType, size_t Arity, typename Element>
 void testing_validate_template(std::vector<Element> data) {
     std::array<uint8_t, 7> data_not_in_tree = {'\x6d', '\x65', '\x73', '\x73', '\x61', '\x67', '\x65'};
     merkle_tree<Hash, Arity> tree = make_merkle_tree<Hash, Arity>(data.begin(), data.end());
@@ -112,7 +112,7 @@ void testing_validate_template(std::vector<Element> data) {
     BOOST_CHECK(false == wrong_data_validate);
 }
 
-template<typename Hash, size_t Arity, typename ValueType, std::size_t N>
+template<typename HashType, size_t Arity, typename ValueType, std::size_t N>
 void testing_validate_template_random_data_compressed_proofs(std::size_t leaf_number) {
     using merkle_proof_type = typename containers::merkle_proof<Hash, Arity>;
     using Element = std::array<ValueType, N>;
@@ -185,7 +185,7 @@ void testing_validate_template_random_data_compressed_proofs(std::size_t leaf_nu
     BOOST_CHECK(!wrong_data_validate_compressed);
 }
 
-template<typename Hash, size_t Arity, typename Element>
+template<typename HashType, size_t Arity, typename Element>
 void testing_validate_template_compressed_proofs(std::vector<Element> data) {
     using merkle_proof_type = typename containers::merkle_proof<Hash, Arity>;
     merkle_tree<Hash, Arity> tree = make_merkle_tree<Hash, Arity>(data.begin(), data.end());
@@ -247,7 +247,7 @@ void testing_validate_template_compressed_proofs(std::vector<Element> data) {
     BOOST_CHECK(!wrong_data_validate_compressed);
 }
 
-template<typename Hash, size_t Arity, typename Element>
+template<typename HashType, size_t Arity, typename Element>
 void testing_hash_template(std::vector<Element> data, std::string result) {
     merkle_tree<Hash, Arity> tree = make_merkle_tree<Hash, Arity>(data.begin(), data.end());
     BOOST_CHECK(result == std::to_string(tree.root()));

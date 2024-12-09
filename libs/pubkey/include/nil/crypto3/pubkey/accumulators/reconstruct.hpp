@@ -58,7 +58,7 @@ namespace nil {
                         typedef ProcessingMode processing_mode_type;
                         typedef typename processing_mode_type::scheme_type scheme_type;
                         typedef typename processing_mode_type::op_type op_type;
-                        typedef typename processing_mode_type::internal_accumulator_type internal_accumulator_type;
+                        typedef typename processing_mode_type::accumulator_type accumulator_type;
 
                     public:
                         typedef typename processing_mode_type::result_type result_type;
@@ -74,7 +74,7 @@ namespace nil {
                         template<typename Args>
                         inline void operator()(const Args &args) {
                             resolve_type(args[boost::accumulators::sample],
-                                         args[::nil::crypto3::accumulators::iterator_last | nullptr]);
+                                         args[crypto3::accumulators::iterator_last | nullptr]);
                         }
 
                     protected:
@@ -103,7 +103,7 @@ namespace nil {
                         }
 
                         std::size_t seen_shares;
-                        mutable internal_accumulator_type acc;
+                        mutable accumulator_type acc;
                     };
                 }    // namespace impl
 
@@ -115,7 +115,7 @@ namespace nil {
                         /// INTERNAL ONLY
                         ///
 
-                        typedef boost::mpl::always<accumulators::impl::reconstruct_impl<mode_type>> impl;
+                        typedef boost::mpl::always<impl::reconstruct_impl<mode_type>> impl;
                     };
                 }    // namespace tag
 

@@ -13,7 +13,7 @@
     "osx": "10.7"
   },
   "source": {
-    "git": "https://github.com/nilfoundation/mac.git",
+    "git": "https://github.com/alloc-init/mac.git",
     "branch": "master"
   },
   "xcconfig": {

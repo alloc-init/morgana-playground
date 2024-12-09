@@ -33,9 +33,9 @@ namespace nil {
     namespace crypto3 {
         namespace hashes {
             namespace detail {
-                template<typename Hash>
+                template<typename HashType>
                 class blake2b_padding {
-                    typedef Hash policy_type;
+                    typedef HashType policy_type;
 
                     typedef typename policy_type::digest_endian endian_type;
 
@@ -47,14 +47,14 @@ namespace nil {
                     typedef typename policy_type::block_type block_type;
 
                     typedef ::nil::crypto3::detail::injector<endian_type, endian_type, word_bits, block_words>
-                        injector_type;
+                            injector_type;
 
                 public:
                     void operator()(block_type &block, word_type total_seen) {
                         // Pad block with zero bits if it is empty or incomplete
                         if (!total_seen || total_seen % block_bits) {
                             word_type seen_words =
-                                ((total_seen / word_bits) % block_words) + ((total_seen % word_bits) ? 1 : 0);
+                                    ((total_seen / word_bits) % block_words) + ((total_seen % word_bits) ? 1 : 0);
                             std::fill(block.begin() + seen_words, block.end(), 0);
                             // Pad with zeros last significant word if it is incomplete
                             if (total_seen % word_bits) {

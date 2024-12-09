@@ -38,7 +38,6 @@
 namespace nil {
     namespace crypto3 {
         namespace algebra {
-
             /** @brief A container representing a matrix
              *    @tparam T scalar type to contain
              *    @tparam N number of rows
@@ -52,12 +51,28 @@ namespace nil {
             struct matrix {
                 static_assert(N != 0 && M != 0, "matrix must have have positive dimensions");
 
+                constexpr matrix() : arrays{} {
+                }
+
+                constexpr matrix(const T (&array)[N][M]) {
+                    for (std::size_t i = 0; i < N; ++i) {
+                        for (std::size_t j = 0; j < M; ++j) {
+                            arrays[i][j] = array[i][j];
+                        }
+                    }
+                }
+
+                template<typename... Args>
+                constexpr matrix(Args... args) : arrays{std::forward<Args>(args)...} {
+                    static_assert(sizeof...(args) == N * M, "Number of arguments must match the matrix size");
+                }
+
                 // CRYPTO3_DETAIL_ASSERT_ARITHMETIC(T)
 
                 using value_type = T;
                 using size_type = std::size_t;
-                static constexpr size_type column_size = N;    ///< Number of rows
-                static constexpr size_type row_size = M;       ///< Number of columns
+                constexpr static const size_type column_size = N; ///< Number of rows
+                constexpr static const size_type row_size = M; ///< Number of columns
 
                 /** @name Element access */
                 ///@{
@@ -67,10 +82,11 @@ namespace nil {
                  *
                  *    Extracts a row from the matrix.
                  */
-                constexpr vector<T, M> row(std::size_t i) const {
-                    if (i >= N)
+                constexpr vector<T, M> row(size_type i) const {
+                    if (i >= N) {
                         throw "index out of range";
-                    return generate<M>([i, this](std::size_t j) { return arrays[i][j]; });
+                    }
+                    return generate<M>([i, this](size_type j) { return arrays[i][j]; });
                 }
 
                 /** @brief access specified column
@@ -79,10 +95,10 @@ namespace nil {
                  *
                  *    Extracts a column from the matrix
                  */
-                constexpr vector<T, N> column(std::size_t i) const {
+                constexpr vector<T, N> column(size_type i) const {
                     if (i >= M)
                         throw "index out of range";
-                    return generate<N>([i, this](std::size_t j) { return arrays[j][i]; });
+                    return generate<N>([i, this](size_type j) { return arrays[j][i]; });
                 }
 
                 /** @brief access specified element
@@ -94,17 +110,33 @@ namespace nil {
                  *    row pointer.    For a matrix `m`, accessing the element in the 5th row
                  *    and 3rd column can be done with `m[5][3]`.
                  */
-                constexpr T *operator[](std::size_t i) {
+                constexpr T *operator[](size_type i) {
                     return arrays[i];
                 }
 
                 /// @copydoc operator[]
-                constexpr T const *operator[](std::size_t i) const {
+                constexpr T const *operator[](size_type i) const {
                     return arrays[i];
                 }
+
+                constexpr bool operator==(const matrix &other) const {
+                    for (std::size_t i = 0; i < N; ++i) {
+                        for (std::size_t j = 0; j < M; ++j) {
+                            if (arrays[i][j] != other.arrays[i][j]) {
+                                return false;
+                            }
+                        }
+                    }
+                    return true;
+                }
+
+                constexpr const T &operator()(size_type i, size_type j) const {
+                    return arrays[i][j];
+                }
+
                 ///@}
 
-                T arrays[N][M];    ///< @private
+                T arrays[N][M]; ///< @private
             };
 
             /** \addtogroup matrix
@@ -112,25 +144,25 @@ namespace nil {
              */
 
             /** @name matrix deduction guides */
+
             ///@{
 
             /** @brief deduction guide for aggregate initialization
-             *    @relatesalso matrix
-             *
-             *    This deduction guide allows matrix to be constructed like this:
-             *    \code{.cpp}
-             *    matrix m{{{1., 2.}, {3., 4.}}}; // deduces the type of m to be matrix<double, 2, 2>
-             *    \endcode
-             */
+                 *    @relatesalso matrix
+                 *
+                 *    This deduction guide allows matrix to be constructed like this:
+                 *    \code{.cpp}
+                 *    matrix m{{{1., 2.}, {3., 4.}}}; // deduces the type of m to be matrix<double, 2, 2>
+                 *    \endcode
+                 */
             template<typename T, std::size_t M, std::size_t N>
             matrix(const T (&)[M][N]) -> matrix<T, M, N>;
 
             ///@}
 
             /** @}*/
-
-        }    // namespace algebra
-    }        // namespace crypto3
-}    // namespace nil
+        } // namespace algebra
+    } // namespace crypto3
+} // namespace nil
 
 #endif    // CRYPTO3_ALGEBRA_MATRIX_CLASS_HPP

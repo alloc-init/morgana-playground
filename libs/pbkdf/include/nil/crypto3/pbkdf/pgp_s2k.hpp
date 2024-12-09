@@ -51,9 +51,9 @@ namespace nil {
              * @tparam Hash
              * @ingroup pbkdf
              */
-            template<typename Hash>
+            template<typename HashType>
             class pgp_s2k {
-                typedef detail::pgp_s2k_functions<Hash> policy_type;
+                typedef detail::pgp_s2k_functions<HashType> policy_type;
 
             public:
                 typedef typename policy_type::hash_type hash_type;
@@ -114,8 +114,8 @@ namespace nil {
                 }
             };
 
-            template<typename Hash>
-            using openpgp_s2k = pgp_s2k<Hash>;
+            template<typename HashType>
+            using openpgp_s2k = pgp_s2k<HashType>;
         }    // namespace pbkdf
     }        // namespace crypto3
 }    // namespace nil

@@ -28,7 +28,6 @@
 namespace nil {
     namespace crypto3 {
         namespace detail {
-
             /*
              * The minimum weight irreducible binary polynomial of size n
              *
@@ -43,7 +42,7 @@ namespace nil {
                 P1024 = 0x80043,
             };
 
-            template<size_t LIMBS, min_weight_polynomial P>
+            template<std::size_t LIMBS, min_weight_polynomial P>
             void poly_double(uint8_t out[], const uint8_t in[]) {
                 uint64_t W[LIMBS];
                 load_be(W, in, LIMBS);
@@ -74,7 +73,7 @@ namespace nil {
 
                 copy_out_le(out, LIMBS * 8, W);
             }
-        }    // namespace detail
+        } // namespace detail
 
         /**
          * Polynomial doubling in GF(2^n)
@@ -133,7 +132,7 @@ namespace nil {
                     throw std::invalid_argument("Unsupported size for poly_double_n_le");
             }
         }
-    }    // namespace crypto3
-}    // namespace nil
+    } // namespace crypto3
+} // namespace nil
 
 #endif

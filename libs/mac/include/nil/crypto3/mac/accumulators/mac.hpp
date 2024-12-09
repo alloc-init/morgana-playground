@@ -45,7 +45,7 @@ namespace nil {
                     typedef ProcessingPolicy processing_policy;
                     typedef typename processing_policy::mac_type mac_type;
                     typedef typename processing_policy::key_type key_type;
-                    typedef typename processing_policy::internal_accumulator_type internal_accumulator_type;
+                    typedef typename processing_policy::accumulator_type accumulator_type;
 
                 public:
                     typedef typename processing_policy::result_type result_type;
@@ -77,7 +77,7 @@ namespace nil {
                     }
 
                     key_type key;
-                    mutable internal_accumulator_type acc;
+                    mutable accumulator_type acc;
                 };
             }    // namespace impl
 

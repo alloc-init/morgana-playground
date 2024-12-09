@@ -36,7 +36,7 @@ namespace nil {
 #endif
 
             struct crc_policy {
-                using basic_policy =  ::nil::crypto3::detail::basic_functions<8>;
+                using basic_policy = ::nil::crypto3::detail::basic_functions<8>;
 
                 constexpr static const std::size_t word_bits = basic_policy::byte_bits;
                 using word_type = basic_policy::byte_type;
@@ -49,11 +49,11 @@ namespace nil {
             };
 
             template<unsigned DigestBits, BOOST_CRC_PARM_TYPE TruncPoly = 0u, BOOST_CRC_PARM_TYPE InitRem = 0u,
-                     BOOST_CRC_PARM_TYPE FinalXor = 0u, bool ReflectIn = false, bool ReflectRem = false>
+                    BOOST_CRC_PARM_TYPE FinalXor = 0u, bool ReflectIn = false, bool ReflectRem = false>
             class crc_construction {
             public:
                 typedef boost::crc_optimal<DigestBits, TruncPoly, InitRem, FinalXor, ReflectIn, ReflectRem>
-                    crc_computer;
+                        crc_computer;
                 constexpr static const std::size_t digest_bits = DigestBits;
                 typedef static_digest<digest_bits> digest_type;
 
@@ -82,9 +82,11 @@ namespace nil {
 
                     auto x = crc_.checksum();
                     digest_type d;
-                    pack_n<stream_endian::big_octet_big_bit, stream_endian::big_octet_big_bit, digest_bits, octet_bits>(&x, 1, d.begin());
+                    pack_n<stream_endian::big_octet_big_bit, stream_endian::big_octet_big_bit, digest_bits, octet_bits>(
+                            &x, 1, d.begin());
                     return d;
                 }
+
                 crc_construction &process_block(const block_type &block) {
                     crc_.process_block(block.begin(), block.end());
                     return *this;
@@ -107,7 +109,7 @@ namespace nil {
              * @tparam ReflectRem
              */
             template<std::size_t DigestBits, BOOST_CRC_PARM_TYPE TruncPoly = 0u, BOOST_CRC_PARM_TYPE InitRem = 0u,
-                     BOOST_CRC_PARM_TYPE FinalXor = 0u, bool ReflectIn = false, bool ReflectRem = false>
+                    BOOST_CRC_PARM_TYPE FinalXor = 0u, bool ReflectIn = false, bool ReflectRem = false>
             class crc {
             public:
                 using policy_type = crc_policy;
@@ -125,7 +127,7 @@ namespace nil {
                 constexpr static const std::size_t digest_bits = DigestBits;
                 typedef typename construction::type::digest_type digest_type;
 
-                constexpr static detail::stream_processor_type stream_processor = detail::stream_processor_type::Block;
+                constexpr static detail::stream_processor_type stream_processor = detail::stream_processor_type::block;
                 using accumulator_tag = accumulators::tag::hash<crc<DigestBits, TruncPoly, InitRem, FinalXor, ReflectIn, ReflectRem>>;
             };
 

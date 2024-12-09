@@ -43,9 +43,9 @@
 
 #include <nil/crypto3/block/detail/rijndael/rijndael_ssse3_impl.hpp>
 
-// #elif defined(CRYPTO3_HAS_RIJNDAEL_ARMV8) || BOOST_ARCH_ARM
+#elif defined(CRYPTO3_HAS_RIJNDAEL_ARMV8) || BOOST_ARCH_ARM
 
-// #include <nil/crypto3/block/detail/rijndael/rijndael_armv8_impl.hpp>
+#include <nil/crypto3/block/detail/rijndael/rijndael_armv8_impl.hpp>
 
 #elif defined(CRYPTO3_HAS_RIJNDAEL_POWER8)
 
@@ -53,12 +53,9 @@
 
 #endif
 
-#include <nil/crypto3/block/detail/utilities/cpuid/cpuid.hpp>
-
 namespace nil {
     namespace crypto3 {
         namespace block {
-
             /*!
              * @brief Rijndael. AES competition winner.
              *
@@ -114,7 +111,6 @@ namespace nil {
              */
             template<std::size_t KeyBits, std::size_t BlockBits>
             class rijndael {
-
                 BOOST_STATIC_ASSERT(KeyBits >= 128 && KeyBits <= 256 && KeyBits % 32 == 0);
                 BOOST_STATIC_ASSERT(BlockBits >= 128 && BlockBits <= 256 && BlockBits % 32 == 0);
 
@@ -122,20 +118,20 @@ namespace nil {
                 typedef detail::rijndael_policy<KeyBits, BlockBits> policy_type;
 
                 typedef
-                    typename std::conditional<BlockBits == 128 && (KeyBits == 128 || KeyBits == 192 || KeyBits == 256),
+                typename std::conditional<BlockBits == 128 && (KeyBits == 128 || KeyBits == 192 || KeyBits == 256),
 #if defined(CRYPTO3_HAS_RIJNDAEL_NI) && (BOOST_ARCH_X86_32 || BOOST_ARCH_X86_64)
                                               detail::rijndael_ni_impl<KeyBits, BlockBits>,
 #elif defined(CRYPTO3_HAS_RIJNDAEL_SSSE3) && \
     ((BOOST_ARCH_X86_32 || BOOST_ARCH_X86_64) && BOOST_HW_SIMD_X86 >= BOOST_HW_SIMD_X86_SSSE3_VERSION)
                                               detail::rijndael_ssse3_impl<KeyBits, BlockBits>,
-// #elif defined(CRYPTO3_HAS_RIJNDAEL_ARMV8) || BOOST_ARCH_ARM >= BOOST_VERSION_NUMBER(8, 0, 0)
-//                                               detail::rijndael_armv8_impl<KeyBits, BlockBits>,
+#elif defined(CRYPTO3_HAS_RIJNDAEL_ARMV8) || BOOST_ARCH_ARM >= BOOST_VERSION_NUMBER(8, 0, 0)
+                    detail::rijndael_armv8_impl<KeyBits, BlockBits>,
 #elif defined(CRYPTO3_HAS_RIJNDAEL_POWER8) || (BOOST_ARCH_PPC >= BOOST_VERSION_NUMBER(8, 0, 0) || BOOST_ARCH_PPC_64)
                                               detail::rijndael_power8_impl<KeyBits, BlockBits>,
 #else
-                                              detail::rijndael_impl<KeyBits, BlockBits>,
+                    detail::rijndael_impl<KeyBits, BlockBits>,
 #endif
-                                              detail::rijndael_impl<KeyBits, BlockBits>>::type impl_type;
+                    detail::rijndael_impl<KeyBits, BlockBits>>::type impl_type;
 
                 constexpr static const std::size_t key_schedule_words = policy_type::key_schedule_words;
                 constexpr static const std::size_t key_schedule_bytes = policy_type::key_schedule_bytes;
@@ -183,15 +179,15 @@ namespace nil {
                     return impl_type::encrypt_block(plaintext, encryption_key);
                 }
 
-                inline block_type decrypt(const block_type &plaintext) const {
-                    return impl_type::decrypt_block(plaintext, decryption_key);
+                inline block_type decrypt(const block_type &ciphertext) const {
+                    return impl_type::decrypt_block(ciphertext, decryption_key);
                 }
 
             protected:
                 key_schedule_type encryption_key, decryption_key;
             };
-        }    // namespace block
-    }        // namespace crypto3
-}    // namespace nil
+        } // namespace block
+    } // namespace crypto3
+} // namespace nil
 
 #endif

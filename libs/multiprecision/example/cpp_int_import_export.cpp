@@ -24,7 +24,7 @@ to a vector of 8-bit unsigned values:
 */
 
 int main() {
-    using nil::crypto3::multiprecision::cpp_int;
+    using boost::multiprecision::cpp_int;
     // Create a cpp_int with just a couple of bits set:
     cpp_int i;
     bit_set(i, 5000);    // set the 5000'th bit

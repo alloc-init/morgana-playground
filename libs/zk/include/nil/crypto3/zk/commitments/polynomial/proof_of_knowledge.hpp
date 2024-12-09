@@ -49,11 +49,11 @@ namespace nil {
                     using g2_value_type = typename g2_type::value_type;
                     typedef detail::element_pok<curve_type> proof_type;
 
-                    template<typename RNG = boost::random_device>
+                    template<typename UniformRandomBitGenerator = boost::random_device>
                     static proof_type proof_eval(const scalar_field_value_type &x,
                                                  const std::vector<std::uint8_t> &transcript,
                                                  std::uint8_t personalization,
-                                                 RNG &&rng = boost::random_device()) {
+                                                 UniformRandomBitGenerator &&rng = boost::random_device()) {
                         const g1_value_type g1_s = algebra::random_element<g1_type>(rng);
                         const g1_value_type g1_s_x = x * g1_s;
                         const g2_value_type g2_s = compute_g2_s(g1_s, g1_s_x, transcript, personalization);

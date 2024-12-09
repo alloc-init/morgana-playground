@@ -36,12 +36,12 @@
 namespace nil {
     namespace crypto3 {
         namespace pubkey {
-            template<typename Scheme>
-            using share_dealing_policy = typename pubkey::modes::isomorphic<Scheme>::share_dealing_policy;
+            template<typename SchemeType>
+            using share_dealing_policy = typename pubkey::modes::isomorphic<SchemeType>::share_dealing_policy;
 
-            template<typename Scheme>
+            template<typename SchemeType>
             using share_dealing_processing_mode_default =
-                typename modes::isomorphic<Scheme>::template bind<share_dealing_policy<Scheme>>::type;
+                typename modes::isomorphic<SchemeType>::template bind<share_dealing_policy<SchemeType>>::type;
         }    // namespace pubkey
 
         /*!
@@ -62,8 +62,8 @@ namespace nil {
          *
          * @return OutputIterator
          */
-        template<typename Scheme, typename InputIterator, typename OutputIterator,
-                 typename ProcessingMode = pubkey::share_dealing_processing_mode_default<Scheme>>
+        template<typename SchemeType, typename InputIterator, typename OutputIterator,
+                 typename ProcessingMode = pubkey::share_dealing_processing_mode_default<SchemeType>>
         OutputIterator deal_share(std::size_t i, InputIterator first, InputIterator last, OutputIterator out) {
 
             typedef typename pubkey::share_dealing_accumulator_set<ProcessingMode> DealingAccumulator;
@@ -91,8 +91,8 @@ namespace nil {
          *
          * @return OutputIterator
          */
-        template<typename Scheme, typename SinglePassRange, typename OutputIterator,
-                 typename ProcessingMode = pubkey::share_dealing_processing_mode_default<Scheme>>
+        template<typename SchemeType, typename SinglePassRange, typename OutputIterator,
+                 typename ProcessingMode = pubkey::share_dealing_processing_mode_default<SchemeType>>
         OutputIterator deal_share(std::size_t i, const SinglePassRange &range, OutputIterator out) {
 
             typedef typename pubkey::share_dealing_accumulator_set<ProcessingMode> DealingAccumulator;
@@ -121,8 +121,8 @@ namespace nil {
          *
          * @return OutputAccumulator
          */
-        template<typename Scheme, typename InputIterator,
-                 typename ProcessingMode = pubkey::share_dealing_processing_mode_default<Scheme>,
+        template<typename SchemeType, typename InputIterator,
+                 typename ProcessingMode = pubkey::share_dealing_processing_mode_default<SchemeType>,
                  typename OutputAccumulator = typename pubkey::share_dealing_accumulator_set<ProcessingMode>>
         typename std::enable_if<boost::accumulators::detail::is_accumulator_set<OutputAccumulator>::value,
                                 OutputAccumulator>::type &
@@ -151,8 +151,8 @@ namespace nil {
          *
          * @return OutputAccumulator
          */
-        template<typename Scheme, typename SinglePassRange,
-                 typename ProcessingMode = pubkey::share_dealing_processing_mode_default<Scheme>,
+        template<typename SchemeType, typename SinglePassRange,
+                 typename ProcessingMode = pubkey::share_dealing_processing_mode_default<SchemeType>,
                  typename OutputAccumulator = typename pubkey::share_dealing_accumulator_set<ProcessingMode>>
         typename std::enable_if<boost::accumulators::detail::is_accumulator_set<OutputAccumulator>::value,
                                 OutputAccumulator>::type &
@@ -183,8 +183,8 @@ namespace nil {
          *
          * @return SchemeImpl
          */
-        template<typename Scheme, typename InputIterator,
-                 typename ProcessingMode = pubkey::share_dealing_processing_mode_default<Scheme>,
+        template<typename SchemeType, typename InputIterator,
+                 typename ProcessingMode = pubkey::share_dealing_processing_mode_default<SchemeType>,
                  typename DealingAccumulator = typename pubkey::share_dealing_accumulator_set<ProcessingMode>,
                  typename StreamSchemeImpl = pubkey::detail::value_pubkey_impl<DealingAccumulator>,
                  typename SchemeImpl = pubkey::detail::range_pubkey_impl<StreamSchemeImpl>>
@@ -211,8 +211,8 @@ namespace nil {
          *
          * @return SchemeImpl
          */
-        template<typename Scheme, typename SinglePassRange,
-                 typename ProcessingMode = pubkey::share_dealing_processing_mode_default<Scheme>,
+        template<typename SchemeType, typename SinglePassRange,
+                 typename ProcessingMode = pubkey::share_dealing_processing_mode_default<SchemeType>,
                  typename DealingAccumulator = typename pubkey::share_dealing_accumulator_set<ProcessingMode>,
                  typename StreamSchemeImpl = pubkey::detail::value_pubkey_impl<DealingAccumulator>,
                  typename SchemeImpl = pubkey::detail::range_pubkey_impl<StreamSchemeImpl>>

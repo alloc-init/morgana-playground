@@ -26,7 +26,7 @@ if((NOT HAVE_AVX2_EXTENSIONS) OR (NOT HAVE_AVX_EXTENSIONS))
 endif()
 
 if(NOT SSE2_FOUND OR NOT SSE3_FOUND OR NOT SSSE3_FOUND OR NOT SSE4_1_FOUND OR NOT SSE4_2_FOUND OR
-   HAVE_AVX2_EXTENSIONS OR HAVE_AVX_EXTENSIONS)
+        HAVE_AVX2_EXTENSIONS OR HAVE_AVX_EXTENSIONS)
     option(CRYPTO3_VDF_USE_SIMD "Build Crypto3.VDF with SIMD instructions usage." TRUE)
 endif()
 
@@ -88,7 +88,7 @@ add_library(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME} INTERFACE)
 
 if(CRYPTO3_VDF_USE_SIMD)
     target_compile_definitions(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME} INTERFACE
-                               "${CMAKE_UPPER_WORKSPACE_NAME}_VDF_SIMD")
+            "${CMAKE_UPPER_WORKSPACE_NAME}_VDF_SIMD")
 
     if(HAVE_AVX2_EXTENSIONS)
         target_compile_options(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME} INTERFACE "-mavx2")
@@ -110,73 +110,71 @@ endif()
 target_compile_options(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME} INTERFACE "$<$<CONFIG:RELEASE>:-O3;-fno-rtti>")
 
 set_target_properties(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME} PROPERTIES
-                      EXPORT_NAME ${CURRENT_PROJECT_NAME})
+        EXPORT_NAME ${CURRENT_PROJECT_NAME})
 
 if(CRYPTO3_VDF_GMP)
     target_compile_definitions(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME} INTERFACE CRYPTO3_VDF_GMP)
 
     target_include_directories(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME} INTERFACE
-                               "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-                               "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>"
+            "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+            "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>"
 
-                               ${GMPXX_INCLUDE_DIR}
-                               ${MPFR_INCLUDE_DIR})
+            ${GMPXX_INCLUDE_DIR}
+            ${MPFR_INCLUDE_DIR})
 
     target_link_libraries(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME} INTERFACE
-                          ${GMP_LIBRARIES} ${GMPXX_LIBRARIES} ${MPFR_LIBRARIES})
+            ${GMP_LIBRARIES} ${GMPXX_LIBRARIES} ${MPFR_LIBRARIES})
 
 elseif(CRYPTO3_VDF_MPIR)
     target_compile_definitions(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME} INTERFACE CRYPTO3_VDF_MPIR)
 
     target_include_directories(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME} INTERFACE
-                               "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-                               "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>"
+            "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+            "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>"
 
-                               ${MPIRXX_INCLUDE_DIR}
-                               ${MPFR_INCLUDE_DIR})
+            ${MPIRXX_INCLUDE_DIR}
+            ${MPFR_INCLUDE_DIR})
 
     target_link_libraries(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME} INTERFACE
-                          ${MPIR_LIBRARIES} ${MPIRXX_LIBRARIES} ${MPFR_LIBRARIES})
+            ${MPIR_LIBRARIES} ${MPIRXX_LIBRARIES} ${MPFR_LIBRARIES})
 elseif(CRYPTO3_VDF_FLINT)
     target_compile_definitions(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME} INTERFACE CRYPTO3_VDF_FLINT)
 
     target_include_directories(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME} INTERFACE
-                               "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-                               "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>"
+            "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+            "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>"
 
-                               ${MPFR_INCLUDE_DIR}
-                               ${GMP_INCLUDE_DIR}
-                               ${FLINT_INCLUDE_DIR})
+            ${MPFR_INCLUDE_DIR}
+            ${GMP_INCLUDE_DIR}
+            ${FLINT_INCLUDE_DIR})
 
     target_link_libraries(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME} INTERFACE ${FLINT_LIBRARIES}
-                          ${MPFR_LIBRARIES} ${GMP_LIBRARIES})
+            ${MPFR_LIBRARIES} ${GMP_LIBRARIES})
 elseif(CRYPTO3_VDF_BOOST)
     target_compile_definitions(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME} INTERFACE CRYPTO3_VDF_BOOST)
 
     target_include_directories(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME} INTERFACE
-                               "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-                               "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>"
+            "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+            "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>"
 
-                               ${Boost_INCLUDE_DIRS})
+            ${Boost_INCLUDE_DIRS})
 
-    if(TARGET nil::crypto3::multiprecision)
+    if(TARGET Boost::multiprecision)
         target_link_libraries(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME} INTERFACE
-                              nil::crypto3::multiprecision
+                ${CMAKE_WORKSPACE_NAME}::block
+                ${CMAKE_WORKSPACE_NAME}::hash
+                ${CMAKE_WORKSPACE_NAME}::multiprecision
 
-                              ${CMAKE_WORKSPACE_NAME}_block
-                              ${CMAKE_WORKSPACE_NAME}_hash
-
-                              Boost::container)
+                Boost::container)
     else()
         target_link_libraries(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME} INTERFACE
-                              Boost::container)
+                Boost::container)
     endif()
 endif()
 
 cm_deploy(TARGETS ${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME}
-          INCLUDE include
-          NAMESPACE ${CMAKE_WORKSPACE_NAME}::)
+        INCLUDE include
+        NAMESPACE ${CMAKE_WORKSPACE_NAME}::)
 
-# Commenting out the tests since libs/vdf/test/chia.cpp fails. 
-#include(CMTest)
-#cm_add_test_subdirectory(test)
+include(CMTest)
+cm_add_test_subdirectory(test)

@@ -3435,15 +3435,15 @@ void test() {
     }};
 
     unsigned max_err = 0;
-    for (unsigned k = 0; k < data.size(); k++) {
-        T val = pow(T(data[k][0]), T(data[k][1]));
-        T e = relative_error(val, T(data[k][2]));
+    for (unsigned K = 0; K < data.size(); K++) {
+        T val = pow(T(data[K][0]), T(data[K][1]));
+        T e = relative_error(val, T(data[K][2]));
         unsigned err = e.template convert_to<unsigned>();
         if (err > max_err) {
             max_err = err;
         }
-        val = pow(T(data[k][0]), -T(data[k][1]));
-        e = relative_error(val, T(1 / T(data[k][2])));
+        val = pow(T(data[K][0]), -T(data[K][1]));
+        e = relative_error(val, T(1 / T(data[K][2])));
         err = e.template convert_to<unsigned>();
         if (err > max_err) {
             max_err = err;

@@ -34,7 +34,7 @@ namespace nil {
                 struct threshold_scheme {
                     typedef BaseScheme base_scheme_type;
 
-                    template<typename Group>
+                    template<typename GroupType>
                     using sss_type = SecretSharingScheme<Group>;
                 };
             }    // namespace detail

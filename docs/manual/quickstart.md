@@ -26,7 +26,7 @@ to your package manager.
 ## Get crypto3 scaffold project
 
 ```
-git clone https://github.com/NilFoundation/crypto3-scaffold.git
+git clone https://github.com/alloc-init/crypto3-scaffold.git
 cd crypto3-scaffold
 ```
 
@@ -67,7 +67,7 @@ You should see the output `Verified signature successfully` on your console.
 
 ## Conclusion
 Congratulations! You now have the environment to start experimenting with the crypto3 suite. You can now explore
-other [modules](modules.html) in the suite.Modules also have examples in their repositories' ex : [algebra example](https://github.com/NilFoundation/crypto3-algebra/tree/master/example).
+other [modules](modules.html) in the suite.Modules also have examples in their repositories' ex : [algebra example](https://github.com/alloc-init/crypto3-algebra/tree/master/example).
 
 
 ## Common Issues

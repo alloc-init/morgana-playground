@@ -126,14 +126,14 @@ struct test_case_base {
 
 using namespace nil::crypto3::math;
 
-template <typename Field>
-polynomial_dfs<typename Field::value_type> generate_random_polynomial(std::size_t size, nil::crypto3::random::algebraic_engine<Field>& engine) {
-    std::vector<typename Field::value_type> random_field_values;
+template <typename FieldType>
+polynomial_dfs<typename FieldType::value_type> generate_random_polynomial(std::size_t size, nil::crypto3::random::algebraic_engine<FieldType>& engine) {
+    std::vector<typename FieldType::value_type> random_field_values;
     random_field_values.reserve(size);
     for (std::size_t i = 0; i < size; ++i) {
         random_field_values.emplace_back(engine());
     }
-    return polynomial_dfs<typename Field::value_type>(size - 1, std::move(random_field_values));
+    return polynomial_dfs<typename FieldType::value_type>(size - 1, std::move(random_field_values));
 }
 
 struct F {
@@ -154,15 +154,15 @@ BENCHMARK_AUTO_TEST_CASE(dummy_test, 100) {
 }
 
 BENCHMARK_AUTO_TEST_CASE(polynomial_product_test, 20) {
-    using Field = nil::crypto3::algebra::fields::bls12_fr<381>;
+    using FieldType = nil::crypto3::algebra::fields::bls12_fr<381>;
 
-    std::vector<polynomial_dfs<typename Field::value_type>> random_polynomials;
+    std::vector<polynomial_dfs<typename FieldType::value_type>> random_polynomials;
     random_polynomials.reserve(8);
-    Field::value_type a = alg_rnd_engine();
+    FieldType::value_type a = alg_rnd_engine();
     std::vector<std::size_t> sizes = {23, 15, 21, 16, 22, 17, 18};
     for (auto size : sizes) {
         random_polynomials.emplace_back(
-            generate_random_polynomial<Field>(
+            generate_random_polynomial<FieldType>(
                 1u << size,
                 alg_rnd_engine
             )
@@ -170,20 +170,20 @@ BENCHMARK_AUTO_TEST_CASE(polynomial_product_test, 20) {
     }
 
     START_TIMER("polynomial_product")
-    polynomial_product<Field>(std::move(random_polynomials));
+    polynomial_product<FieldType>(std::move(random_polynomials));
     STOP_TIMER("polynomial_product")
 }
 
 BENCHMARK_AUTO_TEST_CASE(polynomial_sum_real_test, 20) {
-    using Field = nil::crypto3::algebra::fields::bls12_fr<381>;
+    using FieldType = nil::crypto3::algebra::fields::bls12_fr<381>;
 
-    std::vector<polynomial_dfs<typename Field::value_type>> random_polynomials;
+    std::vector<polynomial_dfs<typename FieldType::value_type>> random_polynomials;
     random_polynomials.reserve(8);
-    Field::value_type a = alg_rnd_engine();
+    FieldType::value_type a = alg_rnd_engine();
     std::vector<std::size_t> sizes = {23, 15, 21, 16, 22, 17, 18};
     for (auto size : sizes) {
         random_polynomials.emplace_back(
-            generate_random_polynomial<Field>(
+            generate_random_polynomial<FieldType>(
                 1u << size,
                 alg_rnd_engine
             )
@@ -200,14 +200,14 @@ BENCHMARK_AUTO_TEST_CASE(polynomial_sum_real_test, 20) {
     for (auto& polynomial : random_polynomials_copy) {
         polynomial.resize(max_size, nullptr, max_domain);
     }
-    polynomial_dfs<typename Field::value_type> naive_res(0, max_size);
+    polynomial_dfs<typename FieldType::value_type> naive_res(0, max_size);
     for (auto& polynomial : random_polynomials_copy) {
         naive_res += std::move(polynomial);
     }
     STOP_TIMER("polynomial_naive")
 
     START_TIMER("polynomial_sum")
-    const auto res = polynomial_sum<Field>(std::move(random_polynomials));
+    const auto res = polynomial_sum<FieldType>(std::move(random_polynomials));
     STOP_TIMER("polynomial_sum")
     BOOST_CHECK_EQUAL(naive_res, res);
 }

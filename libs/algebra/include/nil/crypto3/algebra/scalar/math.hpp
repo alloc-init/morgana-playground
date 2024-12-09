@@ -73,12 +73,13 @@ namespace nil {
              *  Computes the absolute value.
              */
             template<typename T>
-            constexpr nil::crypto3::algebra::remove_complex_t<T> abs(T x) {
+            constexpr typename nil::crypto3::algebra::remove_complex<T>::type abs(T x) {
                 // CRYPTO3_DETAIL_ASSERT_ARITHMETIC(T);
-                if constexpr (algebra::is_complex_v<T>)
+                if constexpr (algebra::is_complex<T>::value) {
                     return sqrt(x.real() * x.real() + x.imag() * x.imag());
-                else
+                } else {
                     return x > 0 ? x : -x;
+                }
             }
 
             /** @brief computes exponents
@@ -116,8 +117,9 @@ namespace nil {
              *  Computes the \f$n\f$th root.
              */
             constexpr double nthroot(double x, int n) {
-                if (x < 0)
+                if (x < 0) {
                     throw "nth root argument must be positive";
+                }
                 double prev = -1;
                 double est = 1;
                 while (prev != est) {
@@ -137,7 +139,7 @@ namespace nil {
             template<typename T>
             constexpr T conj(T x) {
                 // CRYPTO3_DETAIL_ASSERT_ARITHMETIC(T);
-                if constexpr (algebra::is_complex_v<T>)
+                if constexpr (algebra::is_complex<T>::value)
                     return {x.real(), -x.imag()};
                 else
                     return x;

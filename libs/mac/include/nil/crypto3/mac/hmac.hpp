@@ -43,38 +43,38 @@ namespace nil {
              * @tparam Hash
              * @ingroup mac
              */
-            template<typename Hash>
+            template<typename HashType>
             struct hmac {
-                typedef Hash hash_type;
+                typedef HashType hash_type;
 
                 constexpr static const std::size_t block_bits = hash_type::block_bits;
                 constexpr static const std::size_t block_words = hash_type::block_words;
-                constexpr static const std::size_t block_octets = block_bits / 8;
+                constexpr static const std::size_t block_octets = block_bits / CHAR_BIT;
                 typedef typename hash_type::block_type block_type;
 
                 constexpr static const std::size_t digest_bits = hash_type::digest_bits;
                 typedef typename hash_type::digest_type digest_type;
 
                 template<typename InputRange,
-                         typename ValueType = typename std::iterator_traits<typename InputRange::iterator>::value_type>
+                        typename ValueType = typename std::iterator_traits<typename InputRange::iterator>::value_type>
                 using is_key_type = typename std::enable_if<std::is_same<std::uint8_t, ValueType>::value, bool>::type;
 
                 /*!
                  * std::pair<i_key_pad, o_key_pad>
                  */
                 typedef std::pair<std::array<std::uint8_t, block_octets>, std::array<std::uint8_t, block_octets>>
-                    schedule_key_type;
+                        schedule_key_type;
             };
 
-            template<typename Hash>
-            struct mac_key<hmac<Hash>> {
-                typedef hmac<Hash> policy_type;
+            template<typename HashType>
+            struct mac_key<hmac<HashType>> {
+                typedef hmac<HashType> policy_type;
 
                 typedef typename policy_type::hash_type hash_type;
                 typedef typename policy_type::digest_type digest_type;
                 typedef typename policy_type::schedule_key_type schedule_key_type;
 
-                typedef accumulator_set<hash_type> internal_accumulator_type;
+                typedef accumulator_set <hash_type> accumulator_type;
 
                 constexpr static const std::size_t block_octets = policy_type::block_octets;
 
@@ -82,24 +82,24 @@ namespace nil {
                 mac_key(const KeyRange &key) : schedule_key(process_schedule_key(key)) {
                 }
 
-                inline void init_accumulator(internal_accumulator_type &i_acc) const {
+                inline void init_accumulator(accumulator_type &i_acc) const {
                     hash<hash_type>(schedule_key.first, i_acc);
                 }
 
                 template<typename InputRange>
-                inline void update(internal_accumulator_type &i_acc, InputRange range) const {
+                inline void update(accumulator_type &i_acc, InputRange range) const {
                     hash<hash_type>(range, i_acc);
                 }
 
                 template<typename InputIterator>
-                inline void update(internal_accumulator_type &i_acc, InputIterator first, InputIterator last) const {
+                inline void update(accumulator_type &i_acc, InputIterator first, InputIterator last) const {
                     hash<hash_type>(first, last, i_acc);
                 }
 
-                inline digest_type compute(internal_accumulator_type &i_acc) const {
+                inline digest_type compute(accumulator_type &i_acc) const {
                     digest_type i_digest = ::nil::crypto3::accumulators::extract::hash<hash_type>(i_acc);
 
-                    internal_accumulator_type o_acc;
+                    accumulator_type o_acc;
                     hash<hash_type>(schedule_key.second, o_acc);
                     hash<hash_type>(i_digest, o_acc);
                     return ::nil::crypto3::accumulators::extract::hash<hash_type>(o_acc);
@@ -118,11 +118,11 @@ namespace nil {
                     if (key.size() > block_octets) {
                         digest_type hashed_key = hash<hash_type>(key);
                         ::nil::crypto3::detail::strxor(
-                            hashed_key.cbegin(), hashed_key.cend(), schedule_key.first.cbegin(),
-                            schedule_key.first.cbegin() + hashed_key.size(), schedule_key.first.begin());
+                                hashed_key.cbegin(), hashed_key.cend(), schedule_key.first.cbegin(),
+                                schedule_key.first.cbegin() + hashed_key.size(), schedule_key.first.begin());
                         ::nil::crypto3::detail::strxor(
-                            hashed_key.cbegin(), hashed_key.cend(), schedule_key.second.cbegin(),
-                            schedule_key.second.cbegin() + hashed_key.size(), schedule_key.second.begin());
+                                hashed_key.cbegin(), hashed_key.cend(), schedule_key.second.cbegin(),
+                                schedule_key.second.cbegin() + hashed_key.size(), schedule_key.second.begin());
                     } else {
                         ::nil::crypto3::detail::strxor(key.cbegin(), key.cend(), schedule_key.first.cbegin(),
                                                        schedule_key.first.cbegin() + key.size(),

@@ -39,9 +39,9 @@ namespace nil {
              * @tparam Hash
              * @ingroup kdf
              */
-            template<typename Hash = hash::sha1>
+            template<typename HashType = hash::sha1>
             class x942_prf {
-                typedef detail::prf_x942_functions<Hash> policy_type;
+                typedef detail::prf_x942_functions<HashType> policy_type;
 
             public:
                 typedef typename policy_type::hash_type hash_type;

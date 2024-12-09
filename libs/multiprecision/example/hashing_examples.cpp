@@ -19,7 +19,7 @@ That means we can use multiprecision types directly in hashed containers such as
 
 void t1() {
     //[hash2
-    using namespace nil::crypto3::multiprecision;
+    using namespace boost::multiprecision;
     using namespace boost::random;
 
     mt19937 mt;
@@ -41,7 +41,7 @@ Google's CityHash:
 */
 
 struct cityhash {
-    std::size_t operator()(const nil::crypto3::multiprecision::uint256_t& val) const {
+    std::size_t operator()(const boost::multiprecision::uint256_t& val) const {
         // create a hash from all the limbs of the argument, this function is probably x64 specific,
         // and requires that we access the internals of the data type:
         std::size_t result = CityHash64(reinterpret_cast<const char*>(val.backend().limbs()),

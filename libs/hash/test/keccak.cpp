@@ -58,7 +58,7 @@ template<std::size_t Size>
 class fixture {
 public:
     accumulator_set<hashes::keccak_1600<Size>> acc;
-    typedef hashes::keccak_1600<Size> hash_t;
+    typedef hashes::keccak_1600<Size> hash_type;
 
     virtual ~fixture() {
     }
@@ -289,12 +289,12 @@ BOOST_AUTO_TEST_SUITE(keccak_accumulator_test_suite)
 
 BOOST_FIXTURE_TEST_CASE(keccak_224_accumulator, fixture<224>) {
     // "abc"
-    hash_t::construction::type::block_type m = {{}};
+    hash_type::construction::type::block_type m = {{}};
 
     m[0] = UINT64_C(0x0000000000636261);
     acc(m, accumulators::bits = 24);
 
-    hash_t::digest_type s = extract::hash<hash_t>(acc);
+    hash_type::digest_type s = extract::hash<hash_type>(acc);
 
 #ifdef CRYPTO3_HASH_SHOW_PROGRESS
     std::printf("%s\n", std::to_string(s).data());
@@ -305,12 +305,12 @@ BOOST_FIXTURE_TEST_CASE(keccak_224_accumulator, fixture<224>) {
 
 BOOST_FIXTURE_TEST_CASE(keccak_256_accumulator, fixture<256>) {
     // "abc"
-    hash_t::construction::type::block_type m = {{}};
+    hash_type::construction::type::block_type m = {{}};
 
     m[0] = UINT64_C(0x0000000000636261);
     acc(m, accumulators::bits = 24);
 
-    hash_t::digest_type s = extract::hash<hash_t>(acc);
+    hash_type::digest_type s = extract::hash<hash_type>(acc);
 
 #ifdef CRYPTO3_HASH_SHOW_PROGRESS
     std::printf("%s\n", std::to_string(s).data());
@@ -321,12 +321,12 @@ BOOST_FIXTURE_TEST_CASE(keccak_256_accumulator, fixture<256>) {
 
 BOOST_FIXTURE_TEST_CASE(keccak_384_accumulator, fixture<384>) {
     // "abc"
-    hash_t::construction::type::block_type m = {{}};
+    hash_type::construction::type::block_type m = {{}};
 
     m[0] = UINT64_C(0x0000000000636261);
     acc(m, accumulators::bits = 24);
 
-    hash_t::digest_type s = extract::hash<hash_t>(acc);
+    hash_type::digest_type s = extract::hash<hash_type>(acc);
 
 #ifdef CRYPTO3_HASH_SHOW_PROGRESS
     std::printf("%s\n", std::to_string(s).data());
@@ -340,12 +340,12 @@ BOOST_FIXTURE_TEST_CASE(keccak_384_accumulator, fixture<384>) {
 
 BOOST_FIXTURE_TEST_CASE(keccak_512_accumulator, fixture<512>) {
     // "abc"
-    hash_t::construction::type::block_type m = {{}};
+    hash_type::construction::type::block_type m = {{}};
 
     m[0] = UINT64_C(0x0000000000636261);
     acc(m, accumulators::bits = 24);
 
-    hash_t::digest_type s = extract::hash<hash_t>(acc);
+    hash_type::digest_type s = extract::hash<hash_type>(acc);
 
 #ifdef CRYPTO3_HASH_SHOW_PROGRESS
     std::printf("%s\n", std::to_string(s).data());

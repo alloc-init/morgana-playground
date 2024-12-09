@@ -30,6 +30,7 @@
 #ifdef __ZKLLVM__
 #include <nil/crypto3/algebra/curves/pallas.hpp>
 #else
+
 #include <nil/crypto3/hash/accumulators/hash.hpp>
 #include <nil/crypto3/hash/detail/sha2/sha2_policy.hpp>
 #include <nil/crypto3/hash/detail/state_adder.hpp>
@@ -37,6 +38,7 @@
 #include <nil/crypto3/hash/detail/merkle_damgard_construction.hpp>
 #include <nil/crypto3/hash/detail/merkle_damgard_padding.hpp>
 #include <nil/crypto3/hash/detail/stream_processors/stream_processors_enum.hpp>
+
 #endif
 
 namespace nil {
@@ -61,6 +63,7 @@ namespace nil {
                 };
             };
 #else
+
             template<std::size_t Version>
             class sha2 {
             public:
@@ -94,14 +97,15 @@ namespace nil {
                     };
 
                     typedef merkle_damgard_construction<params_type, typename policy_type::iv_generator,
-                                                        davies_meyer_compressor<block_cipher_type, detail::state_adder>,
-                                                        detail::merkle_damgard_padding<policy_type>>
-                        type;
+                            davies_meyer_compressor<block_cipher_type, detail::state_adder>,
+                            detail::merkle_damgard_padding<policy_type>>
+                            type;
                 };
 
-                constexpr static detail::stream_processor_type stream_processor = detail::stream_processor_type::Block;
+                constexpr static detail::stream_processor_type stream_processor = detail::stream_processor_type::block;
                 using accumulator_tag = accumulators::tag::hash<sha2<Version>>;
             };
+
 #endif
         }    // namespace hashes
     }        // namespace crypto3

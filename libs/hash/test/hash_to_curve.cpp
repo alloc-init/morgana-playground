@@ -126,7 +126,7 @@ BOOST_AUTO_TEST_CASE(expand_message_xmd_sha256_test) {
     std::string DST_str("QUUX-V01-CS02-with-expander");
     std::vector<std::uint8_t> DST(DST_str.begin(), DST_str.end());
 
-    // {len_in_bytes, msg, uniform_bytes}
+    // {BytesLength, msg, uniform_bytes}
     using samples_type = std::vector<std::tuple<std::size_t, std::vector<std::uint8_t>, std::vector<std::uint8_t>>>;
     samples_type samples {
         {0x20, {}, {0xf6, 0x59, 0x81, 0x9a, 0x64, 0x73, 0xc1, 0x83, 0x5b, 0x25, 0xea, 0x59, 0xe3, 0xd3, 0x89, 0x14,

@@ -253,9 +253,9 @@ namespace nil {
                         }
                     };
 
-                    template<typename Policy>
+                    template<typename PolicyType>
                     class siv {
-                        typedef Policy policy_type;
+                        typedef PolicyType policy_type;
 
                     public:
                         typedef typename policy_type::cipher_type cipher_type;
@@ -358,10 +358,10 @@ namespace nil {
                         decryption_policy;
 
                     template<template<typename, typename, std::size_t, typename, typename, template<typename> class>
-                             class Policy>
+                             class PolicyType>
                     struct bind {
                         typedef detail::siv<
-                            Policy<cipher_type, padding_type, TagBits, stream_cipher_type, mac_type, allocator_type>>
+                            PolicyType<cipher_type, padding_type, TagBits, stream_cipher_type, mac_type, allocator_type>>
                             type;
                     };
                 };

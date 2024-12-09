@@ -50,7 +50,7 @@ namespace nil {
                     struct params_type {
                         // setup as an open key (non trusted, so uniform for both sides)
                         int n;    // n - number of parties
-                        int k;    // k <= n - number of parties needed to open the secret message
+                        int k;    // K <= n - number of parties needed to open the secret message
                         commitment_type g;
                         commitment_type h;
                     };
@@ -94,7 +94,7 @@ namespace nil {
 
                     static std::vector<evaluation_type> poly_eval(const params_type &params,
                                                                   const std::vector<evaluation_type> &coeffs) {
-                        // computes F(i) for i in range 1..n for polynom F of degree k - proof.E
+                        // computes F(i) for i in range 1..n for polynom F of degree K - proof.E
                         std::vector<evaluation_type> p_i;
                         evaluation_type spare;
                         evaluation_type sum;

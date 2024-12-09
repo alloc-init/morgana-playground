@@ -65,10 +65,10 @@ namespace nil {
                                 for (std::size_t j = 0; j < word_bits; j++) {
                                     lfsr_state = update_lfsr_state(lfsr_state);
                                     constant = set_new_bit<integral_type>(
-                                        constant, get_lfsr_state_bit(lfsr_state, lfsr_state_bits - 1));
+                                            constant, get_lfsr_state_bit(lfsr_state, lfsr_state_bits - 1));
                                 }
                                 if (constant < modulus) {
-                                    round_constants[i] = element_type(constant);
+                                    constants[i] = element_type(constant);
                                     break;
                                 }
                             }
@@ -125,11 +125,11 @@ namespace nil {
                         return (var << 1) | (new_bit ? 1 : 0);
                     }
 
-                    constexpr reinforced_concrete_lfsr() : round_constants() {
+                    constexpr reinforced_concrete_lfsr() : constants() {
                         generate_round_constants();
                     }
 
-                    round_constants_type round_constants;
+                    round_constants_type constants;
                 };
             }    // namespace detail
         }        // namespace hashes

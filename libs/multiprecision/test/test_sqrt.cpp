@@ -1210,9 +1210,9 @@ void test() {
         "2");
 
     unsigned max_err = 0;
-    for (unsigned k = 0; k < data.size(); k++) {
-        T val = sqrt(pi * k);
-        T e = relative_error(val, T(data[k]));
+    for (unsigned K = 0; K < data.size(); K++) {
+        T val = sqrt(pi * K);
+        T e = relative_error(val, T(data[K]));
         unsigned err = e.template convert_to<unsigned>();
         if (err > max_err) {
             max_err = err;

@@ -226,15 +226,15 @@ void test() {
         "962829254091715364367892590360011330530548820466521384146951941511609");
 
     unsigned max_err = 0;
-    for (unsigned k = 0; k < data.size(); k++) {
-        T val = exp(sqrt((pi * (100 * k)) * (100 * k)));
-        T e = relative_error(val, T(data[k]));
+    for (unsigned K = 0; K < data.size(); K++) {
+        T val = exp(sqrt((pi * (100 * K)) * (100 * K)));
+        T e = relative_error(val, T(data[K]));
         unsigned err = e.template convert_to<unsigned>();
         if (err > max_err) {
             max_err = err;
         }
-        val = exp(-sqrt((pi * (100 * k)) * (100 * k)));
-        e = relative_error(val, T(1 / T(data[k])));
+        val = exp(-sqrt((pi * (100 * K)) * (100 * K)));
+        e = relative_error(val, T(1 / T(data[K])));
         err = e.template convert_to<unsigned>();
         if (err > max_err) {
             max_err = err;
@@ -291,15 +291,15 @@ void test() {
     }};
 
     max_err = 0;
-    for (unsigned k = 0; k < exact_data.size(); k++) {
-        T val = exp(exact_data[k][0]);
-        T e = relative_error(val, exact_data[k][1]);
+    for (unsigned K = 0; K < exact_data.size(); K++) {
+        T val = exp(exact_data[K][0]);
+        T e = relative_error(val, exact_data[K][1]);
         unsigned err = e.template convert_to<unsigned>();
         if (err > max_err) {
             max_err = err;
         }
-        val = exp(-exact_data[k][0]);
-        e = relative_error(val, T(1 / exact_data[k][1]));
+        val = exp(-exact_data[K][0]);
+        e = relative_error(val, T(1 / exact_data[K][1]));
         err = e.template convert_to<unsigned>();
         if (err > max_err) {
             max_err = err;

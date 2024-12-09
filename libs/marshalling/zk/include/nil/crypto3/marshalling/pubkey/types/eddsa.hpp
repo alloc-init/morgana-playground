@@ -61,7 +61,7 @@ namespace nil {
                         nil::marshalling::types::array_list<
                             TTypeBase,
                             nil::marshalling::types::integral<TTypeBase,
-                                                              typename PublicKey::public_key_type::value_type>,
+                                                              typename PublicKey::schedule_type::value_type>,
                             nil::marshalling::option::sequence_size_field_prefix<
                                 nil::marshalling::types::integral<TTypeBase, std::size_t>>>>>;
 
@@ -99,19 +99,19 @@ namespace nil {
 
                     using integral_vector_type = nil::marshalling::types::array_list<
                         TTypeBase,
-                        nil::marshalling::types::integral<TTypeBase, typename PublicKey::public_key_type::value_type>,
+                        nil::marshalling::types::integral<TTypeBase, typename PublicKey::schedule_type::value_type>,
                         nil::marshalling::option::sequence_size_field_prefix<
                             nil::marshalling::types::integral<TTypeBase, std::size_t>>>;
 
                     integral_vector_type pubkey_data;
 
                     std::vector<
-                        nil::marshalling::types::integral<TTypeBase, typename PublicKey::public_key_type::value_type>>
+                        nil::marshalling::types::integral<TTypeBase, typename PublicKey::schedule_type::value_type>>
                         &val = pubkey_data.value();
                     for (std::size_t i = 0; i < key_inp.pubkey.size(); i++) {
                         val.push_back(
                             nil::marshalling::types::integral<TTypeBase,
-                                                              typename PublicKey::public_key_type::value_type>(
+                                                              typename PublicKey::schedule_type::value_type>(
                                 key_inp.pubkey[i]));
                     }
 
@@ -124,10 +124,10 @@ namespace nil {
                     const eddsa_public_key<nil::marshalling::field_type<Endianness>, PublicKey> &filled_key_inp) {
 
                     using TTypeBase = nil::marshalling::field_type<Endianness>;
-                    typename PublicKey::public_key_type result;
+                    typename PublicKey::schedule_type result;
 
                     const std::vector<
-                        nil::marshalling::types::integral<TTypeBase, typename PublicKey::public_key_type::value_type>>
+                        nil::marshalling::types::integral<TTypeBase, typename PublicKey::schedule_type::value_type>>
                         &values = std::get<1>(filled_key_inp.value()).value();
 
                     std::size_t size = values.size();

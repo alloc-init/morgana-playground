@@ -19,7 +19,7 @@
 #include <type_traits>
 #include <utility>
 
-namespace boost {   
+namespace boost {
     namespace multiprecision {
         namespace backends {
 
@@ -31,9 +31,9 @@ namespace boost {
             //
             template<typename Backend>
             BOOST_MP_CXX14_CONSTEXPR typename std::conditional<is_trivial_cpp_int_modular<Backend>::value,
-                                                typename trivial_limb_type<max_precision<Backend>::value>::type,
-                                                limb_type>::type
-                get_limb_value(const Backend &b, const std::size_t i) {
+                    typename trivial_limb_type<max_precision<Backend>::value>::type,
+                    limb_type>::type
+            get_limb_value(const Backend &b, const std::size_t i) {
                 if (i < b.size()) {
                     return b.limbs()[i];
                 }
@@ -45,7 +45,7 @@ namespace boost {
             //
             template<typename, typename Backend>
             BOOST_MP_CXX14_CONSTEXPR typename boost::enable_if_c<!is_trivial_cpp_int_modular<Backend>::value, limb_type>::type
-                custom_get_limb_value(const Backend &b, const std::size_t i) {
+            custom_get_limb_value(const Backend &b, const std::size_t i) {
                 return b.limbs()[i];
             }
 
@@ -55,11 +55,11 @@ namespace boost {
             //
             template<typename internal_limb_type, typename Backend>
             BOOST_MP_CXX14_CONSTEXPR typename boost::enable_if_c<
-                is_trivial_cpp_int_modular<Backend>::value &&
+                    is_trivial_cpp_int_modular<Backend>::value &&
                     sizeof(typename trivial_limb_type<max_precision<Backend>::value>::type) >=
-                        sizeof(internal_limb_type),
-                internal_limb_type>::type
-                custom_get_limb_value(const Backend &b, const std::size_t i) {
+                    sizeof(internal_limb_type),
+                    internal_limb_type>::type
+            custom_get_limb_value(const Backend &b, const std::size_t i) {
                 return static_cast<internal_limb_type>(b.limbs()[0] >> (sizeof(internal_limb_type) * CHAR_BIT * i));
             }
 
@@ -68,7 +68,7 @@ namespace boost {
             //
             template<typename, typename Backend>
             BOOST_MP_CXX14_CONSTEXPR typename boost::enable_if_c<!is_trivial_cpp_int_modular<Backend>::value>::type
-                custom_set_limb_value(Backend &b, const std::size_t i, limb_type v) {
+            custom_set_limb_value(Backend &b, const std::size_t i, limb_type v) {
                 b.limbs()[i] = v;
             }
 
@@ -82,10 +82,10 @@ namespace boost {
             //
             template<typename internal_limb_type, typename Backend>
             BOOST_MP_CXX14_CONSTEXPR typename boost::enable_if_c<
-                is_trivial_cpp_int_modular<Backend>::value &&
-                sizeof(typename trivial_limb_type<max_precision<Backend>::value>::type) >=
+                    is_trivial_cpp_int_modular<Backend>::value &&
+                    sizeof(typename trivial_limb_type<max_precision<Backend>::value>::type) >=
                     sizeof(internal_limb_type)>::type
-                custom_set_limb_value(Backend &b, const std::size_t i, internal_limb_type v) {
+            custom_set_limb_value(Backend &b, const std::size_t i, internal_limb_type v) {
                 using local_limb_type = typename trivial_limb_type<max_precision<Backend>::value>::type;
 
                 //
@@ -238,9 +238,9 @@ namespace boost {
                     Backend_padded_limbs compliment = static_cast<limb_type>(1u), modulus = m_mod;
                     eval_left_shift(compliment, Bits);
                     eval_subtract(compliment, modulus);
-                    m_mod_compliment = compliment; 
+                    m_mod_compliment = compliment;
                 }
- 
+
                 BOOST_MP_CXX14_CONSTEXPR void initialize(const Backend &m) {
                     initialize_modulus(m);
                     initialize_barrett_params();
@@ -253,15 +253,19 @@ namespace boost {
                 BOOST_MP_CXX14_CONSTEXPR auto &get_mod() {
                     return m_mod;
                 }
+
                 BOOST_MP_CXX14_CONSTEXPR const auto &get_mod_compliment() const {
                     return m_mod_compliment;
                 }
+
                 BOOST_MP_CXX14_CONSTEXPR auto &get_mu() {
                     return m_barrett_mu;
                 }
+
                 BOOST_MP_CXX14_CONSTEXPR auto &get_r2() {
                     return m_montgomery_r2;
                 }
+
                 BOOST_MP_CXX14_CONSTEXPR auto &get_p_dash() {
                     return m_montgomery_p_dash;
                 }
@@ -269,12 +273,15 @@ namespace boost {
                 BOOST_MP_CXX14_CONSTEXPR const auto &get_mod() const {
                     return m_mod;
                 }
+
                 BOOST_MP_CXX14_CONSTEXPR const auto &get_mu() const {
                     return m_barrett_mu;
                 }
+
                 BOOST_MP_CXX14_CONSTEXPR const auto &get_r2() const {
                     return m_montgomery_r2;
                 }
+
                 BOOST_MP_CXX14_CONSTEXPR auto get_p_dash() const {
                     return m_montgomery_p_dash;
                 }
@@ -287,13 +294,9 @@ namespace boost {
                 }
 
                 BOOST_MP_CXX14_CONSTEXPR modular_functions_fixed(const modular_functions_fixed &o)
-                    : m_mod(o.get_mod())
-                    , m_mod_compliment(o.get_mod_compliment())
-                    , m_barrett_mu(o.get_mu())
-                    , m_montgomery_r2(o.get_r2())
-                    , m_montgomery_p_dash(o.get_p_dash())
-                    , m_no_carry_montgomery_mul_allowed(is_applicable_for_no_carry_montgomery_mul())
-                {
+                        : m_mod(o.get_mod()), m_mod_compliment(o.get_mod_compliment()), m_barrett_mu(o.get_mu()),
+                          m_montgomery_r2(o.get_r2()), m_montgomery_p_dash(o.get_p_dash()),
+                          m_no_carry_montgomery_mul_allowed(is_applicable_for_no_carry_montgomery_mul()) {
                 }
 
                 template<typename Backend1>
@@ -305,12 +308,13 @@ namespace boost {
                 // this overloaded barrett_reduce is intended to work with built-in integral types
                 //
                 template<typename Backend1, typename Backend2>
-                BOOST_MP_CXX14_CONSTEXPR typename std::enable_if<std::is_integral<Backend2>::value && std::is_unsigned<Backend2>::value>::type
-                    barrett_reduce(Backend1 &result, Backend2 input) const {
+                BOOST_MP_CXX14_CONSTEXPR typename std::enable_if<
+                        std::is_integral<Backend2>::value && std::is_unsigned<Backend2>::value>::type
+                barrett_reduce(Backend1 &result, Backend2 input) const {
                     using input_backend_type = typename std::conditional<
-                        bool(sizeof(Backend2) * CHAR_BIT > Bits),
-                        cpp_int_modular_backend<sizeof(Backend2) * CHAR_BIT>,
-                        Backend>::type;
+                            bool(sizeof(Backend2) * CHAR_BIT > Bits),
+                            cpp_int_modular_backend<sizeof(Backend2) * CHAR_BIT>,
+                            Backend>::type;
 
                     input_backend_type input_adjusted(input);
                     barrett_reduce(result, input_adjusted);
@@ -321,19 +325,22 @@ namespace boost {
                 // than modular Backend to satisfy constraints of core barrett_reduce overloading
                 //
                 template<typename Backend1, typename Backend2,
-                         typename boost::enable_if_c<
-                             boost::multiprecision::backends::max_precision<Backend2>::value < boost::multiprecision::backends::max_precision<Backend>::value, bool>::type = true> 
+                        typename boost::enable_if_c<
+                                boost::multiprecision::backends::max_precision<Backend2>::value <
+                                boost::multiprecision::backends::max_precision<Backend>::value, bool>::type = true>
                 BOOST_MP_CXX14_CONSTEXPR void barrett_reduce(Backend1 &result, const Backend2 &input) const {
                     Backend input_adjusted(input);
                     barrett_reduce(result, input_adjusted);
                 }
 
                 template<typename Backend1, typename Backend2,
-                         typename = typename boost::enable_if_c<
-                             /// result should fit in the output parameter
-                             boost::multiprecision::backends::max_precision<Backend1>::value >= boost::multiprecision::backends::max_precision<Backend>::value &&
-                             /// to prevent problems with trivial cpp_int
-                             boost::multiprecision::backends::max_precision<Backend2>::value >= boost::multiprecision::backends::max_precision<Backend>::value>::type>
+                        typename = typename boost::enable_if_c<
+                                /// result should fit in the output parameter
+                                boost::multiprecision::backends::max_precision<Backend1>::value >=
+                                boost::multiprecision::backends::max_precision<Backend>::value &&
+                                /// to prevent problems with trivial cpp_int
+                                boost::multiprecision::backends::max_precision<Backend2>::value >=
+                                boost::multiprecision::backends::max_precision<Backend>::value>::type>
                 BOOST_MP_CXX14_CONSTEXPR void barrett_reduce(Backend1 &result, Backend2 input) const {
                     //
                     // to prevent problems with trivial cpp_int
@@ -362,8 +369,8 @@ namespace boost {
                 }
 
                 template<unsigned Bits1,
-                         // result should fit in the output parameter
-                         typename = typename boost::enable_if_c<Bits1 >= Bits>::type>
+                        // result should fit in the output parameter
+                        typename = typename boost::enable_if_c<Bits1 >= Bits>::type>
                 BOOST_MP_CXX14_CONSTEXPR void montgomery_reduce(cpp_int_modular_backend<Bits1> &result) const {
 
                     Backend_doubled_padded_limbs accum(result);
@@ -372,8 +379,8 @@ namespace boost {
                     for (size_t i = 0; i < m_mod.size(); ++i) {
                         internal_limb_type limb_accum = custom_get_limb_value<internal_limb_type>(accum, i);
                         double_limb_type mult_res = limb_accum *
-                                          /// to prevent overflow error in constexpr
-                                          static_cast<double_limb_type>(m_montgomery_p_dash);
+                                                    /// to prevent overflow error in constexpr
+                                                    static_cast<double_limb_type>(m_montgomery_p_dash);
                         internal_limb_type mult_res_limb = static_cast<internal_limb_type>(mult_res);
 
                         eval_multiply(prod, m_mod, mult_res_limb);
@@ -391,10 +398,10 @@ namespace boost {
                 }
 
                 template<unsigned Bits1, unsigned Bits2,
-                    // result should fit in the output parameter
-                    typename = typename boost::enable_if_c<Bits1 >= Bits2>::type>
-                BOOST_MP_CXX14_CONSTEXPR void regular_add(cpp_int_modular_backend<Bits1>& result,
-                                           const cpp_int_modular_backend<Bits2>& y) const {
+                        // result should fit in the output parameter
+                        typename = typename boost::enable_if_c<Bits1 >= Bits2>::type>
+                BOOST_MP_CXX14_CONSTEXPR void regular_add(cpp_int_modular_backend<Bits1> &result,
+                                                          const cpp_int_modular_backend<Bits2> &y) const {
                     BOOST_ASSERT(eval_lt(result, m_mod) && eval_lt(y, m_mod));
 
                     eval_add(result, y);
@@ -404,16 +411,16 @@ namespace boost {
                     if (result.has_carry()) {
                         eval_add(result, m_mod_compliment);
                         result.set_carry(false);
-                    } else if (!eval_lt(result, m_mod))
-                    {
+                    } else if (!eval_lt(result, m_mod)) {
                         eval_subtract(result, m_mod);
                     }
                 }
 
                 template<typename Backend1, typename Backend2,
-                         /// result should fit in the output parameter
-                         typename = typename boost::enable_if_c<boost::multiprecision::backends::max_precision<Backend1>::value >=
-                                                                boost::multiprecision::backends::max_precision<Backend>::value>::type>
+                        /// result should fit in the output parameter
+                        typename = typename boost::enable_if_c<
+                                boost::multiprecision::backends::max_precision<Backend1>::value >=
+                                boost::multiprecision::backends::max_precision<Backend>::value>::type>
                 BOOST_MP_CXX14_CONSTEXPR void regular_mul(Backend1 &result, const Backend2 &y) const {
                     Backend_doubled_limbs tmp(result);
                     eval_multiply(tmp, y);
@@ -423,93 +430,95 @@ namespace boost {
                 // Delegates Montgomery multiplication to one of corresponding algorithms.
                 BOOST_MP_CXX14_CONSTEXPR void montgomery_mul(
                         Backend &result, const Backend &y,
-                        std::integral_constant<bool, false> const&) const {
+                        std::integral_constant<bool, false> const &) const {
 
-                    if ( m_no_carry_montgomery_mul_allowed ) 
-                        montgomery_mul_no_carry_impl( 
-                                result, 
-                                y); 
+                    if (m_no_carry_montgomery_mul_allowed)
+                        montgomery_mul_no_carry_impl(
+                                result,
+                                y);
                     else
                         montgomery_mul_CIOS_impl(
                                 result,
                                 y,
-                                std::integral_constant<bool, false>() );
+                                std::integral_constant<bool, false>());
                 }
 
-                void montgomery_mul(Backend &result, const Backend &y, std::integral_constant<bool, true> const&) const {
-                     montgomery_mul_CIOS_impl(
-                         result, 
-                         y,
-                         std::integral_constant<bool, true>() );
+                void
+                montgomery_mul(Backend &result, const Backend &y, std::integral_constant<bool, true> const &) const {
+                    montgomery_mul_CIOS_impl(
+                            result,
+                            y,
+                            std::integral_constant<bool, true>());
                 }
 
                 // Given a value represented in 'double_limb_type', decomposes it into
                 // two 'limb_type' variables, based on high order bits and low order bits.
                 // There 'a' receives high order bits of 'X', and 'b' receives the low order bits.
-                static BOOST_MP_CXX14_CONSTEXPR void dbl_limb_to_limbs( 
-                        const internal_double_limb_type& X,
-                        internal_limb_type& a, 
-                        internal_limb_type& b ) {
+                static BOOST_MP_CXX14_CONSTEXPR void dbl_limb_to_limbs(
+                        const internal_double_limb_type &X,
+                        internal_limb_type &a,
+                        internal_limb_type &b) {
                     b = X;
                     a = X >> limb_bits;
                 }
 
                 // Tests if the faster implementation of Montgomery multiplication is possible.
                 // We don't need the template argument Backend1, it's just here to enable specialization.
-                template<class Backend1 = Backend> 
+                template<class Backend1 = Backend>
                 BOOST_MP_CXX14_CONSTEXPR typename boost::enable_if_c<!is_trivial_cpp_int_modular<Backend1>::value, bool>::type
-                    is_applicable_for_no_carry_montgomery_mul() const {
+                is_applicable_for_no_carry_montgomery_mul() const {
 
                     // Check that
                     // 1. The most significant bit of modulus is non-zero, meaning we have at least 1 additional
                     // bit in the number. I.E. if modulus is 255 bits, then we have 1 additional "unused" bit in the number.
                     // 2. Some other bit in modulus is 0.
                     // 3. The number has < 12 limbs.
-                    return m_mod.internal_limb_count < 12 && (Bits % sizeof(internal_limb_type) != 0) && !eval_eq(m_mod_compliment, Backend(internal_limb_type(1u)));
+                    return m_mod.internal_limb_count < 12 && (Bits % sizeof(internal_limb_type) != 0) &&
+                           !eval_eq(m_mod_compliment, Backend(internal_limb_type(1u)));
                 }
 
-                template<class Backend1 = Backend> 
+                template<class Backend1 = Backend>
                 BOOST_MP_CXX14_CONSTEXPR typename boost::enable_if_c<is_trivial_cpp_int_modular<Backend1>::value, bool>::type
-                    is_applicable_for_no_carry_montgomery_mul() const {
+                is_applicable_for_no_carry_montgomery_mul() const {
                     return false;
                 }
 
                 // Non-carry implementation of Montgomery multiplication.
                 // Implemented from pseudo-code at
                 //   "https://hackmd.io/@gnark/modular_multiplication".
-                template< typename Backend1 >
-                BOOST_MP_CXX14_CONSTEXPR void montgomery_mul_no_carry_impl( 
-                        Backend1& c,
-                        const Backend1& b) const {
-                    BOOST_ASSERT( eval_lt(c, m_mod) && eval_lt(b, m_mod) );
-                    BOOST_ASSERT( is_applicable_for_no_carry_montgomery_mul() ); 
+                template<typename Backend1>
+                BOOST_MP_CXX14_CONSTEXPR void montgomery_mul_no_carry_impl(
+                        Backend1 &c,
+                        const Backend1 &b) const {
+                    BOOST_ASSERT(eval_lt(c, m_mod) && eval_lt(b, m_mod));
+                    BOOST_ASSERT(is_applicable_for_no_carry_montgomery_mul());
 
                     // Obtain number of limbs
                     constexpr int N = Backend1::internal_limb_count;
 
-                    const Backend1 a( c );  // Copy the first argument, as the implemented
-                                            // algorithm doesn't work in-place.
+                    const Backend1 a(c);  // Copy the first argument, as the implemented
+                    // algorithm doesn't work in-place.
 
                     // We cannot write directly to 'c', because b may be equal to c, and by changing the value of
                     // 'c' we will change 'b' as well.
                     Backend1 result = internal_limb_type(0u);
 
                     // Prepare temporary variables
-                    internal_limb_type A( 0u ), C( 0u );
-                    internal_double_limb_type tmp( 0u );
-                    internal_limb_type dummy ( 0u );
+                    internal_limb_type A(0u), C(0u);
+                    internal_double_limb_type tmp(0u);
+                    internal_limb_type dummy(0u);
 
-                    auto* a_limbs = a.limbs();
-                    auto* b_limbs = b.limbs();
-                    auto* result_limbs = result.limbs();
-                    auto* m_mod_limbs = m_mod.limbs();
+                    auto *a_limbs = a.limbs();
+                    auto *b_limbs = b.limbs();
+                    auto *result_limbs = result.limbs();
+                    auto *m_mod_limbs = m_mod.limbs();
 
-                    for ( int i = 0; i < N; ++i ) {
+                    for (int i = 0; i < N; ++i) {
                         // "(A,t[0]) := t[0] + a[0]*b[i]"
                         tmp = a_limbs[0];
                         tmp *= b_limbs[i];
                         tmp += result_limbs[0];
-                        modular_functions_fixed::dbl_limb_to_limbs( tmp, A, result_limbs[0] );
+                        modular_functions_fixed::dbl_limb_to_limbs(tmp, A, result_limbs[0]);
 
                         // "m := t[0]*q'[0] mod W"
                         tmp = result_limbs[0];
@@ -523,12 +532,12 @@ namespace boost {
                         tmp = m;
                         tmp *= m_mod_limbs[0];
                         tmp += result_limbs[0];
-                        modular_functions_fixed::dbl_limb_to_limbs( tmp, C, dummy );
+                        modular_functions_fixed::dbl_limb_to_limbs(tmp, C, dummy);
 
                         // The lower loop is unrolled. We want to do this for every 3, because normally mod_size == 4.
                         std::size_t j = 1;
 
-                        #define MONTGOMERY_MUL_NO_CARRY_LOOP_BODY(X) \
+#define MONTGOMERY_MUL_NO_CARRY_LOOP_BODY(X) \
                             /* "(A,t[X])  := t[X] + a[X]*b[i] + A" */\
                             tmp = a_limbs[X]; \
                             tmp *= b_limbs[i]; \
@@ -557,12 +566,12 @@ namespace boost {
                             MONTGOMERY_MUL_NO_CARRY_LOOP_BODY(j + 2);
                         }
 
-                        for ( ; j < N; ++j ) {
+                        for (; j < N; ++j) {
                             MONTGOMERY_MUL_NO_CARRY_LOOP_BODY(j);
                         }
 
                         // "t[N-1] = C + A"
-                        result_limbs[N-1] = C + A;
+                        result_limbs[N - 1] = C + A;
                     }
 
                     if (!eval_lt(result, m_mod)) {
@@ -574,18 +583,18 @@ namespace boost {
                 // A specialization for non-trivial cpp_int_modular types only.
                 template<typename Backend1>
                 BOOST_MP_CXX14_CONSTEXPR void montgomery_mul_CIOS_impl(Backend1 &result, const Backend1 &y,
-                        std::integral_constant<bool, false> const&) const {
+                                                                       std::integral_constant<bool, false> const &) const {
 
                     BOOST_ASSERT(eval_lt(result, m_mod) && eval_lt(y, m_mod));
 
                     Backend A(internal_limb_type(0u));
                     const std::size_t mod_size = m_mod.size();
-                    auto* mod_limbs = m_mod.limbs();
+                    auto *mod_limbs = m_mod.limbs();
                     auto mod_last_limb = static_cast<internal_double_limb_type>(mod_limbs[0]);
                     auto y_last_limb = get_limb_value(y, 0);
-                    auto* y_limbs = y.limbs();
-                    auto* x_limbs = result.limbs();
-                    auto* A_limbs = A.limbs();
+                    auto *y_limbs = y.limbs();
+                    auto *x_limbs = result.limbs();
+                    auto *A_limbs = A.limbs();
                     internal_limb_type carry = 0; // This is the highest limb of 'A'.
 
                     internal_limb_type x_i = 0;
@@ -609,10 +618,10 @@ namespace boost {
                         k2 = 0;
 
                         z = static_cast<internal_double_limb_type>(y_last_limb) *
-                                                          static_cast<internal_double_limb_type>(x_i) +
-                                                      A_0 + k;
+                            static_cast<internal_double_limb_type>(x_i) +
+                            A_0 + k;
                         z2 = mod_last_limb * static_cast<internal_double_limb_type>(u_i) +
-                                                       static_cast<internal_limb_type>(z) + k2;
+                             static_cast<internal_limb_type>(z) + k2;
                         k = static_cast<internal_limb_type>(z >> std::numeric_limits<internal_limb_type>::digits);
                         k2 = static_cast<internal_limb_type>(z2 >> std::numeric_limits<internal_limb_type>::digits);
 
@@ -621,7 +630,7 @@ namespace boost {
                         // The lower loop is unrolled. We want to do this for every 3, because normally mod_size == 4.
                         internal_double_limb_type t = 0, t2 = 0;
 
-                        #define MONTGOMERY_MUL_CIOS_LOOP_BODY(X) \
+#define MONTGOMERY_MUL_CIOS_LOOP_BODY(X) \
                             t = static_cast<internal_double_limb_type>(y_limbs[X]) * \
                                 static_cast<internal_double_limb_type>(x_i) + \
                                 A_limbs[X] + k; \
@@ -630,7 +639,7 @@ namespace boost {
                                 static_cast<internal_limb_type>(t) + k2; \
                             A_limbs[X - 1] = static_cast<internal_limb_type>(t2); \
                             k = static_cast<internal_limb_type>(t >> std::numeric_limits<internal_limb_type>::digits); \
-                            k2 = static_cast<internal_limb_type>(t2 >> std::numeric_limits<internal_limb_type>::digits); 
+                            k2 = static_cast<internal_limb_type>(t2 >> std::numeric_limits<internal_limb_type>::digits);
 
                         for (; j + 5 <= mod_size; j += 5) {
                             MONTGOMERY_MUL_CIOS_LOOP_BODY(j);
@@ -651,11 +660,11 @@ namespace boost {
                         }
 
                         internal_double_limb_type tmp =
-                            static_cast<internal_double_limb_type>(carry) +
-                            k + k2;
+                                static_cast<internal_double_limb_type>(carry) +
+                                k + k2;
                         A_limbs[mod_size - 1] = static_cast<internal_limb_type>(tmp);
                         carry = static_cast<internal_limb_type>(
-                            tmp >> std::numeric_limits<internal_limb_type>::digits);
+                                tmp >> std::numeric_limits<internal_limb_type>::digits);
                     }
 
                     if (carry) {
@@ -673,11 +682,11 @@ namespace boost {
                 // TODO(martun): optimize this function, it obviously does not need to be this long.
                 //
                 // A specialization for trivial cpp_int_modular types only.
-                template< typename Backend1 >
-                BOOST_MP_CXX14_CONSTEXPR void montgomery_mul_CIOS_impl( 
-                        Backend1& result, 
-                        const Backend1& y, 
-                        std::integral_constant<bool, true> const& ) const {
+                template<typename Backend1>
+                BOOST_MP_CXX14_CONSTEXPR void montgomery_mul_CIOS_impl(
+                        Backend1 &result,
+                        const Backend1 &y,
+                        std::integral_constant<bool, true> const &) const {
 
                     BOOST_ASSERT(eval_lt(result, m_mod) && eval_lt(y, m_mod));
 
@@ -696,7 +705,7 @@ namespace boost {
                         internal_limb_type k2 = 0;
 
                         internal_double_limb_type z = static_cast<internal_double_limb_type>(y_last_limb) *
-                                                          static_cast<internal_double_limb_type>(x_i) +
+                                                      static_cast<internal_double_limb_type>(x_i) +
                                                       A_0 + k;
                         internal_double_limb_type z2 = mod_last_limb * static_cast<internal_double_limb_type>(u_i) +
                                                        static_cast<internal_limb_type>(z) + k2;
@@ -705,29 +714,29 @@ namespace boost {
 
                         for (size_t j = 1; j < mod_size; ++j) {
                             internal_double_limb_type t =
-                                static_cast<internal_double_limb_type>(get_limb_value(y, j)) *
+                                    static_cast<internal_double_limb_type>(get_limb_value(y, j)) *
                                     static_cast<internal_double_limb_type>(x_i) +
-                                A.limbs()[j] + k;
+                                    A.limbs()[j] + k;
                             internal_double_limb_type t2 =
-                                static_cast<internal_double_limb_type>(get_limb_value(m_mod, j)) *
+                                    static_cast<internal_double_limb_type>(get_limb_value(m_mod, j)) *
                                     static_cast<internal_double_limb_type>(u_i) +
-                                static_cast<internal_limb_type>(t) + k2;
+                                    static_cast<internal_limb_type>(t) + k2;
                             A.limbs()[j - 1] = static_cast<internal_limb_type>(t2);
                             k = static_cast<internal_limb_type>(t >>
-                                                                std::numeric_limits<internal_limb_type>::digits);
+                                                                  std::numeric_limits<internal_limb_type>::digits);
                             k2 = static_cast<internal_limb_type>(t2 >>
-                                                                 std::numeric_limits<internal_limb_type>::digits);
+                                                                    std::numeric_limits<internal_limb_type>::digits);
                         }
                         internal_double_limb_type tmp =
-                            static_cast<internal_double_limb_type>(
-                                custom_get_limb_value<internal_limb_type>(A, mod_size)) +
-                            k + k2;
+                                static_cast<internal_double_limb_type>(
+                                        custom_get_limb_value<internal_limb_type>(A, mod_size)) +
+                                k + k2;
                         custom_set_limb_value<internal_limb_type>(A, mod_size - 1,
                                                                   static_cast<internal_limb_type>(tmp));
                         custom_set_limb_value<internal_limb_type>(
-                            A, mod_size,
-                            static_cast<internal_limb_type>(tmp >>
-                                                            std::numeric_limits<internal_limb_type>::digits));
+                                A, mod_size,
+                                static_cast<internal_limb_type>(tmp >>
+                                                                    std::numeric_limits<internal_limb_type>::digits));
                     }
 
                     if (!eval_lt(A, m_mod)) {
@@ -738,9 +747,10 @@ namespace boost {
                 }
 
                 template<typename Backend1, typename Backend2, typename Backend3,
-                         /// result should fit in the output parameter
-                         typename = typename boost::enable_if_c<boost::multiprecision::backends::max_precision<Backend1>::value >=
-                                                                boost::multiprecision::backends::max_precision<Backend>::value>::type>
+                        /// result should fit in the output parameter
+                        typename = typename boost::enable_if_c<
+                                boost::multiprecision::backends::max_precision<Backend1>::value >=
+                                boost::multiprecision::backends::max_precision<Backend>::value>::type>
                 BOOST_MP_CXX14_CONSTEXPR void regular_exp(Backend1 &result, Backend2 &a, Backend3 exp) const {
                     BOOST_ASSERT(eval_lt(a, m_mod));
 
@@ -772,9 +782,10 @@ namespace boost {
                 }
 
                 template<typename Backend1, typename Backend2, typename Backend3,
-                         /// result should fit in the output parameter
-                         typename = typename boost::enable_if_c<boost::multiprecision::backends::max_precision<Backend1>::value >=
-                                                                boost::multiprecision::backends::max_precision<Backend>::value>::type>
+                        /// result should fit in the output parameter
+                        typename = typename boost::enable_if_c<
+                                boost::multiprecision::backends::max_precision<Backend1>::value >=
+                                boost::multiprecision::backends::max_precision<Backend>::value>::type>
                 BOOST_MP_CXX14_CONSTEXPR void montgomery_exp(Backend1 &result, const Backend2 &a, Backend3 exp) const {
                     /// input parameter should be lesser than modulus
                     BOOST_ASSERT(eval_lt(a, m_mod));
@@ -805,12 +816,14 @@ namespace boost {
                         internal_limb_type lsb = exp.limbs()[0] & 1u;
                         custom_right_shift(exp, static_cast<internal_limb_type>(1u));
                         if (lsb) {
-                            montgomery_mul(R_mod_m, base, std::integral_constant<bool, is_trivial_cpp_int_modular<Backend>::value>());
+                            montgomery_mul(R_mod_m, base,
+                                           std::integral_constant<bool, is_trivial_cpp_int_modular<Backend>::value>());
                             if (eval_eq(exp, static_cast<internal_limb_type>(0u))) {
                                 break;
                             }
                         }
-                        montgomery_mul(base, base, std::integral_constant<bool, is_trivial_cpp_int_modular<Backend>::value>());
+                        montgomery_mul(base, base,
+                                       std::integral_constant<bool, is_trivial_cpp_int_modular<Backend>::value>());
                     }
                     result = R_mod_m;
                 }
@@ -818,7 +831,7 @@ namespace boost {
                 BOOST_MP_CXX14_CONSTEXPR modular_functions_fixed &operator=(const modular_functions_fixed &o) {
                     m_mod = o.get_mod();
                     m_barrett_mu = o.get_mu();
-                    m_montgomery_r2 = o.get_r2(); 
+                    m_montgomery_r2 = o.get_r2();
                     m_montgomery_p_dash = o.get_p_dash();
                     m_mod_compliment = o.get_mod_compliment();
                     m_no_carry_montgomery_mul_allowed = is_applicable_for_no_carry_montgomery_mul();

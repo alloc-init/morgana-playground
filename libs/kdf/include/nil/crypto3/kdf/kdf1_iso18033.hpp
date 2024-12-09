@@ -36,9 +36,9 @@ namespace nil {
              * @tparam Hash
              * @ingroup kdf
              */
-            template<typename Hash>
+            template<typename HashType>
             class kdf1_18033 {
-                typedef detail::kdf_iso18033_functions<Hash> policy_type;
+                typedef detail::kdf_iso18033_functions<HashType> policy_type;
 
             public:
                 typedef typename policy_type::hash_type hash_type;

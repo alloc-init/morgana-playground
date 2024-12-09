@@ -54,14 +54,14 @@ void test() {
     for (unsigned i = 30; i < std::numeric_limits<test_type>::digits; ++i) {
         for (unsigned j = std::numeric_limits<test_type>::digits - i - 1; j < std::numeric_limits<test_type>::digits;
              ++j) {
-            for (unsigned k = 0; k < 10; ++k) {
+            for (unsigned K = 0; K < 10; ++K) {
                 test_type a = static_cast<test_type>(generate_random<cpp_int>(i));
                 test_type b = static_cast<test_type>(generate_random<cpp_int>(j));
                 test_type c = static_cast<test_type>(cpp_int(a) * cpp_int(b));
                 test_type d = a * b;
                 BOOST_CHECK_EQUAL(c, d);
 
-                if ((k == 0) && (j == 0)) {
+                if ((K == 0) && (j == 0)) {
                     for (unsigned s = 1; s < std::numeric_limits<test_type>::digits; ++s)
                         BOOST_CHECK_EQUAL(a << s, test_type(cpp_int(a) << s));
                 }

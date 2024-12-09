@@ -196,9 +196,9 @@ namespace nil {
                          * of the polynomial
                          *     H(z) := (A(z)*B(z)-C(z))/Z(z)
                          * where
-                         *   A(z) := A_0(z) + \sum_{k=1}^{m} w_k A_k(z) + d1 * Z(z)
-                         *   B(z) := B_0(z) + \sum_{k=1}^{m} w_k B_k(z) + d2 * Z(z)
-                         *   C(z) := C_0(z) + \sum_{k=1}^{m} w_k C_k(z) + d3 * Z(z)
+                         *   A(z) := A_0(z) + \sum_{K=1}^{m} w_k A_k(z) + d1 * Z(z)
+                         *   B(z) := B_0(z) + \sum_{K=1}^{m} w_k B_k(z) + d2 * Z(z)
+                         *   C(z) := C_0(z) + \sum_{K=1}^{m} w_k C_k(z) + d3 * Z(z)
                          *   Z(z) := "vanishing polynomial of set S"
                          * and
                          *   m = number of variables of the QAP

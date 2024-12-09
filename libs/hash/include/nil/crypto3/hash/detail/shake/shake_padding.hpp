@@ -36,9 +36,9 @@ namespace nil {
         namespace hashes {
             namespace detail {
                 // pad10*1 scheme
-                template<typename Policy>
+                template<typename PolicyType>
                 class shake_padder {
-                    typedef Policy policy_type;
+                    typedef PolicyType policy_type;
 
                     constexpr static const std::size_t word_bits = policy_type::word_bits;
                     typedef typename policy_type::word_type word_type;
@@ -52,11 +52,11 @@ namespace nil {
                     typedef typename policy_type::block_type block_type;
 
                     typedef ::nil::crypto3::detail::injector<stream_endian::big_octet_big_bit, stream_endian::little_octet_little_bit, word_bits,
-                                                             block_words>
-                        injector_type;
+                            block_words>
+                            injector_type;
 
                 public:
-                    static std::vector<block_type> get_padded_blocks(const block_type& block, std::size_t block_seen) {
+                    static std::vector<block_type> get_padded_blocks(const block_type &block, std::size_t block_seen) {
                         // SHA3 padding consists of 11 11 10 0...0 1 (1111 + 10*1 keccak padding)
                         using namespace nil::crypto3::detail;
 
@@ -65,9 +65,11 @@ namespace nil {
                         // set variable to 1111
                         word_type shake_specific_bits = high_bits<word_bits>(~word_type(), 4);
                         // get how many bits from it could fit into current block
-                        const std::size_t shake_specific_bits_n_for_first_block = std::min(block_bits - block_seen, std::size_t{4});
+                        const std::size_t shake_specific_bits_n_for_first_block = std::min(block_bits - block_seen,
+                                                                                           std::size_t{4});
                         // inject this amount of bits
-                        injector_type::inject(shake_specific_bits, shake_specific_bits_n_for_first_block, new_block, block_seen);
+                        injector_type::inject(shake_specific_bits, shake_specific_bits_n_for_first_block, new_block,
+                                              block_seen);
 
                         if (block_seen == block_bits) {
                             // if current block is full, copy it to result vector, reset counter. Since we need
@@ -78,12 +80,16 @@ namespace nil {
 
                         if (shake_specific_bits_n_for_first_block < 4) {
                             // if not all sha_specific_bits was injected, we inject the rest to the next block
-                            injector_type::inject(shake_specific_bits, 4 - shake_specific_bits_n_for_first_block, new_block,
-                                                    block_seen, shake_specific_bits_n_for_first_block);
+                            injector_type::inject(shake_specific_bits, 4 - shake_specific_bits_n_for_first_block,
+                                                  new_block,
+                                                  block_seen, shake_specific_bits_n_for_first_block);
                         }
 
-                        auto keccak_padding_result = keccak_1600_padder<Policy>::get_padded_blocks(new_block, block_seen);
-                        padded_blocks.insert(padded_blocks.end(), std::make_move_iterator(keccak_padding_result.begin()), std::make_move_iterator(keccak_padding_result.end()));
+                        auto keccak_padding_result = keccak_1600_padder<policy_type>::get_padded_blocks(new_block,
+                                                                                                        block_seen);
+                        padded_blocks.insert(padded_blocks.end(),
+                                             std::make_move_iterator(keccak_padding_result.begin()),
+                                             std::make_move_iterator(keccak_padding_result.end()));
 
                         return padded_blocks;
                     }

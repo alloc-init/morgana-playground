@@ -14,8 +14,8 @@ Crypto3.Pbkdf consists of several parts to review:
 
 Internal dependencies:
 
-1. [Crypto3.Mac](https://github.com/nilfoundation/block.git)
-2. [Crypto3.Hash](https://github.com/nilfoundation/hash.git)
+1. [Crypto3.Mac](https://github.com/alloc-init/block.git)
+2. [Crypto3.Hash](https://github.com/alloc-init/hash.git)
 
 Outer dependencies:
 1. [Boost](https://boost.org) (>= 1.58)

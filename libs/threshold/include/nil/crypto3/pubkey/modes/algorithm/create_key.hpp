@@ -51,11 +51,11 @@ namespace nil {
         //
         // CoeffIt - coefficients of polynomial
         //
-        template<typename Scheme, typename CoeffIt,
-                 typename SecretSharingScheme = typename pubkey::public_key<Scheme>::sss_public_key_group_type>
+        template<typename SchemeType, typename CoeffIt,
+                 typename SecretSharingScheme = typename pubkey::public_key<SchemeType>::sss_public_key_group_type>
         inline typename std::enable_if<
             pubkey::is_shamir_sss<SecretSharingScheme>::value || pubkey::is_feldman_sss<SecretSharingScheme>::value,
-            std::pair<pubkey::public_key<Scheme>, std::vector<pubkey::private_key<Scheme>>>>::type
+            std::pair<pubkey::public_key<SchemeType>, std::vector<pubkey::private_key<SchemeType>>>>::type
             create_key(CoeffIt first, CoeffIt last, std::size_t n) {
             BOOST_CONCEPT_ASSERT((boost::InputIteratorConcept<CoeffIt>));
 
@@ -63,63 +63,63 @@ namespace nil {
                 pubkey::shares_dealing_policy<SecretSharingScheme>>::type;
 
             typename shares_dealing_mode::result_type shares = deal_shares<SecretSharingScheme>(first, last, n);
-            std::vector<pubkey::private_key<Scheme>> privkeys;
+            std::vector<pubkey::private_key<SchemeType>> privkeys;
             for (const auto &s : shares) {
                 privkeys.emplace_back(s);
             }
-            auto PK = pubkey::public_key<Scheme>(SecretSharingScheme::get_public_coeffs(first, last).front());
+            auto PK = pubkey::public_key<SchemeType>(SecretSharingScheme::get_public_coeffs(first, last).front());
             return std::make_pair(PK, privkeys);
         }
 
         //
         // Coeffs - coefficients of polynomial
         //
-        template<typename Scheme, typename Coeffs,
-                 typename SecretSharingScheme = typename pubkey::public_key<Scheme>::sss_public_key_group_type>
+        template<typename SchemeType, typename Coeffs,
+                 typename SecretSharingScheme = typename pubkey::public_key<SchemeType>::sss_public_key_group_type>
         inline typename std::enable_if<
             pubkey::is_shamir_sss<SecretSharingScheme>::value || pubkey::is_feldman_sss<SecretSharingScheme>::value,
-            std::pair<pubkey::public_key<Scheme>, std::vector<pubkey::private_key<Scheme>>>>::type
+            std::pair<pubkey::public_key<SchemeType>, std::vector<pubkey::private_key<SchemeType>>>>::type
             create_key(const Coeffs &r, std::size_t n) {
             BOOST_RANGE_CONCEPT_ASSERT((boost::SinglePassRangeConcept<const Coeffs>));
 
-            return create_key<Scheme>(std::cbegin(r), std::cend(r), n);
+            return create_key<SchemeType>(std::cbegin(r), std::cend(r), n);
         }
 
         //
         // PublicCoeffIt - public representation values of polynomial's coefficients
         //
-        template<typename Scheme, typename PublicCoeffIt,
-                 typename SecretSharingScheme = typename pubkey::public_key<Scheme>::sss_public_key_group_type>
+        template<typename SchemeType, typename PublicCoeffIt,
+                 typename SecretSharingScheme = typename pubkey::public_key<SchemeType>::sss_public_key_group_type>
         inline typename std::enable_if<pubkey::is_feldman_sss<SecretSharingScheme>::value,
-                                       pubkey::private_key<Scheme>>::type
+                                       pubkey::private_key<SchemeType>>::type
             create_key(PublicCoeffIt first, PublicCoeffIt last, const pubkey::share_sss<SecretSharingScheme> &share,
                        std::size_t n) {
             BOOST_CONCEPT_ASSERT((boost::InputIteratorConcept<PublicCoeffIt>));
             assert(static_cast<bool>(nil::crypto3::verify_share<SecretSharingScheme>(first, last, share)));
 
-            return pubkey::private_key<Scheme>(share);
+            return pubkey::private_key<SchemeType>(share);
         }
 
         //
         // PublicCoeffs - public representation values of polynomial's coefficients
         //
-        template<typename Scheme, typename PublicCoeffs,
-                 typename SecretSharingScheme = typename pubkey::public_key<Scheme>::sss_public_key_group_type>
+        template<typename SchemeType, typename PublicCoeffs,
+                 typename SecretSharingScheme = typename pubkey::public_key<SchemeType>::sss_public_key_group_type>
         inline typename std::enable_if<pubkey::is_feldman_sss<SecretSharingScheme>::value,
-                                       pubkey::private_key<Scheme>>::type
+                                       pubkey::private_key<SchemeType>>::type
             create_key(const PublicCoeffs &r, pubkey::share_sss<SecretSharingScheme> &share, std::size_t n) {
             BOOST_RANGE_CONCEPT_ASSERT((boost::SinglePassRangeConcept<const PublicCoeffs>));
-            return create_key<Scheme>(std::cbegin(r), std::cend(r), share, n);
+            return create_key<SchemeType>(std::cbegin(r), std::cend(r), share, n);
         }
 
         //
         // PublicCoeffIt - public representation values of polynomials' coefficients of other participants
         // ShareIt - shares generated by other participants
         //
-        template<typename Scheme, typename PublicCoeffsIt, typename ShareIt,
-                 typename SecretSharingScheme = typename pubkey::public_key<Scheme>::sss_public_key_group_type>
+        template<typename SchemeType, typename PublicCoeffsIt, typename ShareIt,
+                 typename SecretSharingScheme = typename pubkey::public_key<SchemeType>::sss_public_key_group_type>
         inline typename std::enable_if<pubkey::is_pedersen_dkg<SecretSharingScheme>::value,
-                                       std::pair<pubkey::public_key<Scheme>, pubkey::private_key<Scheme>>>::type
+                                       std::pair<pubkey::public_key<SchemeType>, pubkey::private_key<SchemeType>>>::type
             create_key(PublicCoeffsIt first1, PublicCoeffsIt last1, ShareIt first2, ShareIt last2, std::size_t n) {
             BOOST_CONCEPT_ASSERT((boost::InputIteratorConcept<PublicCoeffsIt>));
             BOOST_RANGE_CONCEPT_ASSERT(
@@ -144,8 +144,8 @@ namespace nil {
                 ++share_it;
             }
             return std::make_pair(
-                pubkey::public_key<Scheme>(PK),
-                pubkey::private_key<Scheme>(static_cast<typename share_dealing_mode::result_type>(
+                pubkey::public_key<SchemeType>(PK),
+                pubkey::private_key<SchemeType>(static_cast<typename share_dealing_mode::result_type>(
                     nil::crypto3::deal_share<SecretSharingScheme>(first2->get_index(), first2, last2))));
         }
 
@@ -153,10 +153,10 @@ namespace nil {
         // PublicCoeffsRange - public representation values of polynomials' coefficients of other participants
         // Shares - shares generated by other participants
         //
-        template<typename Scheme, typename PublicCoeffsRange, typename Shares,
-                 typename SecretSharingScheme = typename pubkey::public_key<Scheme>::sss_public_key_group_type>
+        template<typename SchemeType, typename PublicCoeffsRange, typename Shares,
+                 typename SecretSharingScheme = typename pubkey::public_key<SchemeType>::sss_public_key_group_type>
         inline typename std::enable_if<pubkey::is_pedersen_dkg<SecretSharingScheme>::value,
-                                       std::pair<pubkey::public_key<Scheme>, pubkey::private_key<Scheme>>>::type
+                                       std::pair<pubkey::public_key<SchemeType>, pubkey::private_key<SchemeType>>>::type
             create_key(const PublicCoeffsRange &r, const Shares &shares, std::size_t n) {
             BOOST_RANGE_CONCEPT_ASSERT((boost::SinglePassRangeConcept<const PublicCoeffsRange>));
             BOOST_RANGE_CONCEPT_ASSERT(
@@ -164,18 +164,18 @@ namespace nil {
                     const typename std::iterator_traits<typename PublicCoeffsRange::iterator>::value_type>));
             BOOST_RANGE_CONCEPT_ASSERT((boost::SinglePassRangeConcept<const Shares>));
 
-            return create_key<Scheme>(std::cbegin(r), std::cend(r), std::cbegin(shares), std::cend(shares), n);
+            return create_key<SchemeType>(std::cbegin(r), std::cend(r), std::cbegin(shares), std::cend(shares), n);
         }
 
         //
         // CoeffIt - coefficients of polynomial
         // InputIterator2 - participants' weights
         //
-        template<typename Scheme, typename CoeffIt,
-                 typename SecretSharingScheme = typename pubkey::public_key<Scheme>::sss_public_key_group_type>
+        template<typename SchemeType, typename CoeffIt,
+                 typename SecretSharingScheme = typename pubkey::public_key<SchemeType>::sss_public_key_group_type>
         inline typename std::enable_if<
             pubkey::is_weighted_shamir_sss<SecretSharingScheme>::value,
-            std::pair<pubkey::public_key<Scheme>, std::vector<pubkey::private_key<Scheme>>>>::type
+            std::pair<pubkey::public_key<SchemeType>, std::vector<pubkey::private_key<SchemeType>>>>::type
             create_key(CoeffIt first1, CoeffIt last1, std::size_t n, const typename SecretSharingScheme::weights_type &weights) {
             BOOST_CONCEPT_ASSERT((boost::InputIteratorConcept<CoeffIt>));
 
@@ -184,11 +184,11 @@ namespace nil {
 
             typename shares_dealing_mode::result_type shares = nil::crypto3::deal_shares<SecretSharingScheme>(
                 first1, last1, n, weights);
-            std::vector<pubkey::private_key<Scheme>> privkeys;
+            std::vector<pubkey::private_key<SchemeType>> privkeys;
             for (const auto &s : shares) {
                 privkeys.emplace_back(s);
             }
-            auto PK = pubkey::public_key<Scheme>(SecretSharingScheme::get_public_coeffs(first1, last1).front());
+            auto PK = pubkey::public_key<SchemeType>(SecretSharingScheme::get_public_coeffs(first1, last1).front());
             return std::make_pair(PK, privkeys);
         }
 
@@ -196,15 +196,15 @@ namespace nil {
         // Coeffs - coefficients of polynomial
         // WeightsRange - participants' weights
         //
-        template<typename Scheme, typename Coeffs,
-                 typename SecretSharingScheme = typename pubkey::public_key<Scheme>::sss_public_key_group_type>
+        template<typename SchemeType, typename Coeffs,
+                 typename SecretSharingScheme = typename pubkey::public_key<SchemeType>::sss_public_key_group_type>
         inline typename std::enable_if<
             pubkey::is_weighted_shamir_sss<SecretSharingScheme>::value,
-            std::pair<pubkey::public_key<Scheme>, std::vector<pubkey::private_key<Scheme>>>>::type
+            std::pair<pubkey::public_key<SchemeType>, std::vector<pubkey::private_key<SchemeType>>>>::type
             create_key(const Coeffs &r1, std::size_t n, const typename SecretSharingScheme::weights_type &weights) {
             BOOST_RANGE_CONCEPT_ASSERT((boost::SinglePassRangeConcept<const Coeffs>));
 
-            return create_key<Scheme>(std::cbegin(r1), std::cend(r1), n, weights);
+            return create_key<SchemeType>(std::cbegin(r1), std::cend(r1), n, weights);
         }
     }    // namespace crypto3
 }    // namespace nil

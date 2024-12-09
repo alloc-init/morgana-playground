@@ -104,22 +104,22 @@ namespace nil {
             }    // namespace impl
 
             namespace tag {
-                template<typename Hash>
+                template<typename HashType>
                 struct pdkdf : boost::accumulators::depends_on<> {
-                    typedef Hash hash_type;
+                    typedef HashType hash_type;
 
                     /// INTERNAL ONLY
                     ///
 
-                    typedef boost::mpl::always<accumulators::impl::pdkdf_impl<Hash>> impl;
+                    typedef boost::mpl::always<accumulators::impl::pdkdf_impl<HashType>> impl;
                 };
             }    // namespace tag
 
             namespace extract {
-                template<typename Hash, typename AccumulatorSet>
-                typename boost::mpl::apply<AccumulatorSet, tag::pdkdf<Hash>>::type::result_type
+                template<typename HashType, typename AccumulatorSet>
+                typename boost::mpl::apply<AccumulatorSet, tag::pdkdf<HashType>>::type::result_type
                     pdkdf(const AccumulatorSet &acc) {
-                    return boost::accumulators::extract_result<tag::pdkdf<Hash>>(acc);
+                    return boost::accumulators::extract_result<tag::pdkdf<HashType>>(acc);
                 }
             }    // namespace extract
         }        // namespace accumulators

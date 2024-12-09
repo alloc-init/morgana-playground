@@ -53,15 +53,15 @@ private:
     std::uint64_t x, y, z, c;
 };
 
-inline constexpr void hash_combine(std::uint64_t& h, std::uint64_t k) {
+inline constexpr void hash_combine(std::uint64_t& h, std::uint64_t K) {
     constexpr const std::uint64_t m = 0xc6a4a7935bd1e995uLL;
     constexpr const int r = 47;
 
-    k *= m;
-    k ^= k >> r;
-    k *= m;
+    K *= m;
+    K ^= K >> r;
+    K *= m;
 
-    h ^= k;
+    h ^= K;
     h *= m;
 
     // Completely arbitrary number, to prevent 0's from hashing to 0.

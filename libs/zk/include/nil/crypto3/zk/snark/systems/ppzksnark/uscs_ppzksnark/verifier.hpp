@@ -26,11 +26,10 @@
 #ifndef CRYPTO3_ZK_USCS_PPZKSNARK_BASIC_VERIFIER_HPP
 #define CRYPTO3_ZK_USCS_PPZKSNARK_BASIC_VERIFIER_HPP
 
-#ifdef MULTICORE
-#include <omp.h>
-#endif
-
 #include <nil/crypto3/container/accumulation_vector.hpp>
+
+#include <nil/crypto3/algebra/algorithms/pair.hpp>
+
 #include <nil/crypto3/zk/snark/arithmetization/arithmetic_programs/ssp.hpp>
 #include <nil/crypto3/zk/snark/arithmetization/constraint_satisfaction_problems/uscs.hpp>
 #include <nil/crypto3/zk/snark/reductions/uscs_to_ssp.hpp>
@@ -74,14 +73,15 @@ namespace nil {
 
                         processed_verification_key_type pvk;
 
-                        pvk.pp_G1_one_precomp = precompute_g1<CurveType>(g1_type::value_type::one());
-                        pvk.pp_G2_one_precomp = precompute_g2<CurveType>(g2_type::value_type::one());
+                        pvk.pp_G1_one_precomp = algebra::precompute_g1<CurveType>(g1_type::value_type::one());
+                        pvk.pp_G2_one_precomp = algebra::precompute_g2<CurveType>(g2_type::value_type::one());
 
-                        pvk.vk_tilde_g2_precomp = precompute_g2<CurveType>(vk.tilde_g2);
-                        pvk.vk_alpha_tilde_g2_precomp = precompute_g2<CurveType>(vk.alpha_tilde_g2);
-                        pvk.vk_Z_g2_precomp = precompute_g2<CurveType>(vk.Z_g2);
+                        pvk.vk_tilde_g2_precomp = algebra::precompute_g2<CurveType>(vk.tilde_g2);
+                        pvk.vk_alpha_tilde_g2_precomp = algebra::precompute_g2<CurveType>(vk.alpha_tilde_g2);
+                        pvk.vk_Z_g2_precomp = algebra::precompute_g2<CurveType>(vk.Z_g2);
 
-                        pvk.pairing_of_g1_and_g2 = miller_loop<CurveType>(pvk.pp_G1_one_precomp, pvk.pp_G2_one_precomp);
+                        pvk.pairing_of_g1_and_g2 = algebra::miller_loop<CurveType>(pvk.pp_G1_one_precomp,
+                                                                                   pvk.pp_G2_one_precomp);
 
                         pvk.encoded_IC_query = vk.encoded_IC_query;
 
@@ -125,9 +125,11 @@ namespace nil {
 
                         assert(pvk.encoded_IC_query.domain_size() >= primary_input.size());
 
-                        const accumulation_vector<typename CurveType::template g1_type<>> accumulated_IC =
-                            pvk.encoded_IC_query.accumulate_chunk(primary_input.begin(), primary_input.end(), 0);
-                        assert(accumulated_IC.is_fully_accumulated());
+                        const container::accumulation_vector<typename CurveType::template g1_type<>> accumulated_IC =
+                                pvk.encoded_IC_query.accumulate_chunk(primary_input.begin(), primary_input.end(), 0);
+
+                        BOOST_ASSERT(accumulated_IC.is_fully_accumulated());
+
                         const typename CurveType::template g1_type<>::value_type &acc = accumulated_IC.first;
 
                         bool result = true;
@@ -137,43 +139,43 @@ namespace nil {
                         }
 
                         typename pairing_policy::g1_precomputed_type proof_V_g1_with_acc_precomp =
-                            precompute_g1<CurveType>(proof.V_g1 + acc);
+                                precompute_g1<CurveType>(proof.V_g1 + acc);
                         typename pairing_policy::g2_precomputed_type proof_V_g2_precomp =
-                            precompute_g2<CurveType>(proof.V_g2);
+                                algebra::precompute_g2<CurveType>(proof.V_g2);
                         typename CurveType::gt_type::value_type V_1 =
-                            miller_loop<CurveType>(proof_V_g1_with_acc_precomp, pvk.pp_G2_one_precomp);
+                                algebra::miller_loop<CurveType>(proof_V_g1_with_acc_precomp, pvk.pp_G2_one_precomp);
                         typename CurveType::gt_type::value_type V_2 =
-                            miller_loop<CurveType>(pvk.pp_G1_one_precomp, proof_V_g2_precomp);
+                                algebra::miller_loop<CurveType>(pvk.pp_G1_one_precomp, proof_V_g2_precomp);
                         typename CurveType::gt_type::value_type V =
-                            final_exponentiation<CurveType>(V_1 * V_2.unitary_inversed());
+                                algebra::final_exponentiation<CurveType>(V_1 * V_2.unitary_inversed());
 
                         if (V != CurveType::gt_type::value_type::one()) {
                             result = false;
                         }
 
                         typename pairing_policy::g1_precomputed_type proof_H_g1_precomp =
-                            precompute_g1<CurveType>(proof.H_g1);
+                                algebra::precompute_g1<CurveType>(proof.H_g1);
                         typename CurveType::gt_type::value_type SSP_1 =
-                            miller_loop<CurveType>(proof_V_g1_with_acc_precomp, proof_V_g2_precomp);
+                                algebra::miller_loop<CurveType>(proof_V_g1_with_acc_precomp, proof_V_g2_precomp);
                         typename CurveType::gt_type::value_type SSP_2 =
-                            miller_loop<CurveType>(proof_H_g1_precomp, pvk.vk_Z_g2_precomp);
-                        typename CurveType::gt_type::value_type SSP = final_exponentiation<CurveType>(
-                            SSP_1.unitary_inversed() * SSP_2 * pvk.pairing_of_g1_and_g2);
+                                algebra::miller_loop<CurveType>(proof_H_g1_precomp, pvk.vk_Z_g2_precomp);
+                        typename CurveType::gt_type::value_type SSP = algebra::final_exponentiation<CurveType>(
+                                SSP_1.unitary_inversed() * SSP_2 * pvk.pairing_of_g1_and_g2);
 
                         if (SSP != CurveType::gt_type::value_type::one()) {
                             result = false;
                         }
 
                         typename pairing_policy::g1_precomputed_type proof_V_g1_precomp =
-                            precompute_g1<CurveType>(proof.V_g1);
+                                precompute_g1<CurveType>(proof.V_g1);
                         typename pairing_policy::g1_precomputed_type proof_alpha_V_g1_precomp =
-                            precompute_g1<CurveType>(proof.alpha_V_g1);
+                                precompute_g1<CurveType>(proof.alpha_V_g1);
                         typename CurveType::gt_type::value_type alpha_V_1 =
-                            miller_loop<CurveType>(proof_V_g1_precomp, pvk.vk_alpha_tilde_g2_precomp);
+                                algebra::miller_loop<CurveType>(proof_V_g1_precomp, pvk.vk_alpha_tilde_g2_precomp);
                         typename CurveType::gt_type::value_type alpha_V_2 =
-                            miller_loop<CurveType>(proof_alpha_V_g1_precomp, pvk.vk_tilde_g2_precomp);
+                                algebra::miller_loop<CurveType>(proof_alpha_V_g1_precomp, pvk.vk_tilde_g2_precomp);
                         typename CurveType::gt_type::value_type alpha_V =
-                            final_exponentiation<CurveType>(alpha_V_1 * alpha_V_2.unitary_inversed());
+                                algebra::final_exponentiation<CurveType>(alpha_V_1 * alpha_V_2.unitary_inversed());
 
                         if (alpha_V != CurveType::gt_type::value_type::one()) {
                             result = false;
@@ -202,7 +204,7 @@ namespace nil {
                                                const primary_input_type &primary_input,
                                                const proof_type &proof) {
                         return uscs_ppzksnark_verifier_strong_input_consistency<CurveType>::process(
-                            uscs_ppzksnark_process_verification_key<CurveType>::process(vk), primary_input, proof);
+                                uscs_ppzksnark_process_verification_key<CurveType>::process(vk), primary_input, proof);
                     }
 
                     /**
@@ -213,17 +215,10 @@ namespace nil {
                     static inline bool process(const processed_verification_key_type &pvk,
                                                const primary_input_type &primary_input,
                                                const proof_type &proof) {
-
-                        bool result = true;
-
-                        if (pvk.encoded_IC_query.domain_size() != primary_input.size()) {
-                            result = false;
-                        } else {
-                            result = uscs_ppzksnark_verifier_weak_input_consistency<CurveType>::process(
-                                pvk, primary_input, proof);
-                        }
-
-                        return result;
+                        return pvk.encoded_IC_query.domain_size() != primary_input.size() ?
+                               false : uscs_ppzksnark_verifier_weak_input_consistency<CurveType>::process(pvk,
+                                                                                                          primary_input,
+                                                                                                          proof);
                     }
                 };
             }    // namespace snark

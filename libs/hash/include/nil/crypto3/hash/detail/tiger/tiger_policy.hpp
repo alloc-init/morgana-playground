@@ -62,7 +62,7 @@ namespace nil {
                     struct iv_generator {
                         state_type const &operator()() const {
                             constexpr static const state_type H0 = {
-                                {0x0123456789ABCDEF, 0xFEDCBA9876543210, 0xF096A5B4C3B2E187}};
+                                    {0x0123456789ABCDEF, 0xFEDCBA9876543210, 0xF096A5B4C3B2E187}};
                             return H0;
                         }
                     };
@@ -97,7 +97,7 @@ namespace nil {
                     struct iv_generator {
                         state_type const &operator()() const {
                             constexpr static const state_type H0 = {
-                                {0x0123456789ABCDEF, 0xFEDCBA9876543210, 0xF096A5B4C3B2E187}};
+                                    {0x0123456789ABCDEF, 0xFEDCBA9876543210, 0xF096A5B4C3B2E187}};
                             return H0;
                         }
                     };
@@ -105,7 +105,7 @@ namespace nil {
 
                 template<std::size_t DigestBits, std::size_t Passes>
                 constexpr typename tiger_policy<DigestBits, Passes>::pkcs_id_type const
-                    tiger_policy<DigestBits, Passes>::pkcs_id;
+                        tiger_policy<DigestBits, Passes>::pkcs_id;
             }    // namespace detail
         }        // namespace hashes
     }            // namespace crypto3

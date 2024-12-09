@@ -1,7 +1,9 @@
 # [[alloc] init] C++ Cryptography Suite
+
 [![Twitter](https://img.shields.io/twitter/follow/alloc_init_)](https://twitter.com/alloc_init_)
 
 Crypto3 cryptography suite's purpose is:
+
 1. To provide a secure, fast and architecturally clean C++ generic cryptography schemes implementation.
 2. To provide a developer-friendly, modular suite, usable for novel schemes implementation and further
    extension.
@@ -11,11 +13,13 @@ Libraries are designed to be state of the art, highly performant and providing a
 all cryptographic operations. They are supported on all operating systems (*nix, windows, macOS)
 and architectures(x86/ARM).
 
-Initially developed by [=nil; Crypto3](https://crypto3.nil.foundation), part of [=nil; Foundation](https://nil.foundation) and now supported by [[[alloc] init]](https://allocin.it).
+Initially developed by [=nil; Crypto3](https://crypto3.nil.foundation), part
+of [=nil; Foundation](https://nil.foundation) and now supported by [[[alloc] init]](https://allocin.it).
 
 Rationale, tutorials and references are available [here](https://docs.allocin.it/crypto3)
- 
+
 ## Contents
+
 1. [Repository Structure](#repository-structure)
 2. [Installation](#installation)
 3. [Usage](#usage)
@@ -23,9 +27,11 @@ Rationale, tutorials and references are available [here](https://docs.allocin.it
 4. [Community](#community)
 
 ## Repository Structure
+
 This repository is an umbrella-repository for the whole suite. Single-purposed libraries repositories (e.g. [block
 ](https://github.com/alloc-init/block) or [hash](https://github.com/alloc-init/hash)) are not advised to be
 used outside this suite or properly constructed CMake project and should be handled with great care.
+
 ```
 root
 ├── cmake: cmake sub-module with helper functions/macros to build crypto3 library umbrella-repository
@@ -54,8 +60,8 @@ root
 │   ├── zk: zk cryptography schemes
 ```
 
-
 ## Installation
+
 ### Dependencies
 
 - [clang](https://clang.llvm.org/) (>= 11.0)/GCC (>= 10.0)/MSVC (>= 14.20)
@@ -65,7 +71,7 @@ root
 ### Clone & Build
 
 ```
-git clone --recurse-submodules https://github.com/nilfoundation/crypto3.git 
+git clone --recurse-submodules https://github.com/alloc-init/crypto3.git 
 cd crypto3 && mkdir build && cd build
 cmake ..
 make tests
@@ -73,7 +79,8 @@ make tests
 
 ## Nix support
 
-This repository provides Nix flake, so once you have installed Nix with flake support, you can use single command to fetch all the dependencies and build:
+This repository provides Nix flake, so once you have installed Nix with flake support, you can use single command to
+fetch all the dependencies and build:
 
 ```bash
 nix build
@@ -94,7 +101,7 @@ nix flake check
 To run single test:
 
 ```bash
-nix develop . -c cmake -B build -DCMAKE_CXX_STANDARD=17 -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=FALSE -DCMAKE_ENABLE_TESTS=TRUE -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Debug  -DCMAKE_CXX_FLAGS=-ggdb
+nix develop . -c cmake -B build -DCMAKE_CXX_STANDARD=20 -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=FALSE -DCMAKE_ENABLE_TESTS=TRUE -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Debug  -DCMAKE_CXX_FLAGS=-ggdb
 nix develop -c cmake --build build -t <test_target> // for example multiprecision_modular_adaptor_fixed_test
 ```
 
@@ -108,34 +115,37 @@ Cryptography suite can be used as follows:
 The suite is used as a header-only and is currently statically linked. Future versions will allow dynamic linking.
 
 #### Generic
+
 Generic usage of cryptography suite consists of all modules available at
 [GitHub =nil; Crypto3 Team Repositories](https://github.com/orgs/NilFoundation/teams/nil-crypto3/repositories).
-This is an umbrella-repository where  Modules
+This is an umbrella-repository where Modules
 are added as submodules emplaced in `libs` directory. A developer can thus add this  
-project as a submodule and would not need to resolve dependencies. See [crypto3-template](https://github.com/alloc-init/crypto3-template) as an example of usage.
+project as a submodule and would not need to resolve dependencies.
+See [crypto3-template](https://github.com/alloc-init/crypto3-template) as an example of usage.
 
 The generic module can be added to your c++ project as follows
 
-``` git submodule add https://github.com/NilFoundation/crypto3.git <dir>```
+``` git submodule add https://github.com/alloc-init/crypto3.git <dir>```
 
 ### Selective
-Developer can select to include a one or more modules to reduce the sources of resulting project and dependencies tree height. This however
+
+Developer can select to include a one or more modules to reduce the sources of resulting project and dependencies tree
+height. This however
 does require the developer to manually resolve all required dependencies and stay upto date regarding
 compatibilities across modules.
 
-Example of such embedding is =nil; Foundation's [Actor Library](https://github.com/nilfoundation/actor). It uses only
-[hashes](https://github.com/nilfoundation/hash) so the dependency graph requires
-for the project to submodule [block ciphers library](https://github.com/nilfoundation/block) and optional
-[codec library](https://github.com/nilfoundation/codec) for testing purposes. So,
+Example of such embedding is =nil; Foundation's [Actor Library](https://github.com/alloc-init/actor). It uses only
+[hashes](https://github.com/alloc-init/hash) so the dependency graph requires
+for the project to submodule [block ciphers library](https://github.com/alloc-init/block) and optional
+[codec library](https://github.com/alloc-init/codec) for testing purposes. So,
 the root Actor repository has only related libraries submoduled:
-[block](https://github.com/nilfoundation/mtl/libs/block),
-[codec](https://github.com/nilfoundation/mtl/libs/codec) and
-[hash](https://github.com/nilfoundation/mtl/hash).
+[block](https://github.com/alloc-init/mtl/libs/block),
+[codec](https://github.com/alloc-init/mtl/libs/codec) and
+[hash](https://github.com/alloc-init/mtl/hash).
 
 Selective modules can be added to your project as follows:
 
-``` git submodule add https://github.com/NilFoundation/crypto3-<lib>.git <dir>```
-
+``` git submodule add https://github.com/alloc-init/crypto3-<lib>.git <dir>```
 
 ## Contributing
 
@@ -143,14 +153,17 @@ See [contributing](./docs/manual/contributing.md) for contribution guidelines.
 
 ## Support
 
-This cryptography suite is authored by [=nil; Crypto3](https://crypto3.nil.foundation) team, so you can contact it
- several ways:
- * E-Mail. Just drop a line to [nemo@nil.foundation](mailto:nemo@nil.foundation).
- * Telegram Group. Join our Telegram group [@nilfoundation](https://t.me/nilfoundation) and ask any question in there.
- * Discord [channel](https://discord.gg/KmTAEjbmM3) for discussions.
- * Issue. Issue which does not belong to any particular module (or you just don't know where to put it) can be
+This cryptography suite is maintained by [[alloc] init], which can be contacted in several ways:
+
+* E-Mail. Just drop a line to [nemo@allocin.it](mailto:nemo@allocin.it).
+* Telegram Group. Join our Telegram group [@alloc-init](https://t.me/alloc-init) and ask any question in there.
+
+[//]: # ( * Discord [channel]&#40;https://discord.gg/KmTAEjbmM3&#41; for discussions.)
+
+* Issue. Issue which does not belong to any particular module (or you just don't know where to put it) can be
   created in this repository. The team will answer that.
- * Discussion Topic (proposal, tutorial request, suggestion, etc). Would be happy to discuss that in the repository's GitHub [Discussions](https://github.com/NilFoundation/crypto3/discussions)
+* Discussion Topic (proposal, tutorial request, suggestion, etc). Would be happy to discuss that in the repository's
+  GitHub [Discussions](https://github.com/alloc-init/crypto3/discussions)
 
 ## Licence
 

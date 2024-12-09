@@ -57,7 +57,7 @@ namespace nil {
                         typedef ProcessingMode processing_mode_type;
                         typedef typename processing_mode_type::scheme_type scheme_type;
                         typedef typename processing_mode_type::op_type op_type;
-                        typedef typename processing_mode_type::internal_accumulator_type internal_accumulator_type;
+                        typedef typename processing_mode_type::accumulator_type accumulator_type;
                         typedef typename op_type::signature_type signature_type;
                         typedef public_key<scheme_type> key_type;
 
@@ -72,8 +72,8 @@ namespace nil {
                         template<typename Args>
                         inline void operator()(const Args &args) {
                             resolve_type(args[boost::accumulators::sample | nullptr],
-                                         args[::nil::crypto3::accumulators::iterator_last | nullptr],
-                                         args[::nil::crypto3::accumulators::key | nullptr]);
+                                         args[crypto3::accumulators::iterator_last | nullptr],
+                                         args[crypto3::accumulators::key | nullptr]);
                         }
 
                         inline result_type result(boost::accumulators::dont_care) const {
@@ -108,7 +108,7 @@ namespace nil {
                         }
 
                         signature_type signature;
-                        mutable internal_accumulator_type acc;
+                        mutable accumulator_type acc;
                     };
                 }    // namespace impl
 
@@ -120,7 +120,7 @@ namespace nil {
                         /// INTERNAL ONLY
                         ///
 
-                        typedef boost::mpl::always<accumulators::impl::aggregate_verify_impl<processing_mode_type>>
+                        typedef boost::mpl::always<impl::aggregate_verify_impl<processing_mode_type>>
                             impl;
                     };
                 }    // namespace tag
