@@ -1,7 +1,7 @@
 include(CMTest)
 
 cm_test_link_libraries(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME}
-    Boost::unit_test_framework)
+        Boost::unit_test_framework)
 
 macro(define_pkpad_test name)
     cm_test(NAME pkpad_${name}_test SOURCES ${name}.cpp)
@@ -18,8 +18,8 @@ endmacro()
 
 set(TESTS_NAMES
         "emsa1"
-        )
+)
 
-foreach (TEST_NAME ${TESTS_NAMES})
+foreach(TEST_NAME ${TESTS_NAMES})
     define_pkpad_test(${TEST_NAME})
-endforeach ()
+endforeach()

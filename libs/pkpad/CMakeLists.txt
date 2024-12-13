@@ -59,26 +59,24 @@ cm_setup_version(VERSION 0.1.0 PREFIX ${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_
 add_library(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME} INTERFACE)
 
 set_target_properties(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME} PROPERTIES
-                      EXPORT_NAME ${CURRENT_PROJECT_NAME})
+        EXPORT_NAME ${CURRENT_PROJECT_NAME})
 
 target_link_libraries(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME} INTERFACE
-#                      ${CMAKE_WORKSPACE_NAME}::codec
-                      ${CMAKE_WORKSPACE_NAME}::hash
-                      ${CMAKE_WORKSPACE_NAME}::algebra
-                      crypto3::marshalling-algebra
-                      Boost::container)
+        ${CMAKE_WORKSPACE_NAME}::codec
+        ${CMAKE_WORKSPACE_NAME}::hash
+        ${CMAKE_WORKSPACE_NAME}::algebra
+        crypto3::marshalling-algebra
+        Boost::container)
 
 target_include_directories(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME} INTERFACE
-                           $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-                           $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>
 
-                           $<$<BOOL:${Boost_FOUND}>:${Boost_INCLUDE_DIRS}>)
+        $<$<BOOL:${Boost_FOUND}>:${Boost_INCLUDE_DIRS}>)
 
 cm_deploy(TARGETS ${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME}
-          INCLUDE include
-          NAMESPACE ${CMAKE_WORKSPACE_NAME}::)
+        INCLUDE include
+        NAMESPACE ${CMAKE_WORKSPACE_NAME}::)
 
-# Disabling tests because ./libs/pkpad/test/pkpad_emsa1_test is unable to find it's test data.
-# The paths need to be fixed.
-# include(CMTest)
-# cm_add_test_subdirectory(test)
+include(CMTest)
+cm_add_test_subdirectory(test)
