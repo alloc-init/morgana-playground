@@ -346,7 +346,8 @@ namespace nil {
             };
 
             template<typename HashType>
-            struct is_poseidon<HashType, typename std::enable_if_t<std::is_same<nil::crypto3::hashes::poseidon<typename HashType::policy_type>, HashType>::value>> {
+            struct is_poseidon<HashType, typename std::enable_if_t<std::is_same<nil::crypto3::hashes::poseidon<typename
+                        HashType::policy_type>, HashType>::value>> {
             public:
                 constexpr static const bool value = true;
                 typedef HashType type;
@@ -369,9 +370,8 @@ namespace nil {
                         has_state_bits<HashType>::value && has_absorb<HashType>::value && has_squeeze<HashType>::value;
                 typedef HashType type;
             };
-
-        }    // namespace hashes
-    }        // namespace crypto3
-}    // namespace nil
+        } // namespace hashes
+    } // namespace crypto3
+} // namespace nil
 
 #endif    // CRYPTO3_HASH_TYPE_TRAITS_HPP

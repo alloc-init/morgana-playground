@@ -279,8 +279,7 @@ namespace nil {
                         std::vector<verification_key_type> verification_key;
                         using params_single_commitment_type = commitment_type;
 
-                        params_type() {
-                        };
+                        params_type() = default;
 
                         params_type(std::size_t d, std::size_t t) {
                             auto alpha = algebra::random_element<typename curve_type::scalar_field_type>();
@@ -333,9 +332,9 @@ namespace nil {
                         public_key_type() = default;
 
                         public_key_type(const std::vector<single_commitment_type> &commits,
-                                      const std::vector<scalar_value_type> &T,
-                                      const std::vector<std::vector<scalar_value_type>> &S,
-                                      const std::vector<polynomial_type> &r) : commits(commits), T(T), S(S), r(r) {
+                                        const std::vector<scalar_value_type> &T,
+                                        const std::vector<std::vector<scalar_value_type>> &S,
+                                        const std::vector<polynomial_type> &r) : commits(commits), T(T), S(S), r(r) {
                         };
 
                         public_key_type operator=(const public_key_type &other) {

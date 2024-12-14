@@ -186,7 +186,7 @@ namespace nil {
                  *  This struct is designed for operations with algebra entities rather than processing
                  *  binary data. It does not work with bits directly but with the entities themselves.
                  *
-                 *  @tparam Hash The type of hash function or algorithm used.
+                 *  @tparam HashType The type of hash function or algorithm used.
                  */
                 template<typename HashType>
                 struct algebraic_block_acc_impl : boost::accumulators::accumulator_base {

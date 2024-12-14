@@ -35,11 +35,11 @@ namespace nil {
                     typedef BaseScheme base_scheme_type;
 
                     template<typename GroupType>
-                    using sss_type = SecretSharingScheme<Group>;
+                    using sss_type = SecretSharingScheme<GroupType>;
                 };
-            }    // namespace detail
-        }        // namespace pubkey
-    }            // namespace crypto3
-}    // namespace nil
+            } // namespace detail
+        } // namespace pubkey
+    } // namespace crypto3
+} // namespace nil
 
 #endif    // CRYPTO3_PUBKEY_MODES_THRESHOLD_SCHEME_HPP

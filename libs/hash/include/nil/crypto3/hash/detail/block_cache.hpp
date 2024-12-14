@@ -31,11 +31,11 @@
 namespace nil {
     namespace crypto3 {
         namespace hashes {
-
-            template<typename BlockType, typename WordType, std::size_t WordBits, std::size_t BlockWords, typename EndianType>
+            template<typename BlockType, typename WordType, std::size_t WordBits, std::size_t BlockWords, typename
+                     EndianType>
             class block_cache {
             public:
-                void append(WordType word, const std::size_t inject_bits_n, const std::size_t word_offset = 0) {
+                void append(WordType word, std::size_t inject_bits_n, std::size_t word_offset = 0) {
                     if (inject_bits_n > block_bits_ - filled_bits_n_) {
                         return;
                     }
@@ -49,8 +49,7 @@ namespace nil {
                     }
                 }
 
-                void
-                append(const BlockType &block, const std::size_t inject_bits_n, const std::size_t block_offset = 0) {
+                void append(const BlockType &block, std::size_t inject_bits_n, std::size_t block_offset = 0) {
                     if (inject_bits_n > block_bits_ - filled_bits_n_) {
                         return;
                     }
@@ -62,10 +61,10 @@ namespace nil {
                         if (is_word_aligned() && block_offset % WordBits == 0) {
                             std::size_t block_offset_words = block_offset / WordBits;
                             std::copy(
-                                    block.begin() + block_offset_words,
-                                    block.begin() + block_offset_words + inject_bits_n / WordBits +
-                                    (inject_bits_n % WordBits ? 1 : 0),
-                                    storage_.begin() + filled_bits_n_ / WordBits
+                                block.begin() + block_offset_words,
+                                block.begin() + block_offset_words + inject_bits_n / WordBits +
+                                (inject_bits_n % WordBits ? 1 : 0),
+                                storage_.begin() + filled_bits_n_ / WordBits
                             );
 
                             filled_bits_n_ += inject_bits_n;
@@ -125,8 +124,7 @@ namespace nil {
                     storage_[filled_words_n_++] = word;
                 }
 
-                void append(const BlockType &block, const std::size_t words_n_to_append,
-                            const std::size_t block_offset_words = 0) {
+                void append(const BlockType &block, std::size_t words_n_to_append, std::size_t block_offset_words = 0) {
                     if (words_n_to_append > BlockWords - filled_words_n_) {
                         return;
                     }
@@ -135,11 +133,10 @@ namespace nil {
                         storage_ = block;
                     } else {
                         std::copy(
-                                block.begin() + block_offset_words,
-                                block.begin() + block_offset_words + words_n_to_append,
-                                storage_.begin() + filled_words_n_
+                            block.begin() + block_offset_words,
+                            block.begin() + block_offset_words + words_n_to_append,
+                            storage_.begin() + filled_words_n_
                         );
-
                     }
                     filled_words_n_ += words_n_to_append;
                 }
@@ -176,9 +173,8 @@ namespace nil {
                 BlockType storage_ = BlockType();
                 std::size_t filled_words_n_ = 0;
             };
-
-        }    // hashes
-    }    // crypto3
-}    // nil
+        } // hashes
+    } // crypto3
+} // nil
 
 #endif // CRYPTO3_HASH_BLOCK_CACHE_HPP
