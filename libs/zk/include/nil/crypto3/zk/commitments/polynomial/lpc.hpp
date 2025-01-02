@@ -43,14 +43,13 @@ namespace nil {
     namespace crypto3 {
         namespace zk {
             namespace commitments {
-
                 // Placeholder-friendly class.
                 template<typename LPCScheme, typename PolynomialType = typename math::polynomial_dfs<
-                    typename LPCScheme::params_type::field_type::value_type>>
+                             typename LPCScheme::params_type::field_type::value_type>>
                 class lpc_commitment_scheme : public polys_evaluator<typename LPCScheme::params_type,
-                    typename LPCScheme::commitment_type, PolynomialType>{
+                            typename LPCScheme::commitment_type, PolynomialType> {
                 public:
-                    static constexpr bool is_lpc(){return true;}
+                    static constexpr bool is_lpc() { return true; }
 
                     using field_type = typename LPCScheme::field_type;
                     using value_type = typename field_type::value_type;
@@ -79,21 +78,21 @@ namespace nil {
                         : _fri_params(fri_params), _etha(0u) {
                     }
 
-                    preprocessed_data_type preprocess(transcript_type& transcript) const{
+                    preprocessed_data_type preprocess(transcript_type &transcript) const {
                         auto etha = transcript.template challenge<field_type>();
 
                         preprocessed_data_type result;
-                        for(auto const&[index, fixed]: _batch_fixed) {
-                            if(!fixed) continue;
+                        for (auto const &[index, fixed]: _batch_fixed) {
+                            if (!fixed) continue;
                             result[index] = {};
-                            for (const auto& poly: this->_polys.at(index)){
+                            for (const auto &poly: this->_polys.at(index)) {
                                 result[index].push_back(poly.evaluate(etha));
                             }
                         }
                         return result;
                     }
 
-                    void setup(transcript_type& transcript, const preprocessed_data_type &preprocessed_data) {
+                    void setup(transcript_type &transcript, const preprocessed_data_type &preprocessed_data) {
                         _etha = transcript.template challenge<field_type>();
                         _fixed_polys_values = preprocessed_data;
                     }
@@ -111,13 +110,12 @@ namespace nil {
                     }
 
                     proof_type proof_eval(transcript_type &transcript) {
-
                         this->eval_polys();
 
                         BOOST_ASSERT(this->_points.size() == this->_polys.size());
                         BOOST_ASSERT(this->_points.size() == this->_z.get_batches_num());
 
-                        for(auto const& it: this->_trees) {
+                        for (auto const &it: this->_trees) {
                             transcript(it.second.root());
                         }
 
@@ -130,15 +128,16 @@ namespace nil {
                         auto points = this->get_unique_points();
                         math::polynomial<value_type> combined_Q_normal;
 
-                        for (auto const &point: points){
+                        for (auto const &point: points) {
                             V = {-point, 1u};
                             math::polynomial<value_type> Q_normal;
-                            for(std::size_t i: this->_z.get_batches()){
-                                for(std::size_t j = 0; j < this->_z.get_batch_size(i); j++){
+                            for (std::size_t i: this->_z.get_batches()) {
+                                for (std::size_t j = 0; j < this->_z.get_batch_size(i); j++) {
                                     auto it = std::find(this->_points[i][j].begin(), this->_points[i][j].end(), point);
-                                    if( it == this->_points[i][j].end()) continue;
+                                    if (it == this->_points[i][j].end()) continue;
                                     math::polynomial<value_type> g_normal;
-                                    if constexpr(std::is_same<math::polynomial_dfs<value_type>, PolynomialType>::value ) {
+                                    if constexpr (std::is_same<math::polynomial_dfs<value_type>,
+                                        PolynomialType>::value) {
                                         g_normal = math::polynomial<value_type>(this->_polys[i][j].coefficients());
                                     } else {
                                         g_normal = this->_polys[i][j];
@@ -153,14 +152,14 @@ namespace nil {
                             combined_Q_normal += Q_normal;
                         }
 
-                        for(std::size_t i: this->_z.get_batches()){
-                            if( !_batch_fixed[i] )continue;
+                        for (std::size_t i: this->_z.get_batches()) {
+                            if (!_batch_fixed[i])continue;
                             math::polynomial<value_type> Q_normal;
                             auto point = _etha;
                             V = {-point, 1u};
-                            for(std::size_t j = 0; j < this->_z.get_batch_size(i); j++){
+                            for (std::size_t j = 0; j < this->_z.get_batch_size(i); j++) {
                                 math::polynomial<value_type> g_normal;
-                                if constexpr(std::is_same<math::polynomial_dfs<value_type>, PolynomialType>::value ) {
+                                if constexpr (std::is_same<math::polynomial_dfs<value_type>, PolynomialType>::value) {
                                     g_normal = math::polynomial<value_type>(this->_polys[i][j].coefficients());
                                 } else {
                                     g_normal = this->_polys[i][j];
@@ -174,7 +173,7 @@ namespace nil {
                             combined_Q_normal += Q_normal;
                         }
 
-                        if constexpr (std::is_same<math::polynomial_dfs<value_type>, PolynomialType>::value ) {
+                        if constexpr (std::is_same<math::polynomial_dfs<value_type>, PolynomialType>::value) {
                             combined_Q.from_coefficients(combined_Q_normal);
                         } else {
                             combined_Q = std::move(combined_Q_normal);
@@ -213,7 +212,9 @@ namespace nil {
 
                         // List of unique eval points set. [id=>points]
                         std::size_t total_points = points.size();
-                        if (std::any_of(_batch_fixed.begin(), _batch_fixed.end(), [](auto i){return i.second != false;})) total_points++;
+                        if (std::any_of(_batch_fixed.begin(), _batch_fixed.end(),
+                                        [](auto i) { return i.second != false; }))
+                            total_points++;
 
                         typename std::vector<typename field_type::value_type> U(total_points);
                         // V is product of (x - eval_point) polynomial for each eval_point
@@ -224,13 +225,13 @@ namespace nil {
                         value_type theta = transcript.template challenge<field_type>();
                         value_type theta_acc = value_type::one();
 
-                        for (std::size_t p = 0; p < points.size(); p++){
+                        for (std::size_t p = 0; p < points.size(); p++) {
                             auto &point = points[p];
                             V[p] = {-point, 1u};
-                            for(std::size_t i:this->_z.get_batches()){
-                                for(std::size_t j = 0; j < this->_z.get_batch_size(i); j++){
+                            for (std::size_t i: this->_z.get_batches()) {
+                                for (std::size_t j = 0; j < this->_z.get_batch_size(i); j++) {
                                     auto it = std::find(this->_points[i][j].begin(), this->_points[i][j].end(), point);
-                                    if( it == this->_points[i][j].end()) continue;
+                                    if (it == this->_points[i][j].end()) continue;
                                     U[p] += this->_z.get(i, j, it - this->_points[i][j].begin()) * theta_acc;
                                     poly_map[p].push_back(std::make_tuple(i, j));
                                     theta_acc *= theta;
@@ -238,12 +239,12 @@ namespace nil {
                             }
                         }
 
-                        if( total_points > points.size()){
+                        if (total_points > points.size()) {
                             std::size_t p = points.size();
                             V[p] = {-_etha, 1u};
-                            for(std::size_t i:this->_z.get_batches()){
-                                if( !_batch_fixed[i] )continue;
-                                for(std::size_t j = 0; j < this->_z.get_batch_size(i); j++){
+                            for (std::size_t i: this->_z.get_batches()) {
+                                if (!_batch_fixed[i])continue;
+                                for (std::size_t j = 0; j < this->_z.get_batch_size(i); j++) {
                                     U[p] += _fixed_polys_values[i][j] * theta_acc;
                                     poly_map[p].push_back(std::make_tuple(i, j));
                                     theta_acc *= theta;
@@ -268,11 +269,11 @@ namespace nil {
 
                     // Params for LPC are actually FRI params. We can return some LPC params from here in the future if needed.
                     // This params are used for initializing transcript in the prover.
-                    const params_type& get_commitment_params() const {
+                    const params_type &get_commitment_params() const {
                         return _fri_params;
                     }
 
-                    boost::property_tree::ptree get_params() const{
+                    boost::property_tree::ptree get_params() const {
                         boost::property_tree::ptree params;
                         params.put("type", "LPC");
                         params.put("r", _fri_params.r);
@@ -280,7 +281,7 @@ namespace nil {
                         params.put("max_degree", _fri_params.max_degree);
 
                         boost::property_tree::ptree step_list_node;
-                        for( std::size_t j = 0; j < _fri_params.step_list.size(); j++){
+                        for (std::size_t j = 0; j < _fri_params.step_list.size(); j++) {
                             boost::property_tree::ptree step_node;
                             step_node.put("", _fri_params.step_list[j]);
                             step_list_node.push_back(std::make_pair("", step_node));
@@ -288,7 +289,7 @@ namespace nil {
                         params.add_child("step_list", step_list_node);
 
                         boost::property_tree::ptree D_omegas_node;
-                        for(std::size_t j = 0; j < _fri_params.D.size(); j++){
+                        for (std::size_t j = 0; j < _fri_params.D.size(); j++) {
                             boost::property_tree::ptree D_omega_node;
                             D_omega_node.put("", _fri_params.D[j]->get_domain_element(1));
                             D_omegas_node.push_back(std::make_pair("", D_omega_node));
@@ -299,7 +300,7 @@ namespace nil {
                 };
 
                 template<typename MerkleTreeHashType, typename TranscriptHashType,
-                        std::size_t M, typename GrindingType = proof_of_work<TranscriptHashType>>
+                         std::size_t M, typename GrindingType = proof_of_work<TranscriptHashType>>
                 struct list_polynomial_commitment_params {
                     typedef MerkleTreeHashType merkle_hash_type;
                     typedef TranscriptHashType transcript_hash_type;
@@ -307,6 +308,7 @@ namespace nil {
                     constexpr static const std::size_t m = M;
                     typedef GrindingType grinding_type;
                 };
+
                 /**
                  * @brief Based on the FRI Commitment description from \[RedShift].
                  * @tparam d ...
@@ -325,12 +327,12 @@ namespace nil {
 
                 template<typename FieldType, typename LPCParams>
                 struct batched_list_polynomial_commitment : public detail::basic_batched_fri<
-                    FieldType,
-                    typename LPCParams::merkle_hash_type,
-                    typename LPCParams::transcript_hash_type,
-                    LPCParams::m,
-                    typename LPCParams::grinding_type
-                > {
+                            FieldType,
+                            typename LPCParams::merkle_hash_type,
+                            typename LPCParams::transcript_hash_type,
+                            LPCParams::m,
+                            typename LPCParams::grinding_type
+                        > {
                     using fri_type = typename detail::basic_batched_fri<
                         FieldType,
                         typename LPCParams::merkle_hash_type,
@@ -349,16 +351,17 @@ namespace nil {
                     typedef typename containers::merkle_proof<merkle_hash_type, 2> merkle_proof_type;
 
                     using basic_fri = detail::basic_batched_fri<FieldType, typename LPCParams::merkle_hash_type,
-                            typename LPCParams::transcript_hash_type,
-                            LPCParams::m,
-                            typename LPCParams::grinding_type>;
+                        typename LPCParams::transcript_hash_type,
+                        LPCParams::m,
+                        typename LPCParams::grinding_type>;
 
                     using precommitment_type = typename basic_fri::precommitment_type;
                     using commitment_type = typename basic_fri::commitment_type;
                     using field_type = FieldType;
                     using polynomials_values_type = typename basic_fri::polynomials_values_type;
                     using params_type = typename basic_fri::params_type;
-                    using transcript_type = transcript::fiat_shamir_heuristic_sequential<typename LPCParams::transcript_hash_type>;
+                    using transcript_type = transcript::fiat_shamir_heuristic_sequential<typename
+                        LPCParams::transcript_hash_type>;
                     using transcript_hash_type = typename LPCParams::transcript_hash_type;
                     using eval_storage_type = eval_storage<field_type>;
 
@@ -378,24 +381,24 @@ namespace nil {
 
                 template<typename FieldType, typename LPCParams>
                 using batched_lpc = batched_list_polynomial_commitment<
-                        FieldType, commitments::list_polynomial_commitment_params<
-                            typename LPCParams::merkle_hash_type, typename LPCParams::transcript_hash_type,
-                            LPCParams::m,
-                            typename LPCParams::grinding_type
-                        >>;
+                    FieldType, commitments::list_polynomial_commitment_params<
+                        typename LPCParams::merkle_hash_type, typename LPCParams::transcript_hash_type,
+                        LPCParams::m,
+                        typename LPCParams::grinding_type
+                    >>;
                 template<typename FieldType, typename LPCParams>
                 using lpc = batched_list_polynomial_commitment<
-                        FieldType, list_polynomial_commitment_params<
-                            typename LPCParams::merkle_hash_type, typename LPCParams::transcript_hash_type,
-                            LPCParams::m,
-                            typename LPCParams::grinding_type
-                        >>;
+                    FieldType, list_polynomial_commitment_params<
+                        typename LPCParams::merkle_hash_type, typename LPCParams::transcript_hash_type,
+                        LPCParams::m,
+                        typename LPCParams::grinding_type
+                    >>;
 
                 template<typename FieldType, typename LPCParams>
                 using list_polynomial_commitment = batched_list_polynomial_commitment<FieldType, LPCParams>;
-            }    // namespace commitments
-        }        // namespace zk
-    }            // namespace crypto3
-}    // namespace nil
+            } // namespace commitments
+        } // namespace zk
+    } // namespace crypto3
+} // namespace nil
 
 #endif    // CRYPTO3_ZK_LIST_POLYNOMIAL_COMMITMENT_SCHEME_HPP
