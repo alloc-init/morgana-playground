@@ -282,7 +282,7 @@ namespace nil {
             GENERATE_HAS_MEMBER_RETURN_FUNCTION(squeeze, block_type)
 
             template<typename PolicyType>
-            struct poseidon;
+            class poseidon;
 
             template<typename ParamsType, typename HashType, typename GroupType>
             struct find_group_hash;
