@@ -42,7 +42,7 @@ macro(define_witness_test test)
 endmacro()
 
 set(TESTS_NAMES
-        "laconic_ot"
+        "fhs24"
 )
 
 foreach(TEST_NAME ${TESTS_NAMES})

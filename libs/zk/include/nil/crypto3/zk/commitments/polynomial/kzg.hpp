@@ -312,12 +312,12 @@ namespace nil {
                             }
                         }
 
-                        params_type(std::vector<single_commitment_type> commitment_key,
-                                    std::vector<verification_key_type> verification_key) : commitment_key(
+                        params_type(const std::vector<single_commitment_type> &commitment_key,
+                                    const std::vector<verification_key_type> &verification_key) : commitment_key(
                                 commitment_key), verification_key(verification_key) {
                         };
 
-                        params_type operator=(const params_type &other) {
+                        params_type &operator=(const params_type &other) {
                             commitment_key = other.commitment_key;
                             verification_key = other.verification_key;
                             return *this;
@@ -337,7 +337,7 @@ namespace nil {
                                         const std::vector<polynomial_type> &r) : commits(commits), T(T), S(S), r(r) {
                         };
 
-                        public_key_type operator=(const public_key_type &other) {
+                        public_key_type &operator=(const public_key_type &other) {
                             commits = other.commits;
                             T = other.T;
                             S = other.S;

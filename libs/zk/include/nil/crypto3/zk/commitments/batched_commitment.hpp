@@ -297,23 +297,23 @@ namespace nil {
 
                     // TODO check, that SchemeType has proof_type and proof_eval functions
                     template<typename FieldType, typename SchemeType>
-                    static typename SchemeType::proof_type proof_eval(
-                        SchemeType &scheme,
-                        const std::vector<std::vector<std::vector<FieldType>>> &evaluation_points,
-                        typename SchemeType::transcript_type &transcript
-                    ) {
+                    static typename SchemeType::proof_type proof_eval(SchemeType &scheme,
+                                                                      const std::vector<std::vector<std::vector<
+                                                                          FieldType>>> &evaluation_points,
+                                                                      typename SchemeType::transcript_type &
+                                                                      transcript) {
                         return scheme.proof_eval(evaluation_points);
                     }
 
                     // TODO check, that SchemeType has proof_type and verify_eval functions
                     template<typename FieldType, typename SchemeType>
-                    static bool verify_eval(
-                        SchemeType &scheme,
-                        const typename SchemeType::proof_type &proof,
-                        const std::map<std::size_t, std::vector<std::vector<FieldType>>> &evaluation_points,
-                        const std::map<std::size_t, typename SchemeType::commitment_type> &commitments,
-                        typename SchemeType::transcript_type &transcript
-                    ) {
+                    static bool verify_eval(SchemeType &scheme,
+                                            const typename SchemeType::proof_type &proof,
+                                            const std::map<std::size_t, std::vector<std::vector<FieldType>>> &
+                                            evaluation_points,
+                                            const std::map<std::size_t, typename SchemeType::commitment_type> &
+                                            commitments,
+                                            typename SchemeType::transcript_type &transcript) {
                         return scheme.verify_eval(proof, evaluation_points, commitments);
                     }
                 }
