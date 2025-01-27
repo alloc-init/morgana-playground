@@ -1,10 +1,21 @@
-# Functional Encryption for [[alloc] init]'s Cryptography Suite
+# Witness Encryption for [[alloc] init]'s Cryptography Suite
 
 [![Build Status](https://travis-ci.com/NilFoundation/hash.svg?branch=master)](https://travis-ci.com/NilFoundation/hash)
 
-Functional Encryption for [[alloc] init]'s cryptography suite offering different
+Wirnessl Encryption for [[alloc] init]'s cryptography suite offering different
 state-of-the-art implementations of functional encryption schemes, specifically
 FE schemes for _linear_ polynomials (e.g. _inner products_).
+
+To quickly get familiar with FE, read a short and very high-level introduction on
+our [Introductory Wiki page](https://github.com/fentec-project/gofe/wiki/Introduction-to-FE).
+
+- [Using CiFEr in your project](#using-cifer-in-your-project)
+    * [Select the FE scheme](#select-the-fe-scheme)
+    * [Configure selected scheme](#configure-selected-scheme)
+    * [Prepare input data](#prepare-input-data)
+    * [Use the scheme (examples)](#use-the-scheme-(examples))
+
+<!-- tocstop -->
 
 ## Building
 
@@ -25,4 +36,5 @@ library in a project it is required to:
 * [Block Ciphers](https://github.com/alloc-init/crypto3-block.git)
 
 ### External
+
 * [Boost](https://boost.org) (>= 1.74)

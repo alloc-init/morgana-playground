@@ -64,7 +64,9 @@ namespace nil {
                         for (std::size_t i = 0; i < state_words; i++) {
                             A[i] += poseidon_constants_type::round_constant(round_number, i);
                         }
+
                         A[0] = A[0].pow(sbox_power);
+
                         poseidon_constants_type::product_with_mds_matrix(A);
                     }
                 };
@@ -111,7 +113,9 @@ namespace nil {
                                          round_number < half_full_rounds + part_rounds,
                                          "Wrong usage of the part round function of Mina Poseidon.");
                         A[0] = A[0].pow(sbox_power);
+
                         poseidon_constants_type::product_with_mds_matrix(A);
+
                         for (std::size_t i = 0; i < state_words; i++) {
                             A[i] += poseidon_constants_type::round_constant(round_number, i);
                         }

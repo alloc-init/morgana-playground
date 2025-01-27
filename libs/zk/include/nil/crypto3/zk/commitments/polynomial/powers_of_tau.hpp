@@ -1,3 +1,27 @@
+//---------------------------------------------------------------------------//
+// Copyright (c) 2022 Noam Yemini <@NoamDev>
+//
+// MIT License
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+//---------------------------------------------------------------------------//
+
 #ifndef CRYPTO3_ZK_POWERS_OF_TAU_HPP
 #define CRYPTO3_ZK_POWERS_OF_TAU_HPP
 
@@ -41,7 +65,8 @@ namespace nil {
                     // The result of this function is considered toxic wast
                     // and should thus be destroyed
                     template<typename UniformRandomBitGenerator = boost::random_device>
-                    static private_key_type generate_private_key(UniformRandomBitGenerator &&rng = boost::random_device()) {
+                    static private_key_type generate_private_key(
+                        UniformRandomBitGenerator &&rng = boost::random_device()) {
                         typename scalar_field_type::value_type tau = algebra::random_element<scalar_field_type>(rng);
                         typename scalar_field_type::value_type alpha = algebra::random_element<scalar_field_type>(rng);
                         typename scalar_field_type::value_type beta = algebra::random_element<scalar_field_type>(rng);
@@ -70,11 +95,11 @@ namespace nil {
                                                       UniformRandomBitGenerator &&rng = boost::random_device()) {
                         std::vector<std::uint8_t> transcript = compute_transcript(before);
                         auto tau_pok = proof_of_knowledge_scheme_type::proof_eval(
-                                private_key.tau, transcript, tau_personalization, rng);
+                            private_key.tau, transcript, tau_personalization, rng);
                         auto alpha_pok = proof_of_knowledge_scheme_type::proof_eval(
-                                private_key.alpha, transcript, alpha_personalization, rng);
+                            private_key.alpha, transcript, alpha_personalization, rng);
                         auto beta_pok = proof_of_knowledge_scheme_type::proof_eval(
-                                private_key.beta, transcript, beta_personalization, rng);
+                            private_key.beta, transcript, beta_personalization, rng);
 
                         return public_key_type{std::move(tau_pok), std::move(alpha_pok), std::move(beta_pok)};
                     }
@@ -85,12 +110,12 @@ namespace nil {
                         std::vector<std::uint8_t> transcript = compute_transcript(before);
 
                         auto tau_g2_s = proof_of_knowledge_scheme_type::compute_g2_s(
-                                public_key.tau_pok.g1_s, public_key.tau_pok.g1_s_x, transcript, tau_personalization);
+                            public_key.tau_pok.g1_s, public_key.tau_pok.g1_s_x, transcript, tau_personalization);
                         auto alpha_g2_s = proof_of_knowledge_scheme_type::compute_g2_s(
-                                public_key.alpha_pok.g1_s, public_key.alpha_pok.g1_s_x, transcript,
-                                alpha_personalization);
+                            public_key.alpha_pok.g1_s, public_key.alpha_pok.g1_s_x, transcript,
+                            alpha_personalization);
                         auto beta_g2_s = proof_of_knowledge_scheme_type::compute_g2_s(
-                                public_key.beta_pok.g1_s, public_key.beta_pok.g1_s_x, transcript, beta_personalization);
+                            public_key.beta_pok.g1_s, public_key.beta_pok.g1_s_x, transcript, beta_personalization);
 
                         // Verify the proofs of knowledge of tau, alpha and beta
                         if (!proof_of_knowledge_scheme_type::verify_eval(public_key.tau_pok, tau_g2_s)) {
@@ -157,7 +182,6 @@ namespace nil {
 
                     static bool is_same_ratio(const std::pair<g1_value_type, g1_value_type> &g1_pair,
                                               const std::pair<g2_value_type, g2_value_type> &g2_pair) {
-
                         return algebra::pair_reduced<CurveType>(g1_pair.first, g2_pair.second) ==
                                algebra::pair_reduced<CurveType>(g1_pair.second, g2_pair.first);
                     }
@@ -171,7 +195,7 @@ namespace nil {
                         using endianness = nil::marshalling::option::little_endian;
                         auto filled_val =
                                 nil::crypto3::marshalling::types::fill_powers_of_tau_accumulator<accumulator_type,
-                                        endianness>(acc);
+                                    endianness>(acc);
                         std::vector<std::uint8_t> blob(filled_val.length());
                         auto it = std::begin(blob);
                         nil::marshalling::status_type status = filled_val.write(it, blob.size());
@@ -182,9 +206,9 @@ namespace nil {
                         }
                     }
                 };
-            }    // namespace commitments
-        }        // namespace zk
-    }            // namespace crypto3
-}    // namespace nil
+            } // namespace commitments
+        } // namespace zk
+    } // namespace crypto3
+} // namespace nil
 
 #endif    // CRYPTO3_ZK_POWERS_OF_TAU_HPP

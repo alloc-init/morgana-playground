@@ -1,6 +1,5 @@
 //---------------------------------------------------------------------------//
-// Copyright (c) 2019-2021 Mikhail Komarov <nemo@nil.foundation>
-// Copyright (c) 2020-2021 Ilias Khairullin <ilias@nil.foundation>
+// Copyright (c) 2024 Mikhail Komarov <nemo@allocin.it>
 //
 // MIT License
 //
@@ -23,23 +22,18 @@
 // SOFTWARE.
 //---------------------------------------------------------------------------//
 
-#ifndef CRYPTO3_PUBKEY_MODES_THRESHOLD_SCHEME_HPP
-#define CRYPTO3_PUBKEY_MODES_THRESHOLD_SCHEME_HPP
+#define BOOST_TEST_MODULE witness_fhs24_test
 
-namespace nil {
-    namespace crypto3 {
-        namespace pubkey {
-            namespace detail {
-                template<typename BaseScheme, template<typename> class SecretSharingScheme, typename = void>
-                struct threshold_scheme {
-                    typedef BaseScheme base_scheme_type;
+#include <boost/test/unit_test.hpp>
 
-                    template<typename GroupType>
-                    using sss_type = SecretSharingScheme<GroupType>;
-                };
-            } // namespace detail
-        } // namespace pubkey
-    } // namespace crypto3
-} // namespace nil
+#include <nil/crypto3/algebra/curves/bls12.hpp>
 
-#endif    // CRYPTO3_PUBKEY_MODES_THRESHOLD_SCHEME_HPP
+#include <nil/crypto3/witness/fhs24.hpp>
+
+BOOST_AUTO_TEST_CASE(test_laconic_ot) {
+
+    typedef nil::crypto3::algebra::curves::bls12_381 curve_type;
+    typedef typename curve_type::g1_type<> g1_type;
+    typedef typename curve_type::g2_type<> g2_type;
+
+}

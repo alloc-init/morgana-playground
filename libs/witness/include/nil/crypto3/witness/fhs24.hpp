@@ -1,6 +1,5 @@
 //---------------------------------------------------------------------------//
-// Copyright (c) 2019-2021 Mikhail Komarov <nemo@nil.foundation>
-// Copyright (c) 2020-2021 Ilias Khairullin <ilias@nil.foundation>
+// Copyright (c) 2024 Mikhail Komarov <nemo@allocin.it>
 //
 // MIT License
 //
@@ -23,23 +22,26 @@
 // SOFTWARE.
 //---------------------------------------------------------------------------//
 
-#ifndef CRYPTO3_PUBKEY_MODES_THRESHOLD_SCHEME_HPP
-#define CRYPTO3_PUBKEY_MODES_THRESHOLD_SCHEME_HPP
+#ifndef CRYPTO3_WITNESS_LACONIC_OT_HPP
+#define CRYPTO3_WITNESS_LACONIC_OT_HPP
+
+#include <vector>
+#include <array>
+
+#include <nil/crypto3/algebra/curves/bls12.hpp>
+
+#include <nil/crypto3/algebra/algorithms/pair.hpp>
+
+#include <nil/crypto3/math/domains/evaluation_domain.hpp>
+
+using namespace nil::crypto3;
+using namespace nil::crypto3::algebra;
 
 namespace nil {
     namespace crypto3 {
-        namespace pubkey {
-            namespace detail {
-                template<typename BaseScheme, template<typename> class SecretSharingScheme, typename = void>
-                struct threshold_scheme {
-                    typedef BaseScheme base_scheme_type;
+        namespace witness {
+        }
+    }
+}
 
-                    template<typename GroupType>
-                    using sss_type = SecretSharingScheme<GroupType>;
-                };
-            } // namespace detail
-        } // namespace pubkey
-    } // namespace crypto3
-} // namespace nil
-
-#endif    // CRYPTO3_PUBKEY_MODES_THRESHOLD_SCHEME_HPP
+#endif //LACONIC_OT_HPP

@@ -47,35 +47,31 @@ namespace nil {
     namespace crypto3 {
         namespace zk {
             namespace commitments {
-
                 /**
-                 * @brief Based on the FRI Commitment description from \[ResShift].
+                 * @brief Based on the FRI Commitment description from \[Placeholder].
                  * @tparam d ...
                  * @tparam Rounds Denoted by r in \[Placeholder].
                  *
                  * References:
                  * \[Placeholder]:
-                 * "PLACEHOLDER: Transparent SNARKs from List
-                 * Polynomial Commitment IOPs",
-                 * Assimakis Kattis, Konstantin Panarin, Alexander Vlasov,
-                 * Matter Labs,
-                 * <https://eprint.iacr.org/2019/1400.pdf>
+                 * "Placeholder Proof System",
+                 * Alisa Cherniaeva, Ilia Shirobokov, Mikhail Komarov,
+                 * =nil; Foundation,
+                 * <https://www.allocin.it/uploads/placeholder.pdf>
                  */
                 template<typename FieldType,
-                        typename MerkleTreeHashType,
-                        typename TranscriptHashType,
-                        std::size_t M,
-                        typename GrindingType = proof_of_work<TranscriptHashType>
-                >
+                         typename MerkleTreeHashType,
+                         typename TranscriptHashType,
+                         std::size_t M,
+                         typename GrindingType = proof_of_work<TranscriptHashType>>
                 struct fri : public detail::basic_batched_fri<FieldType,
-                        MerkleTreeHashType,
-                        TranscriptHashType,
-                        M, GrindingType
-                > {
-                    using basic_fri = detail::basic_batched_fri<FieldType,
                             MerkleTreeHashType,
                             TranscriptHashType,
-                            M, GrindingType>;
+                            M, GrindingType> {
+                    using basic_fri = detail::basic_batched_fri<FieldType,
+                        MerkleTreeHashType,
+                        TranscriptHashType,
+                        M, GrindingType>;
                     constexpr static const std::size_t m = basic_fri::m;
                     constexpr static const std::size_t batches_num = basic_fri::batches_num;
 
@@ -91,68 +87,71 @@ namespace nil {
                     using precommitment_type = typename basic_fri::precommitment_type;
                     using commitment_type = typename basic_fri::commitment_type;
                 };
-            }    // namespace commitments
+            } // namespace commitments
 
             namespace algorithms {
                 // Proof and verify for one polynomial
                 // One polynomial processing
                 template<typename FRI,
-                    typename PolynomialType,
-                    typename std::enable_if<std::is_base_of<commitments::fri<typename FRI::field_type,
-                            typename FRI::merkle_tree_hash_type,
-                            typename FRI::transcript_hash_type,
-                            FRI::m,
-                            typename FRI::grinding_type
-                        >,
-                        FRI>::value,
-                    bool>::type = true>
+                         typename PolynomialType,
+                         typename std::enable_if<std::is_base_of<commitments::fri<typename FRI::field_type,
+                                     typename FRI::merkle_tree_hash_type,
+                                     typename FRI::transcript_hash_type,
+                                     FRI::m,
+                                     typename FRI::grinding_type
+                                 >,
+                                 FRI>::value,
+                             bool>::type = true>
                 static typename FRI::basic_fri::proof_type proof_eval(
                     PolynomialType &g,
                     typename FRI::basic_fri::merkle_tree_type &tree,
                     const typename FRI::params_type &fri_params,
-                    typename FRI::transcript_type &transcript = typename FRI::transcript_type()
-                ){
+                    typename FRI::transcript_type &transcript = typename FRI::transcript_type()) {
                     std::map<std::size_t, std::vector<PolynomialType>> gs;
-                    gs[0]={g};
+                    gs[0] = {g};
                     std::map<std::size_t, typename FRI::basic_fri::merkle_tree_type> trees;
                     trees[0] = typename FRI::basic_fri::merkle_tree_type(tree);
                     return proof_eval<FRI, PolynomialType>(gs, g, trees, tree, fri_params, transcript);
                 }
 
                 template<typename FRI,
-                    typename std::enable_if<
-                        std::is_base_of<commitments::detail::basic_batched_fri<
-                            typename FRI::field_type,
-                            typename FRI::merkle_tree_hash_type,
-                            typename FRI::transcript_hash_type,
-                            FRI::m,
-                            typename FRI::grinding_type
-                        >,
-                        FRI>::value,
-                        bool>::type = true>
+                         typename std::enable_if<
+                             std::is_base_of<commitments::detail::basic_batched_fri<
+                                     typename FRI::field_type,
+                                     typename FRI::merkle_tree_hash_type,
+                                     typename FRI::transcript_hash_type,
+                                     FRI::m,
+                                     typename FRI::grinding_type
+                                 >,
+                                 FRI>::value,
+                             bool>::type = true>
                 static bool verify_eval(
                     const typename FRI::basic_fri::proof_type &proof,
                     const typename FRI::basic_fri::commitment_type &t_root,
                     const typename FRI::basic_fri::params_type &fri_params,
-                    typename FRI::basic_fri::transcript_type &transcript = typename FRI::basic_fri::transcript_type()
-                ) {
-                    std::map<std::size_t, typename FRI::basic_fri::commitment_type> t_roots; t_roots[0] = {t_root};
+                    typename FRI::basic_fri::transcript_type &transcript = typename FRI::basic_fri::transcript_type()) {
+                    std::map<std::size_t, typename FRI::basic_fri::commitment_type> t_roots;
+                    t_roots[0] = {t_root};
                     std::vector<std::vector<std::tuple<std::size_t, std::size_t>>> evals_map(1);
-                    evals_map[0] = {{0u,0u}};
+                    evals_map[0] = {{0u, 0u}};
 
-                    std::vector<typename FRI::field_type::value_type> combined_U = {{FRI::field_type::value_type::zero()}};
-                    std::vector<math::polynomial<typename FRI::field_type::value_type>> combined_V = {{FRI::field_type::value_type::one()}};
+                    std::vector<typename FRI::field_type::value_type> combined_U = {
+                        {FRI::field_type::value_type::zero()}
+                    };
+                    std::vector<math::polynomial<typename FRI::field_type::value_type>> combined_V = {
+                        {FRI::field_type::value_type::one()}
+                    };
 
                     return verify_eval<typename FRI::basic_fri>(
-                            proof, fri_params, t_roots,
-                            FRI::basic_fri::field_type::value_type::one(),
-                            evals_map, combined_U, combined_V,
-                            transcript
+                        proof, fri_params, t_roots,
+                        FRI::basic_fri::field_type::value_type::one(),
+                        evals_map, combined_U, combined_V,
+                        transcript
                     );
                 }
-            }    // namespace algorithms
-        }        // namespace zk
-    }            // namespace crypto3
-}    // namespace nil
+            } // namespace algorithms
+        } // namespace zk
+    } // namespace crypto3
+} // namespace nil
 
 #endif    // CRYPTO3_ZK_FRI_COMMITMENT_SCHEME_HPP

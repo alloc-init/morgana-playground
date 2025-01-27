@@ -39,10 +39,12 @@ namespace nil {
             };
 #else
             template<typename PolicyType>
-            struct poseidon {
+            class poseidon {
                 typedef PolicyType policy_type;
+
+            public:
                 typedef typename policy_type::word_type word_type;
-                constexpr static const std::size_t word_bits = 0;
+                constexpr static const std::size_t word_bits = policy_type::word_bits;
 
                 constexpr static const std::size_t block_words = policy_type::block_words;
                 typedef typename policy_type::block_type block_type;
@@ -63,9 +65,12 @@ namespace nil {
             };
 
             template<typename PolicyType>
-            struct original_poseidon {
+            class original_poseidon {
                 typedef PolicyType policy_type;
+
+            public:
                 typedef typename policy_type::word_type word_type;
+                constexpr static const std::size_t word_bits = policy_type::word_bits;
 
                 constexpr static const std::size_t block_words = policy_type::block_words;
                 typedef typename policy_type::block_type block_type;
@@ -79,10 +84,10 @@ namespace nil {
                     };
 
                     typedef algebraic_sponge_construction<policy_type,
-                            typename policy_type::iv_generator,
-                            detail::poseidon_functions<policy_type>,
-                            detail::poseidon_functions<policy_type>,
-                            detail::poseidon_functions<policy_type>> type;
+                        typename policy_type::iv_generator,
+                        detail::poseidon_functions<policy_type>,
+                        detail::poseidon_functions<policy_type>,
+                        detail::poseidon_functions<policy_type>> type;
                 };
 
                 constexpr static detail::stream_processor_type stream_processor = detail::stream_processor_type::raw;

@@ -267,7 +267,7 @@ namespace nil {
                     : public_key<functional::fh_multi_ipe<CurveType, sec_level, Clients, ciphertext_size, BoundX,
                         BoundY>>(
                         mu) {
-                    algebra::matrix<client_key_type> B(Clients, Clients), B_star(Clients, Clients);
+                    algebra::matrix<client_key_type, Clients, Clients> B, B_star;
 
                     for (size_t i = 0; i < Clients; i++) {
                         random_OB(B[i], B_star[i], mu, group_order);

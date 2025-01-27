@@ -45,16 +45,16 @@ namespace nil {
     namespace crypto3 {
         namespace zk {
             namespace commitments {
-
                 template<typename FieldType, typename CommitmentType>
-                struct commitment_scheme_params_type{
+                struct commitment_scheme_params_type {
                     using commitment_type = CommitmentType;
                     using field_type = FieldType;
                 };
 
                 // Placeholder commitment scheme works with polynomial_dfs
                 template<typename ParamsType, typename TranscriptType,
-                         typename PolynomialType = typename math::polynomial_dfs<typename ParamsType::field_type::value_type>>
+                         typename PolynomialType = typename math::polynomial_dfs<typename
+                             ParamsType::field_type::value_type>>
                 class polys_evaluator {
                 public:
                     using params_type = ParamsType;
@@ -74,14 +74,15 @@ namespace nil {
 
                     // We frequently search over the this->_points structure, and it's better to keep a hashmap that maps point to
                     // it's index in vector for faster search. We need to duplicate this data for now, because the order of points matters.
-                    std::map<std::size_t, std::vector<std::unordered_map<typename field_type::value_type, std::size_t>>> _points_map;
+                    std::map<std::size_t, std::vector<std::unordered_map<typename field_type::value_type, std::size_t>>>
+                    _points_map;
 
                     // Creates '_points_map'. We need to think about re-designing this class later. Currently this is used from LPC.
                     void build_points_map() {
-                        for (const auto& [i, V]: this->_points) {
+                        for (const auto &[i, V]: this->_points) {
                             _points_map[i].resize(V.size());
                             for (std::size_t j = 0; j < V.size(); ++j) {
-                                const auto& batch = V[j];
+                                const auto &batch = V[j];
                                 for (std::size_t k = 0; k < batch.size(); ++k) {
                                     // We need to store the index of the first occurance of each point.
                                     if (_points_map[i][j].find(batch[k]) == _points_map[i][j].end())
@@ -94,33 +95,35 @@ namespace nil {
                 protected:
                     math::polynomial<typename field_type::value_type> get_V(
                         const std::vector<typename field_type::value_type> &points) const {
-
                         math::polynomial<typename field_type::value_type> V = {{field_type::value_type::one()}};
-                        for( std::size_t xi_index = 0; xi_index < points.size(); xi_index++ ){
-                            V *= math::polynomial<typename field_type::value_type>({-points[xi_index], field_type::value_type::one()});
+                        for (std::size_t xi_index = 0; xi_index < points.size(); xi_index++) {
+                            V *= math::polynomial<typename field_type::value_type>({
+                                -points[xi_index], field_type::value_type::one()
+                            });
                         }
                         return V;
                     }
 
                     std::vector<math::polynomial<typename field_type::value_type>> get_V_multipliers(
                         const std::vector<typename field_type::value_type> &points) const {
-
                         std::vector<math::polynomial<typename field_type::value_type>> V_multipliers;
-                        for( std::size_t xi_index = 0; xi_index < points.size(); xi_index++ ){
+                        for (std::size_t xi_index = 0; xi_index < points.size(); xi_index++) {
                             V_multipliers.push_back(math::polynomial<typename field_type::value_type>(
                                 {-points[xi_index], 1}));
                         }
                         return V_multipliers;
                     }
 
-                    math::polynomial<typename field_type::value_type> get_U(std::size_t b_ind, std::size_t poly_ind) const {
+                    math::polynomial<typename field_type::value_type> get_U(
+                        std::size_t b_ind, std::size_t poly_ind) const {
                         const auto &points = _points.at(b_ind)[poly_ind];
                         BOOST_ASSERT(points.size() == this->_z.get_poly_points_number(b_ind, poly_ind));
-                        std::vector<std::pair<typename field_type::value_type,typename field_type::value_type>> U_interpolation_points;
+                        std::vector<std::pair<typename field_type::value_type, typename field_type::value_type>>
+                                U_interpolation_points;
 
                         U_interpolation_points.resize(points.size());
-                        for(std::size_t k = 0; k < points.size(); k++){
-                            U_interpolation_points[k] = std::make_pair( points[k], this->_z.get(b_ind, poly_ind, k) );
+                        for (std::size_t k = 0; k < points.size(); k++) {
+                            U_interpolation_points[k] = std::make_pair(points[k], this->_z.get(b_ind, poly_ind, k));
                         }
 
                         return math::lagrange_interpolation(U_interpolation_points);
@@ -129,13 +132,12 @@ namespace nil {
                     // We call them singles in recursive verifier
                     // We keep the order of points, not sure if that was required.
                     std::vector<typename field_type::value_type> get_unique_points() const {
-
                         std::vector<typename field_type::value_type> result;
                         std::unordered_set<typename field_type::value_type> result_set;
 
-                        for( auto const &[k, point_batch]: _points ){
-                            for( auto const &point_set: point_batch ){
-                                for( auto const &point: point_set ){
+                        for (auto const &[k, point_batch]: _points) {
+                            for (auto const &point_set: point_batch) {
+                                for (auto const &point: point_set) {
                                     if (result_set.find(point) == result_set.end()) {
                                         result.push_back(point);
                                         result_set.insert(point);
@@ -147,19 +149,19 @@ namespace nil {
                         return result;
                     }
 
-                    std::vector<std::vector<typename field_type::value_type>> get_unique_point_sets_list() const{
+                    std::vector<std::vector<typename field_type::value_type>> get_unique_point_sets_list() const {
                         std::vector<std::vector<typename field_type::value_type>> unique_points;
 
-                        for(auto const &[k, point]:_points){
-                            for( std::size_t i = 0; i < point.size(); i++ ){
+                        for (auto const &[k, point]: _points) {
+                            for (std::size_t i = 0; i < point.size(); i++) {
                                 bool found = false;
-                                for( std::size_t j = 0; j < unique_points.size(); j++ ){
-                                    if( unique_points[j] == point[i] ){
+                                for (std::size_t j = 0; j < unique_points.size(); j++) {
+                                    if (unique_points[j] == point[i]) {
                                         found = true;
                                         break;
                                     }
                                 }
-                                if( !found ){
+                                if (!found) {
                                     unique_points.push_back(point[i]);
                                 }
                             }
@@ -168,10 +170,10 @@ namespace nil {
                     }
 
                     std::map<std::size_t, std::vector<std::size_t>> get_eval_map(
-                            const std::vector<std::vector<typename field_type::value_type>>& unique_points) const {
+                        const std::vector<std::vector<typename field_type::value_type>> &unique_points) const {
                         std::map<std::size_t, std::vector<std::size_t>> eval_map;
 
-                        for(auto const &[k, point] : _points) {
+                        for (auto const &[k, point]: _points) {
                             eval_map[k] = {};
                             for (std::size_t i = 0; i < point.size(); i++) {
                                 bool found = false;
@@ -189,13 +191,13 @@ namespace nil {
                     }
 
 
-                    void state_commited(std::size_t index){
+                    void state_commited(std::size_t index) {
                         _locked[index] = true;
                         _points[index].resize(_polys[index].size());
                     }
 
                     void eval_polys() {
-                        for(auto const &[k, poly] : _polys) {
+                        for (auto const &[k, poly]: _polys) {
                             _z.set_batch_size(k, poly.size());
                             auto const &point = _points.at(k);
 
@@ -211,52 +213,55 @@ namespace nil {
                     }
 
                 public:
-                    boost::property_tree::ptree get_params() const{
+                    boost::property_tree::ptree get_params() const {
                         boost::property_tree::ptree root;
                         return root;
                     }
 
-                    void append_to_batch(std::size_t index, const polynomial_type& poly){
-                        if( _locked.find(index) == _locked.end() ) _locked[index] = false;
+                    void append_to_batch(std::size_t index, const polynomial_type &poly) {
+                        if (_locked.find(index) == _locked.end()) _locked[index] = false;
                         BOOST_ASSERT(!_locked[index]); // We cannot modify batch after commitment
                         _polys[index].push_back(poly);
                     }
 
                     template<typename container_type>
-                    void append_to_batch(std::size_t index, const container_type& polys){
-                        if( _locked.find(index) == _locked.end() ) _locked[index] = false;
+                    void append_to_batch(std::size_t index, const container_type &polys) {
+                        if (_locked.find(index) == _locked.end()) _locked[index] = false;
                         BOOST_ASSERT(!_locked[index]); // We cannot modify batch after commitment
                         _polys[index].insert(std::end(_polys[index]), std::begin(polys), std::end(polys));
                     }
 
-                    void append_eval_point(std::size_t batch_id, typename field_type::value_type point){
+                    void append_eval_point(std::size_t batch_id, typename field_type::value_type point) {
                         BOOST_ASSERT(_locked[batch_id]); // We can add points only after polynomails are commited.
-                        for(std::size_t i = 0; i < _points[batch_id].size(); i++){
+                        for (std::size_t i = 0; i < _points[batch_id].size(); i++) {
                             _points[batch_id][i].push_back(point);
                         }
                     }
 
-                    void append_eval_point(std::size_t batch_id, std::size_t poly_id, typename field_type::value_type point){
+                    void append_eval_point(std::size_t batch_id, std::size_t poly_id,
+                                           typename field_type::value_type point) {
                         BOOST_ASSERT(_locked[batch_id]); // We can add points only after polynomails are commited.
                         _points[batch_id][poly_id].push_back(point);
                     }
 
                     // This function don't check evaluation points repeats
-                    void append_eval_points(std::size_t batch_id, std::set<typename field_type::value_type> points){
+                    void append_eval_points(std::size_t batch_id, std::set<typename field_type::value_type> points) {
                         BOOST_ASSERT(_locked[batch_id]); // We can add points only after polynomails are commited.
-                        for(std::size_t i = 0; i < _points[batch_id].size(); i++){
+                        for (std::size_t i = 0; i < _points[batch_id].size(); i++) {
                             _points[batch_id][i].insert(_points[batch_id][i].end(), points.begin(), points.end());
                         }
                     }
 
                     // This function don't check evaluation points repeats
-                    void append_eval_points(std::size_t batch_id, std::size_t poly_id, std::set<typename field_type::value_type> points){
+                    void append_eval_points(std::size_t batch_id, std::size_t poly_id,
+                                            std::set<typename field_type::value_type> points) {
                         BOOST_ASSERT(_locked[batch_id]); // We can add points only after polynomails are commited.
-                        _points[batch_id][poly_id].insert(_points[batch_id][poly_id].end(), points.begin(), points.end());
+                        _points[batch_id][poly_id].insert(_points[batch_id][poly_id].end(), points.begin(),
+                                                          points.end());
                     }
 
-                    void set_batch_size(std::size_t batch_id, std::size_t batch_size){
-                        if( _points.find(batch_id) == _points.end() ){
+                    void set_batch_size(std::size_t batch_id, std::size_t batch_size) {
+                        if (_points.find(batch_id) == _points.end()) {
                             _points[batch_id] = {};
                         }
                         _points[batch_id].resize(batch_size);
@@ -264,58 +269,53 @@ namespace nil {
                     }
                 };
 
-                namespace algorithms{
+                namespace algorithms {
                     // TODO check, that SchemeType has commitment_type and commit functions
                     // Is called from preprocessor
                     template<typename FieldType, typename SchemeType>
                     static typename SchemeType::preprocessed_data_type preprocess(
-                        SchemeType &scheme, typename SchemeType::transcript_type &transcript
-                    ){
+                        SchemeType &scheme, typename SchemeType::transcript_type &transcript) {
                         return scheme.preprocess(transcript);
                     }
 
                     // Is called from prover and verifier. Checks, that transcript is well-initialized
                     template<typename FieldType, typename SchemeType>
-                    static void setup(
-                        SchemeType &scheme,
-                        typename SchemeType::transcript_type &transcript,
-                        const typename SchemeType::preprocessed_data_type preprocessed_data
-                        ) {
+                    static void setup(SchemeType &scheme,
+                                      typename SchemeType::transcript_type &transcript,
+                                      const typename SchemeType::preprocessed_data_type preprocessed_data) {
                         return scheme.setup(transcript, preprocessed_data);
                     }
 
                     // TODO check, that SchemeType has commitment_type and commit functions
                     template<typename FieldType, typename SchemeType>
-                    static typename SchemeType::commitment_type commit(
-                        SchemeType &scheme,
-                        const std::vector<math::polynomial_dfs<typename FieldType::value_type>> &polynomials,
-                        std::size_t index
-                    ){
+                    static typename SchemeType::commitment_type commit(SchemeType &scheme,
+                                                                       const std::vector<math::polynomial_dfs<typename
+                                                                           FieldType::value_type>> &polynomials,
+                                                                       std::size_t index) {
                         return scheme.commit(polynomials, index);
                     }
 
                     // TODO check, that SchemeType has proof_type and proof_eval functions
                     template<typename FieldType, typename SchemeType>
-                    static typename SchemeType::proof_type proof_eval(
-                        SchemeType &scheme,
-                        const std::vector<std::vector<std::vector<FieldType>>> &evaluation_points,
-                        typename SchemeType::transcript_type &transcript
-                    ){
+                    static typename SchemeType::proof_type proof_eval(SchemeType &scheme,
+                                                                      const std::vector<std::vector<std::vector<
+                                                                          FieldType>>> &evaluation_points,
+                                                                      typename SchemeType::transcript_type &
+                                                                      transcript) {
                         return scheme.proof_eval(evaluation_points);
                     }
 
                     // TODO check, that SchemeType has proof_type and verify_eval functions
                     template<typename FieldType, typename SchemeType>
-                    static bool verify_eval(
-                        SchemeType &scheme,
-                        const typename SchemeType::proof_type &proof,
-                        const std::map<std::size_t, std::vector<std::vector<FieldType>>> &evaluation_points,
-                        const std::map<std::size_t, typename SchemeType::commitment_type> &commitments,
-                        typename SchemeType::transcript_type &transcript
-                    ){
+                    static bool verify_eval(SchemeType &scheme,
+                                            const typename SchemeType::proof_type &proof,
+                                            const std::map<std::size_t, std::vector<std::vector<FieldType>>> &
+                                            evaluation_points,
+                                            const std::map<std::size_t, typename SchemeType::commitment_type> &
+                                            commitments,
+                                            typename SchemeType::transcript_type &transcript) {
                         return scheme.verify_eval(proof, evaluation_points, commitments);
                     }
-
                 }
             }
         }

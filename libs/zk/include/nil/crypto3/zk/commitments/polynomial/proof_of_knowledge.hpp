@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-// Copyright (c) 2022 Noam Y <@NoamDev>
+// Copyright (c) 2022 Noam Yemini <@NoamDev>
 //
 // MIT License
 //
@@ -118,9 +118,9 @@ namespace nil {
                         }
                     }
                 };
-            }    // namespace commitments
-        }        // namespace zk
-    }            // namespace crypto3
-}    // namespace nil
+            } // namespace commitments
+        } // namespace zk
+    } // namespace crypto3
+} // namespace nil
 
 #endif    // CRYPTO3_ZK_PROOF_OF_KNOWLEDGE_HPP

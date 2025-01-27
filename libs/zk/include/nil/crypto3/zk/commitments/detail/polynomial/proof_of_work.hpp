@@ -46,22 +46,22 @@ namespace nil {
                     using output_type = OutType;
 
                     static inline std::array<std::uint8_t, sizeof(OutType)>
-                        to_byte_array(OutType v) {
-                            std::array<std::uint8_t, sizeof(OutType)> bytes;
-                            for(int i = sizeof(v)-1; i>=0; --i) {
-                                bytes[i] = v & 0xFF;
-                                v >>= 8;
-                            }
-                            return bytes;
+                    to_byte_array(OutType v) {
+                        std::array<std::uint8_t, sizeof(OutType)> bytes;
+                        for (int i = sizeof(v) - 1; i >= 0; --i) {
+                            bytes[i] = v & 0xFF;
+                            v >>= 8;
                         }
+                        return bytes;
+                    }
 
                     static inline OutType generate(transcript_type &transcript, std::size_t GrindingBits = 16) {
                         BOOST_ASSERT_MSG(GrindingBits < 64, "Grinding parameter should be bits, not mask");
-                        output_type mask = GrindingBits > 0 ? ( 1ULL << GrindingBits ) - 1 : 0;
+                        output_type mask = GrindingBits > 0 ? (1ULL << GrindingBits) - 1 : 0;
                         output_type proof_of_work = std::rand();
                         output_type result;
 
-                        while( true ) {
+                        while (true) {
                             transcript_type tmp_transcript = transcript;
                             tmp_transcript(to_byte_array(proof_of_work));
                             result = tmp_transcript.template int_challenge<output_type>();
@@ -74,11 +74,12 @@ namespace nil {
                         return proof_of_work;
                     }
 
-                    static inline bool verify(transcript_type &transcript, output_type proof_of_work, std::size_t GrindingBits = 16) {
+                    static inline bool verify(transcript_type &transcript, output_type proof_of_work,
+                                              std::size_t GrindingBits = 16) {
                         BOOST_ASSERT_MSG(GrindingBits < 64, "Grinding parameter should be bits, not mask");
                         transcript(to_byte_array(proof_of_work));
                         output_type result = transcript.template int_challenge<output_type>();
-                        output_type mask = GrindingBits > 0 ? ( 1ULL << GrindingBits ) - 1 : 0;
+                        output_type mask = GrindingBits > 0 ? (1ULL << GrindingBits) - 1 : 0;
                         return ((result & mask) == 0);
                     }
                 };
@@ -102,11 +103,11 @@ namespace nil {
                         integral_type result;
 
                         integral_type mask =
-                            (GrindingBits > 0 ?
-                                ((integral_type(1) << GrindingBits) - 1) << (FieldType::modulus_bits - GrindingBits)
-                                : 0);
+                        (GrindingBits > 0 ?
+                             ((integral_type(1) << GrindingBits) - 1) << (FieldType::modulus_bits - GrindingBits) :
+                             0);
 
-                        while( true ) {
+                        while (true) {
                             transcript_type tmp_transcript = transcript;
                             tmp_transcript(proof_of_work);
                             result = integral_type(tmp_transcript.template challenge<FieldType>().data);
@@ -119,12 +120,13 @@ namespace nil {
                         return proof_of_work;
                     }
 
-                    static inline bool verify(transcript_type &transcript, value_type proof_of_work, std::size_t GrindingBits = 16) {
+                    static inline bool verify(transcript_type &transcript, value_type proof_of_work,
+                                              std::size_t GrindingBits = 16) {
                         transcript(proof_of_work);
                         integral_type mask =
-                            (GrindingBits > 0 ?
-                                ((integral_type(1) << GrindingBits) - 1) << (FieldType::modulus_bits - GrindingBits)
-                                : 0);
+                        (GrindingBits > 0 ?
+                             ((integral_type(1) << GrindingBits) - 1) << (FieldType::modulus_bits - GrindingBits) :
+                             0);
 
                         integral_type result = integral_type(transcript.template challenge<FieldType>().data);
                         return ((result & mask) == 0);

@@ -74,9 +74,9 @@ namespace nil {
                 template<typename CommitmentSchemeType>
                 class kzg_commitment_scheme_v2 :
                         public polys_evaluator<
-                                typename CommitmentSchemeType::params_type,
-                                typename CommitmentSchemeType::commitment_type,
-                                typename CommitmentSchemeType::polynomial_type> {
+                            typename CommitmentSchemeType::params_type,
+                            typename CommitmentSchemeType::commitment_type,
+                            typename CommitmentSchemeType::polynomial_type> {
                 public:
                     static constexpr bool is_kzg() { return true; }
 
@@ -109,16 +109,18 @@ namespace nil {
 
                     using endianness = nil::marshalling::option::big_endian;
                     using field_element_type = nil::crypto3::marshalling::types::field_element<
-                            nil::marshalling::field_type<endianness>,
-                            commitment_type
+                        nil::marshalling::field_type<endianness>,
+                        commitment_type
                     >;
+
                 private:
                     params_type _params;
                     std::map<std::size_t, commitment_type> _commitments;
-                    std::map<std::size_t, std::vector<typename CommitmentSchemeType::single_commitment_type>> _ind_commitments;
+                    std::map<std::size_t, std::vector<typename CommitmentSchemeType::single_commitment_type>>
+                    _ind_commitments;
                     std::vector<typename CommitmentSchemeType::scalar_value_type> _merged_points;
-                protected:
 
+                protected:
                     // Differs from static one by input parameters
                     void merge_eval_points() {
                         std::set<typename CommitmentSchemeType::scalar_value_type> set;
@@ -129,13 +131,12 @@ namespace nil {
                             }
                         }
                         _merged_points = std::vector<typename CommitmentSchemeType::scalar_value_type>(set.begin(),
-                                                                                                       set.end());
+                            set.end());
                     }
 
                     typename math::polynomial<typename CommitmentSchemeType::scalar_value_type>
-                    set_difference_polynom(
-                            std::vector<typename CommitmentSchemeType::scalar_value_type> merged_points,
-                            std::vector<typename CommitmentSchemeType::scalar_value_type> points) {
+                    set_difference_polynom(std::vector<typename CommitmentSchemeType::scalar_value_type> merged_points,
+                                           std::vector<typename CommitmentSchemeType::scalar_value_type> points) {
                         std::sort(merged_points.begin(), merged_points.end());
                         std::sort(points.begin(), points.end());
                         std::vector<typename CommitmentSchemeType::scalar_value_type> result;
@@ -143,7 +144,7 @@ namespace nil {
                                             std::back_inserter(result));
                         if (result.size() == 0) {
                             return typename math::polynomial<typename CommitmentSchemeType::scalar_value_type>(
-                                    {{CommitmentSchemeType::scalar_value_type::one()}});
+                                {{CommitmentSchemeType::scalar_value_type::one()}});
                         }
                         BOOST_ASSERT(this->get_V(result) * this->get_V(points) == this->get_V(merged_points));
                         return this->get_V(result);
@@ -197,8 +198,8 @@ namespace nil {
                         for (std::size_t i = 0; i < this->_polys[index].size(); ++i) {
                             BOOST_ASSERT(this->_polys[index][i].degree() <= _params.commitment_key.size());
                             auto single_commitment = nil::crypto3::zk::algorithms::commit_one<CommitmentSchemeType>(
-                                    _params,
-                                    this->_polys[index][i]);
+                                _params,
+                                this->_polys[index][i]);
                             this->_ind_commitments[index].push_back(single_commitment);
                             nil::marshalling::status_type status;
                             std::vector<uint8_t> single_commitment_bytes =
@@ -229,7 +230,8 @@ namespace nil {
                             update_transcript(k, transcript);
                         }
 
-                        auto theta = transcript.template challenge<typename CommitmentSchemeType::curve_type::scalar_field_type>();
+                        auto theta = transcript.template challenge<typename
+                            CommitmentSchemeType::curve_type::scalar_field_type>();
                         auto theta_i = CommitmentSchemeType::scalar_value_type::one();
                         auto f = math::polynomial<typename CommitmentSchemeType::scalar_value_type>::zero();
 
@@ -238,24 +240,26 @@ namespace nil {
                             for (std::size_t i = 0; i < this->_z.get_batch_size(k); ++i) {
                                 auto diffpoly = set_difference_polynom(_merged_points, this->_points.at(k)[i]);
                                 auto f_i = math::polynomial<typename CommitmentSchemeType::scalar_value_type>(
-                                        this->_polys[k][i].coefficients());
+                                    this->_polys[k][i].coefficients());
                                 f += theta_i * (f_i - this->get_U(k, i)) * diffpoly;
                                 theta_i *= theta;
                             }
                         }
 
                         BOOST_ASSERT(f % this->get_V(_merged_points) ==
-                                     math::polynomial<typename CommitmentSchemeType::scalar_value_type>::zero());
+                            math::polynomial<typename CommitmentSchemeType::scalar_value_type>::zero());
                         f /= this->get_V(_merged_points);
 
-                        typename CommitmentSchemeType::single_commitment_type pi_1 = nil::crypto3::zk::algorithms::commit_one<CommitmentSchemeType>(
-                                _params, f);
+                        typename CommitmentSchemeType::single_commitment_type pi_1 =
+                                nil::crypto3::zk::algorithms::commit_one<CommitmentSchemeType>(
+                                    _params, f);
 
                         transcript(pi_1);
 
                         auto theta_2 = transcript.template challenge<typename curve_type::scalar_field_type>();
                         math::polynomial<typename CommitmentSchemeType::scalar_value_type> theta_2_vanish = {
-                                {-theta_2, CommitmentSchemeType::scalar_value_type::one()}};
+                            {-theta_2, CommitmentSchemeType::scalar_value_type::one()}
+                        };
 
                         theta_i = CommitmentSchemeType::scalar_value_type::one();
 
@@ -267,7 +271,7 @@ namespace nil {
                                 auto diffpoly = set_difference_polynom(_merged_points, this->_points.at(k)[i]);
                                 auto Z_T_S_i = diffpoly.evaluate(theta_2);
                                 auto f_i = math::polynomial<typename CommitmentSchemeType::scalar_value_type>(
-                                        this->_polys[k][i].coefficients());
+                                    this->_polys[k][i].coefficients());
                                 L += theta_i * Z_T_S_i * (f_i - this->get_U(k, i).evaluate(theta_2));
                                 theta_i *= theta;
                             }
@@ -277,8 +281,9 @@ namespace nil {
                         BOOST_ASSERT(L.evaluate(theta_2) == CommitmentSchemeType::scalar_value_type::zero());
                         L /= theta_2_vanish;
 
-                        typename CommitmentSchemeType::single_commitment_type pi_2 = nil::crypto3::zk::algorithms::commit_one<CommitmentSchemeType>(
-                                _params, L);
+                        typename CommitmentSchemeType::single_commitment_type pi_2 =
+                                nil::crypto3::zk::algorithms::commit_one<CommitmentSchemeType>(
+                                    _params, L);
 
                         /* TODO: Review the necessity of sending pi_2 to transcript */
                         transcript(pi_2);
@@ -298,11 +303,13 @@ namespace nil {
                             update_transcript(k, transcript);
                         }
 
-                        auto theta = transcript.template challenge<typename CommitmentSchemeType::curve_type::scalar_field_type>();
+                        auto theta = transcript.template challenge<typename
+                            CommitmentSchemeType::curve_type::scalar_field_type>();
 
                         transcript(proof.pi_1);
 
-                        auto theta_2 = transcript.template challenge<typename CommitmentSchemeType::curve_type::scalar_field_type>();
+                        auto theta_2 = transcript.template challenge<typename
+                            CommitmentSchemeType::curve_type::scalar_field_type>();
                         auto theta_i = CommitmentSchemeType::scalar_value_type::one();
 
                         auto F = CommitmentSchemeType::single_commitment_type::zero();
@@ -323,7 +330,7 @@ namespace nil {
                                         cm_i = nil::marshalling::pack(byteblob, status);
                                 BOOST_ASSERT(status == nil::marshalling::status_type::success);
                                 auto Z_T_S_i = set_difference_polynom(_merged_points, this->_points.at(k)[i]).evaluate(
-                                        theta_2);
+                                    theta_2);
                                 F += theta_i * Z_T_S_i * cm_i;
                                 rsum += theta_i * Z_T_S_i * this->get_U(k, i).evaluate(theta_2);
 
@@ -334,10 +341,12 @@ namespace nil {
                         F -= rsum * CommitmentSchemeType::single_commitment_type::one();
                         F -= this->get_V(_merged_points).evaluate(theta_2) * proof.pi_1;
 
-                        auto left_side_pairing = nil::crypto3::algebra::pair_reduced<typename CommitmentSchemeType::curve_type>
+                        auto left_side_pairing = nil::crypto3::algebra::pair_reduced<typename
+                                    CommitmentSchemeType::curve_type>
                                 (F + theta_2 * proof.pi_2, verification_key_type::one());
 
-                        auto right_side_pairing = nil::crypto3::algebra::pair_reduced<typename CommitmentSchemeType::curve_type>
+                        auto right_side_pairing = nil::crypto3::algebra::pair_reduced<typename
+                                    CommitmentSchemeType::curve_type>
                                 (proof.pi_2, _params.verification_key[1]);
 
                         return left_side_pairing == right_side_pairing;
@@ -347,9 +356,9 @@ namespace nil {
                         return _params;
                     }
                 };
-            }     // namespace commitments
-        }         // namespace zk
-    }             // namespace crypto3
-}    // namespace nil
+            } // namespace commitments
+        } // namespace zk
+    } // namespace crypto3
+} // namespace nil
 
 #endif    // CRYPTO3_ZK_COMMITMENTS_KZG_HPP
