@@ -25,5 +25,4 @@ library in a project it is required to:
 * [Block Ciphers](https://github.com/alloc-init/crypto3-block.git)
 
 ### External
-
 * [Boost](https://boost.org) (>= 1.74)
