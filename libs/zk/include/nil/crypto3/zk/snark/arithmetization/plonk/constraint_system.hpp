@@ -261,8 +261,8 @@ namespace nil {
                             return {this->sorted_lookup_columns_number()};
                         }
 
-                        using VariableType = plonk_variable<typename FieldType::value_type>;
-                        typedef math::expression_max_degree_visitor<VariableType> degree_visitor_type;
+                        using variable_type = plonk_variable<typename FieldType::value_type>;
+                        typedef math::expression_max_degree_visitor<variable_type> degree_visitor_type;
                         std::vector<std::size_t> lookup_parts;
                         degree_visitor_type lookup_visitor;
 

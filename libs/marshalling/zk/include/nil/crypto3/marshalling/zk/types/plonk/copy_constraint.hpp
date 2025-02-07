@@ -30,12 +30,12 @@ namespace nil {
                 fill_plonk_copy_constraint(const nil::crypto3::zk::snark::plonk_copy_constraint<FieldType> &copy_constraint){
                     using TTypeBase = nil::marshalling::field_type<Endianness>;
                     using result_type = plonk_copy_constraint<TTypeBase, FieldType>;
-                    using VariableType = nil::crypto3::zk::snark::plonk_variable<typename FieldType::value_type>;
+                    using variable_type = nil::crypto3::zk::snark::plonk_variable<typename FieldType::value_type>;
 
                     return result_type(
                         std::make_tuple(
-                            fill_variable<Endianness, VariableType>(copy_constraint.first),
-                            fill_variable<Endianness, VariableType>(copy_constraint.second)
+                            fill_variable<Endianness, variable_type>(copy_constraint.first),
+                            fill_variable<Endianness, variable_type>(copy_constraint.second)
                         )
                     );
                 }
@@ -44,10 +44,10 @@ namespace nil {
                 nil::crypto3::zk::snark::plonk_copy_constraint<FieldType>
                 make_plonk_copy_constraint(const plonk_copy_constraint<typename nil::marshalling::field_type<Endianness>, FieldType> &filled_copy_constraint
                 ){
-                    using VariableType = nil::crypto3::zk::snark::plonk_variable<typename FieldType::value_type>;
+                    using variable_type = nil::crypto3::zk::snark::plonk_variable<typename FieldType::value_type>;
                     return nil::crypto3::zk::snark::plonk_copy_constraint<FieldType>(
-                        make_variable<Endianness, VariableType>(std::get<0>(filled_copy_constraint.value())),
-                        make_variable<Endianness, VariableType>(std::get<1>(filled_copy_constraint.value()))
+                        make_variable<Endianness, variable_type>(std::get<0>(filled_copy_constraint.value())),
+                        make_variable<Endianness, variable_type>(std::get<1>(filled_copy_constraint.value()))
                     );
                 }
 

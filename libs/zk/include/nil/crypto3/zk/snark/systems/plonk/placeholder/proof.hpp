@@ -36,7 +36,7 @@ namespace nil {
             namespace snark {
                 constexpr std::size_t FIXED_VALUES_BATCH = 0;
                 constexpr std::size_t VARIABLE_VALUES_BATCH = 1;
-                constexpr std::size_t PERMUTATION_BATCH =2;
+                constexpr std::size_t PERMUTATION_BATCH = 2;
                 constexpr std::size_t QUOTIENT_BATCH = 3;
                 constexpr std::size_t LOOKUP_BATCH = 4;
 
@@ -51,7 +51,7 @@ namespace nil {
                 struct placeholder_proof {
                     static constexpr std::size_t FIXED_VALUES_BATCH = 0;
                     static constexpr std::size_t VARIABLE_VALUES_BATCH = 1;
-                    static constexpr std::size_t PERMUTATION_BATCH =2;
+                    static constexpr std::size_t PERMUTATION_BATCH = 2;
                     static constexpr std::size_t QUOTIENT_BATCH = 3;
                     static constexpr std::size_t LOOKUP_BATCH = 4;
 
@@ -69,7 +69,7 @@ namespace nil {
                         typename commitment_scheme_type::proof_type eval_proof;
 
                         bool operator==(const evaluation_proof &rhs) const {
-                            return challenge == rhs.challenge &&  eval_proof == rhs.eval_proof;
+                            return challenge == rhs.challenge && eval_proof == rhs.eval_proof;
                         }
                         bool operator!=(const evaluation_proof &rhs) const {
                             return !(rhs == *this);
@@ -83,17 +83,15 @@ namespace nil {
                     evaluation_proof eval_proof;
 
                     bool operator==(const placeholder_proof &rhs) const {
-                        return
-                            commitments == rhs.commitments &&
-                            eval_proof == rhs.eval_proof;
+                        return commitments == rhs.commitments && eval_proof == rhs.eval_proof;
                     }
                     bool operator!=(const placeholder_proof &rhs) const {
                         return !(rhs == *this);
                     }
                 };
             }    // namespace snark
-        }        // namespace zk
-    }            // namespace crypto3
+        }    // namespace zk
+    }    // namespace crypto3
 }    // namespace nil
 
 #endif    // CRYPTO3_ZK_PLONK_PLACEHOLDER_PROOF_HPP

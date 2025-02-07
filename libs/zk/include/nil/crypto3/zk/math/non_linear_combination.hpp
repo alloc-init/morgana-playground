@@ -45,15 +45,16 @@ namespace nil {
             template<typename VariableType>
             struct non_linear_combination {
 
-                using term_type = term<VariableType>;
-                using variable_type = VariableType;
-                using assignment_type = typename VariableType::assignment_type;
+                typedef VariableType variable_type;
+
+                using term_type = term<variable_type>;
+                using assignment_type = typename variable_type::assignment_type;
 
                 std::vector<term_type> terms;
 
-                non_linear_combination() {};
+                non_linear_combination() { };
 
-                non_linear_combination(const VariableType &var) {
+                non_linear_combination(const variable_type &var) {
                     this->add_term(var);
                 }
 
@@ -73,17 +74,17 @@ namespace nil {
                     return terms.end();
                 }
 
-                void add_term(const VariableType &var) {
+                void add_term(const variable_type &var) {
                     this->terms.emplace_back(term_type(var));
                 }
-                void add_term(const VariableType &var, const typename VariableType::assignment_type &field_coeff) {
+                void add_term(const variable_type &var, const typename variable_type::assignment_type &field_coeff) {
                     this->terms.emplace_back(term_type(var) * field_coeff);
                 }
                 void add_term(const term_type &nlt) {
                     this->terms.emplace_back(nlt);
                 }
 
-                non_linear_combination operator*(const typename VariableType::assignment_type &field_coeff) const {
+                non_linear_combination operator*(const typename variable_type::assignment_type &field_coeff) const {
                     non_linear_combination result;
                     result.terms.reserve(this->terms.size());
                     for (const term_type &nlt : this->terms) {
@@ -104,9 +105,9 @@ namespace nil {
                     return (*this) + (-other);
                 }
                 non_linear_combination operator-() const {
-                    return (*this) * (-VariableType::assignment_type::one());
+                    return (*this) * (-variable_type::assignment_type::one());
                 }
-                
+
                 std::size_t max_degree() const {
                     std::size_t max_degree = 0;
                     for (const term_type &nlt : this->terms) {
@@ -116,7 +117,8 @@ namespace nil {
                 }
 
                 void sort_terms_by_degree() {
-                    std::sort(this->terms.begin(), this->terms.end(),[](term_type const& left, term_type const& right) {
+                    std::sort(
+                        this->terms.begin(), this->terms.end(), [](term_type const &left, term_type const &right) {
                             return left.get_vars().size() > right.get_vars().size();
                         });
                 }
@@ -124,7 +126,7 @@ namespace nil {
                 // Merges equal terms, and if some term has coefficient of 0, removes it.
                 void merge_equal_terms() {
                     std::unordered_map<term_type, assignment_type> unique_terms;
-                    for (const auto& term: this->terms) {
+                    for (const auto &term : this->terms) {
                         // Create a new term with variables only.
                         term_type vars(term.get_vars());
                         auto it = unique_terms.find(vars);
@@ -135,13 +137,13 @@ namespace nil {
                         }
                     }
                     this->terms.clear();
-                    for (const auto& it: unique_terms) {
+                    for (const auto &it : unique_terms) {
                         if (it.second != assignment_type::zero()) {
                             this->terms.emplace_back(it.first.get_vars(), it.second);
                         }
                     }
                 }
-                
+
                 bool operator==(const non_linear_combination &other) const {
                     if (this->terms.size() != other.terms.size())
                         return false;
@@ -149,7 +151,7 @@ namespace nil {
                     // Put both terms and other->terms into a hashmap, and check if
                     // everything is equal.
                     std::unordered_map<term_type, int> terms_map;
-                    for (const auto& term: this->terms) {
+                    for (const auto &term : this->terms) {
                         auto iter = terms_map.find(term);
                         if (iter != terms_map.end()) {
                             iter->second++;
@@ -158,7 +160,7 @@ namespace nil {
                         }
                     }
 
-                    for (const auto& term: other.terms) {
+                    for (const auto &term : other.terms) {
                         auto iter = terms_map.find(term);
                         if (iter != terms_map.end()) {
                             iter->second--;
@@ -167,7 +169,7 @@ namespace nil {
                         }
                     }
 
-                    for (const auto& entry: terms_map) {
+                    for (const auto &entry : terms_map) {
                         if (entry.second != 0)
                             return false;
                     }
@@ -175,108 +177,102 @@ namespace nil {
                 }
             };
 
-            template<typename VariableType>
-            non_linear_combination<VariableType>
-                operator*(const typename VariableType::assignment_type &field_coeff,
-                          const non_linear_combination<VariableType> &lc) {
+            template<typename variable_type>
+            non_linear_combination<variable_type> operator*(const typename variable_type::assignment_type &field_coeff,
+                                                            const non_linear_combination<variable_type> &lc) {
                 return lc * field_coeff;
             }
 
-            template<typename VariableType>
-            non_linear_combination<VariableType> operator*(const non_linear_combination<VariableType> &A,
-                                                           const non_linear_combination<VariableType> &B) {
-                non_linear_combination<VariableType> result;
+            template<typename variable_type>
+            non_linear_combination<variable_type> operator*(const non_linear_combination<variable_type> &A,
+                                                            const non_linear_combination<variable_type> &B) {
+                non_linear_combination<variable_type> result;
                 result.terms.reserve(A.terms.size() * B.terms.size());
 
-                for (const typename non_linear_combination<VariableType>::term_type &this_nlt : A.terms) {
-                    for (const typename non_linear_combination<VariableType>::term_type &other_nlt : B.terms) {
+                for (const typename non_linear_combination<variable_type>::term_type &this_nlt : A.terms) {
+                    for (const typename non_linear_combination<variable_type>::term_type &other_nlt : B.terms) {
                         result.terms.emplace_back(this_nlt * other_nlt);
                     }
                 }
                 return result;
             }
 
-            template<typename VariableType>
-            non_linear_combination<VariableType> operator*(const VariableType &var,
-                                                           const non_linear_combination<VariableType> &A) {
-                non_linear_combination<VariableType> result;
+            template<typename variable_type>
+            non_linear_combination<variable_type> operator*(const variable_type &var,
+                                                            const non_linear_combination<variable_type> &A) {
+                non_linear_combination<variable_type> result;
                 result.terms.reserve(A.terms.size());
 
-                for (const typename non_linear_combination<VariableType>::term_type &this_nlt : A.terms) {
+                for (const typename non_linear_combination<variable_type>::term_type &this_nlt : A.terms) {
                     result.terms.emplace_back(this_nlt * var);
                 }
                 return result;
             }
 
-            template<typename VariableType>
-            non_linear_combination<VariableType> operator*(const non_linear_combination<VariableType> &A,
-                                                           const VariableType &var) {
-                non_linear_combination<VariableType> result;
+            template<typename variable_type>
+            non_linear_combination<variable_type> operator*(const non_linear_combination<variable_type> &A,
+                                                            const variable_type &var) {
+                non_linear_combination<variable_type> result;
                 result.terms.reserve(A.terms.size());
 
-                for (const typename non_linear_combination<VariableType>::term_type &this_nlt : A.terms) {
+                for (const typename non_linear_combination<variable_type>::term_type &this_nlt : A.terms) {
                     result.terms.emplace_back(this_nlt * var);
                 }
                 return result;
             }
 
-            template<typename VariableType>
-            non_linear_combination<VariableType>
-                operator+(const typename VariableType::assignment_type &field_coeff,
-                          const non_linear_combination<VariableType> &lc) {
-                return non_linear_combination<VariableType>(field_coeff) + lc;
+            template<typename variable_type>
+            non_linear_combination<variable_type> operator+(const typename variable_type::assignment_type &field_coeff,
+                                                            const non_linear_combination<variable_type> &lc) {
+                return non_linear_combination<variable_type>(field_coeff) + lc;
             }
 
-            template<typename VariableType>
-            non_linear_combination<VariableType>
-                operator+(const term<VariableType> &nlt,
-                          const non_linear_combination<VariableType> &lc) {
-                return non_linear_combination<VariableType>(nlt) + lc;
+            template<typename variable_type>
+            non_linear_combination<variable_type> operator+(const term<variable_type> &nlt,
+                                                            const non_linear_combination<variable_type> &lc) {
+                return non_linear_combination<variable_type>(nlt) + lc;
             }
 
-            template<typename VariableType>
-            non_linear_combination<VariableType>
-                operator+(const non_linear_combination<VariableType> &lc,
-                          const typename VariableType::assignment_type &field_coeff) {
+            template<typename variable_type>
+            non_linear_combination<variable_type>
+                operator+(const non_linear_combination<variable_type> &lc,
+                          const typename variable_type::assignment_type &field_coeff) {
 
                 return field_coeff + lc;
             }
 
-            template<typename VariableType>
-            non_linear_combination<VariableType>
-                operator-(const typename VariableType::assignment_type &field_coeff,
-                          const non_linear_combination<VariableType> &lc) {
-                return non_linear_combination<VariableType>(field_coeff) - lc;
+            template<typename variable_type>
+            non_linear_combination<variable_type> operator-(const typename variable_type::assignment_type &field_coeff,
+                                                            const non_linear_combination<variable_type> &lc) {
+                return non_linear_combination<variable_type>(field_coeff) - lc;
             }
 
-            template<typename VariableType>
-            non_linear_combination<VariableType>
-                operator-(const non_linear_combination<VariableType> &lc,
-                          const typename VariableType::assignment_type &field_coeff) {
+            template<typename variable_type>
+            non_linear_combination<variable_type>
+                operator-(const non_linear_combination<variable_type> &lc,
+                          const typename variable_type::assignment_type &field_coeff) {
 
                 return -(field_coeff - lc);
             }
 
-            template<typename VariableType>
-            non_linear_combination<VariableType>
-                operator-(const term<VariableType> &term,
-                          const non_linear_combination<VariableType> &lc) {
-                return non_linear_combination<VariableType>(term) - lc;
+            template<typename variable_type>
+            non_linear_combination<variable_type> operator-(const term<variable_type> &term,
+                                                            const non_linear_combination<variable_type> &lc) {
+                return non_linear_combination<variable_type>(term) - lc;
             }
 
-            template<typename VariableType>
-            non_linear_combination<VariableType>
-                operator-(const non_linear_combination<VariableType> &lc,
-                    const term<VariableType> &term) {
-                return lc - non_linear_combination<VariableType>(term);
+            template<typename variable_type>
+            non_linear_combination<variable_type> operator-(const non_linear_combination<variable_type> &lc,
+                                                            const term<variable_type> &term) {
+                return lc - non_linear_combination<variable_type>(term);
             }
 
             // Used in the unit tests, so we can use BOOST_CHECK_EQUALS, and see
             // the values of terms, when the check fails.
-            template<typename VariableType>
-            std::ostream& operator<<(std::ostream& os, const non_linear_combination<VariableType> &comb) {
+            template<typename variable_type>
+            std::ostream &operator<<(std::ostream &os, const non_linear_combination<variable_type> &comb) {
                 bool first = true;
-                for (const auto& term: comb.terms) {
+                for (const auto &term : comb.terms) {
                     if (!first)
                         os << " + ";
                     os << term;
@@ -286,7 +282,7 @@ namespace nil {
             }
 
         }    // namespace math
-    }            // namespace crypto3
+    }    // namespace crypto3
 }    // namespace nil
 
 #endif    // CRYPTO3_ZK_MATH_NON_LINEAR_COMBINATION_HPP

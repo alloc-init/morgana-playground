@@ -38,13 +38,13 @@ namespace nil {
             /**
              * Forward declaration.
              */
-            template<typename VariableType>
+            template<typename variable_type>
             class linear_term;
 
             /**
              * Forward declaration.
              */
-            template<typename VariableType>
+            template<typename variable_type>
             class linear_combination;
 
             /********************************* Variable **********************************/

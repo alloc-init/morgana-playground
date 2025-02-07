@@ -222,6 +222,7 @@ namespace nil {
                             return res.digest();
                         } else {
                             BOOST_ASSERT_MSG(false, "Unknown construction");
+                            return {};
                         }
                     }
 

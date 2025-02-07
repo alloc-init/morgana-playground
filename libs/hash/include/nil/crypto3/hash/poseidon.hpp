@@ -40,9 +40,9 @@ namespace nil {
 #else
             template<typename PolicyType>
             class poseidon {
+            public:
                 typedef PolicyType policy_type;
 
-            public:
                 typedef typename policy_type::word_type word_type;
                 constexpr static const std::size_t word_bits = policy_type::word_bits;
 
@@ -66,9 +66,9 @@ namespace nil {
 
             template<typename PolicyType>
             class original_poseidon {
+            public:
                 typedef PolicyType policy_type;
 
-            public:
                 typedef typename policy_type::word_type word_type;
                 constexpr static const std::size_t word_bits = policy_type::word_bits;
 

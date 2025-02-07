@@ -59,8 +59,8 @@ namespace nil {
                 std::size_t index;
                 field_value_type coeff;
 
-                linear_term() {};
-                linear_term(const VariableType &var) : index(var.index), coeff(field_value_type::one()) {
+                linear_term() { };
+                linear_term(const variable_type &var) : index(var.index), coeff(field_value_type::one()) {
                 }
 
                 linear_term operator*(const field_value_type &field_coeff) const {
@@ -90,7 +90,7 @@ namespace nil {
 
             template<typename VariableType>
             linear_term<VariableType> operator*(const typename VariableType::value_type &field_coeff,
-                                                              const linear_term<VariableType> &lt) {
+                                                const linear_term<VariableType> &lt) {
                 return lt * field_coeff;
             }
 
@@ -120,20 +120,22 @@ namespace nil {
                 constexpr static const bool RotationSupport = false;
 
             public:
-                typedef typename VariableType::field_type field_type;
+                typedef VariableType variable_type;
+
+                typedef typename variable_type::field_type field_type;
                 std::vector<linear_term<VariableType>> terms;
 
-                linear_combination() {};
+                linear_combination() { };
                 linear_combination(const field_value_type &field_coeff) {
-                    this->add_term(linear_term<VariableType>(0) * field_coeff);
+                    this->add_term(linear_term<variable_type>(0) * field_coeff);
                 }
-                linear_combination(const VariableType &var) {
+                linear_combination(const variable_type &var) {
                     this->add_term(var);
                 }
-                linear_combination(const linear_term<VariableType> &lt) {
+                linear_combination(const linear_term<variable_type> &lt) {
                     this->add_term(lt);
                 }
-                linear_combination(const std::vector<linear_term<VariableType>> &all_terms) {
+                linear_combination(const std::vector<linear_term<variable_type>> &all_terms) {
                     if (all_terms.empty()) {
                         return;
                     }
@@ -141,9 +143,7 @@ namespace nil {
                     terms = all_terms;
                     std::sort(
                         terms.begin(), terms.end(),
-                        [](linear_term<VariableType> a, linear_term<VariableType> b) {
-                            return a.index < b.index;
-                        });
+                        [](linear_term<variable_type> a, linear_term<variable_type> b) { return a.index < b.index; });
 
                     auto result_it = terms.begin();
                     for (auto it = ++terms.begin(); it != terms.end(); ++it) {
@@ -157,22 +157,21 @@ namespace nil {
                 }
 
                 /* for supporting range-based for loops over linear_combination */
-                typename std::vector<linear_term<VariableType>>::const_iterator begin() const {
+                typename std::vector<linear_term<variable_type>>::const_iterator begin() const {
                     return terms.begin();
                 }
 
-                typename std::vector<linear_term<VariableType>>::const_iterator end() const {
+                typename std::vector<linear_term<variable_type>>::const_iterator end() const {
                     return terms.end();
                 }
 
-                void add_term(const VariableType &var) {
-                    this->terms.emplace_back(linear_term<VariableType>(var));
+                void add_term(const variable_type &var) {
+                    this->terms.emplace_back(linear_term<variable_type>(var));
                 }
-                void add_term(const VariableType &var,
-                              const field_value_type &field_coeff) {
-                    this->terms.emplace_back(linear_term<VariableType>(var) * field_coeff);
+                void add_term(const variable_type &var, const field_value_type &field_coeff) {
+                    this->terms.emplace_back(linear_term<variable_type>(var) * field_coeff);
                 }
-                void add_term(const linear_term<VariableType> &lt) {
+                void add_term(const linear_term<variable_type> &lt) {
                     this->terms.emplace_back(lt);
                 }
 
@@ -209,8 +208,7 @@ namespace nil {
                             ++it2;
                         } else {
                             /* it1->index == it2->index */
-                            result.terms.emplace_back(linear_term<VariableType>(
-                                                          VariableType(it1->index)) *
+                            result.terms.emplace_back(linear_term<VariableType>(VariableType(it1->index)) *
                                                       (it1->coeff + it2->coeff));
                             ++it1;
                             ++it2;
@@ -234,19 +232,15 @@ namespace nil {
 
                 bool operator==(const linear_combination &other) const {
 
-                    std::vector<linear_term<VariableType>> thisterms = this->terms;
+                    std::vector<linear_term<variable_type>> thisterms = this->terms;
                     std::sort(
                         thisterms.begin(), thisterms.end(),
-                        [](linear_term<VariableType> a, linear_term<VariableType> b) {
-                            return a.index < b.index;
-                        });
+                        [](linear_term<variable_type> a, linear_term<variable_type> b) { return a.index < b.index; });
 
-                    std::vector<linear_term<VariableType>> otherterms = other.terms;
+                    std::vector<linear_term<variable_type>> otherterms = other.terms;
                     std::sort(
                         otherterms.begin(), otherterms.end(),
-                        [](linear_term<VariableType> a, linear_term<VariableType> b) {
-                            return a.index < b.index;
-                        });
+                        [](linear_term<variable_type> a, linear_term<variable_type> b) { return a.index < b.index; });
 
                     return (thisterms == otherterms);
                 }
@@ -270,27 +264,24 @@ namespace nil {
             };
 
             template<typename VariableType>
-            linear_combination<VariableType>
-                operator*(const typename VariableType::value_type &field_coeff,
-                          const linear_combination<VariableType> &lc) {
+            linear_combination<VariableType> operator*(const typename VariableType::value_type &field_coeff,
+                                                       const linear_combination<VariableType> &lc) {
                 return lc * field_coeff;
             }
 
             template<typename VariableType>
-            linear_combination<VariableType>
-                operator+(const typename VariableType::value_type &field_coeff,
-                          const linear_combination<VariableType> &lc) {
+            linear_combination<VariableType> operator+(const typename VariableType::value_type &field_coeff,
+                                                       const linear_combination<VariableType> &lc) {
                 return linear_combination<VariableType>(field_coeff) + lc;
             }
 
             template<typename VariableType>
-            linear_combination<VariableType>
-                operator-(const typename VariableType::value_type &field_coeff,
-                          const linear_combination<VariableType> &lc) {
+            linear_combination<VariableType> operator-(const typename VariableType::value_type &field_coeff,
+                                                       const linear_combination<VariableType> &lc) {
                 return linear_combination<VariableType>(field_coeff) - lc;
             }
         }    // namespace math
-    }            // namespace crypto3
+    }    // namespace crypto3
 }    // namespace nil
 
 #endif    // CRYPTO3_ZK_MATH_LINEAR_COMBINATION_HPP

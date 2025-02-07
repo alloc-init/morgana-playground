@@ -42,8 +42,8 @@ namespace nil {
             struct functional_key {
                 typedef SchemeType scheme_type;
             };
-        }    // namespace pubkey
-    }        // namespace crypto3
-}    // namespace nil
+        } // namespace pubkey
+    } // namespace crypto3
+} // namespace nil
 
 #endif    // CRYPTO3_PUBKEY_PUBLIC_KEY_HPP

@@ -44,13 +44,13 @@ namespace nil {
             /**
              * Forward declaration.
              */
-            template<typename VariableType>
+            template<typename variable_type>
             class term;
 
             /**
              * Forward declaration.
              */
-            template<typename VariableType>
+            template<typename variable_type>
             class expression;
         }    // namespace math
 

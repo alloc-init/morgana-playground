@@ -45,8 +45,8 @@ namespace nil {
                 struct variable;
                 
                 //********************************* plonk_variable ***************************/
-                template<typename TTypeBase, typename VariableType>
-                struct variable<TTypeBase, VariableType> {
+                template<typename TTypeBase, typename variable_type>
+                struct variable<TTypeBase, variable_type> {
                     using type = nil::marshalling::types::bundle<
                         TTypeBase,
                         std::tuple<
@@ -90,10 +90,10 @@ namespace nil {
                 }
 
                 //****************** vector of plonk_variable *************************/
-                template<typename TTypeBase, typename VariableType>
+                template<typename TTypeBase, typename variable_type>
                 using variables = nil::marshalling::types::array_list<
                     TTypeBase, 
-                    typename variable<TTypeBase, VariableType>::type,
+                    typename variable<TTypeBase, variable_type>::type,
                     nil::marshalling::option::sequence_size_field_prefix<nil::marshalling::types::integral<TTypeBase, std::size_t>>
                 >;
 

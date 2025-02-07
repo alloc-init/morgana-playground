@@ -34,27 +34,27 @@ namespace nil {
     namespace crypto3 {
         namespace math {
             // Used for counting max degree of an expression.
-            template<typename VariableType>
+            template<typename variable_type>
             class expression_max_degree_visitor : public boost::static_visitor<std::uint32_t> {
             public:
                 expression_max_degree_visitor() {}
 
-                std::uint32_t compute_max_degree(const math::expression<VariableType>& expr) {
+                std::uint32_t compute_max_degree(const math::expression<variable_type>& expr) {
                     return boost::apply_visitor(*this, expr.get_expr());
                 }
 
-                std::uint32_t operator()(const math::term<VariableType>& term) {
+                std::uint32_t operator()(const math::term<variable_type>& term) {
                     return term.get_vars().size();
                 }
 
                 std::uint32_t operator()(
-                        const math::pow_operation<VariableType>& pow) {
+                        const math::pow_operation<variable_type>& pow) {
                     std::uint32_t result = boost::apply_visitor(*this, pow.get_expr().get_expr());
                     return result * pow.get_power();
                 }
 
                 std::uint32_t operator()(
-                        const math::binary_arithmetic_operation<VariableType>& op) {
+                        const math::binary_arithmetic_operation<variable_type>& op) {
                     std::uint32_t left = boost::apply_visitor(*this, op.get_expr_left().get_expr());
                     std::uint32_t right = boost::apply_visitor(*this, op.get_expr_right().get_expr());
                     switch (op.get_op()) {
@@ -72,64 +72,64 @@ namespace nil {
             // Runs over the variables of an expression, calling the given callback function
             // for each variable. If a given variable is used multiple times,
             // the callback is called multiple times.
-            template<typename VariableType>
+            template<typename variable_type>
             class expression_for_each_variable_visitor : public boost::static_visitor<void> {
             public:
                 expression_for_each_variable_visitor(
-                        std::function<void(const VariableType&)> callback)
+                        std::function<void(const variable_type&)> callback)
                     : callback(callback) {}
 
-                void visit(const math::expression<VariableType>& expr) {
+                void visit(const math::expression<variable_type>& expr) {
                     boost::apply_visitor(*this, expr.get_expr());
                 }
 
-                void operator()(const math::term<VariableType>& term) {
+                void operator()(const math::term<variable_type>& term) {
                     for (const auto& var: term.get_vars()) {
                         callback(var);
                     }
                 }
 
                 void operator()(
-                        const math::pow_operation<VariableType>& pow) {
+                        const math::pow_operation<variable_type>& pow) {
                     boost::apply_visitor(*this, pow.get_expr().get_expr());
                 }
 
-                void operator()(const math::binary_arithmetic_operation<VariableType>& op) {
+                void operator()(const math::binary_arithmetic_operation<variable_type>& op) {
                     boost::apply_visitor(*this, op.get_expr_left().get_expr());
                     boost::apply_visitor(*this, op.get_expr_right().get_expr());
                 }
 
                 private:
-                    std::function<void(const VariableType&)> callback;
+                    std::function<void(const variable_type&)> callback;
             };
 
             // Converts tree-structured expression to flat one, a vector of terms.
             // Used for generating solidity code for constraints, because we want
             // to use minimal number of variables in the stack.
-            template<typename VariableType>
+            template<typename variable_type>
             class expression_to_non_linear_combination_visitor
-                : public boost::static_visitor<math::non_linear_combination<VariableType>> {
+                : public boost::static_visitor<math::non_linear_combination<variable_type>> {
             public:
                 expression_to_non_linear_combination_visitor() {}
 
-                math::non_linear_combination<VariableType> convert(
-                        const math::expression<VariableType>& expr) {
-                    math::non_linear_combination<VariableType> result =
+                math::non_linear_combination<variable_type> convert(
+                        const math::expression<variable_type>& expr) {
+                    math::non_linear_combination<variable_type> result =
                         boost::apply_visitor(*this, expr.get_expr());
                     result.merge_equal_terms();
                     return result;
                 }
 
-                math::non_linear_combination<VariableType> operator()(
-                        const math::term<VariableType>& term) {
-                    return math::non_linear_combination<VariableType>(term);
+                math::non_linear_combination<variable_type> operator()(
+                        const math::term<variable_type>& term) {
+                    return math::non_linear_combination<variable_type>(term);
                 }
 
-                math::non_linear_combination<VariableType> operator()(
-                        const math::pow_operation<VariableType>& pow) {
-                    math::non_linear_combination<VariableType> base = boost::apply_visitor(
+                math::non_linear_combination<variable_type> operator()(
+                        const math::pow_operation<variable_type>& pow) {
+                    math::non_linear_combination<variable_type> base = boost::apply_visitor(
                         *this, pow.get_expr().get_expr());
-                    math::non_linear_combination<VariableType> result = base;
+                    math::non_linear_combination<variable_type> result = base;
 
                     // It does not matter how we compute power here.
                     for (int i = 1; i < pow.get_power(); ++i)
@@ -139,11 +139,11 @@ namespace nil {
                     return result;
                 }
 
-                math::non_linear_combination<VariableType> operator()(
-                        const math::binary_arithmetic_operation<VariableType>& op) {
-                    math::non_linear_combination<VariableType> left =
+                math::non_linear_combination<variable_type> operator()(
+                        const math::binary_arithmetic_operation<variable_type>& op) {
+                    math::non_linear_combination<variable_type> left =
                         boost::apply_visitor(*this, op.get_expr_left().get_expr());
-                    math::non_linear_combination<VariableType> right =
+                    math::non_linear_combination<variable_type> right =
                         boost::apply_visitor(*this, op.get_expr_right().get_expr());
                     switch (op.get_op()) {
                         case ArithmeticOperator::ADD:

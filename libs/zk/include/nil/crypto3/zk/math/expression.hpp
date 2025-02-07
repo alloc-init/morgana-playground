@@ -42,13 +42,7 @@ namespace nil {
     namespace crypto3 {
         namespace math {
 
-            enum class ArithmeticOperator : std::uint8_t
-            {
-                ADD = 0,
-                SUB = 1,
-                MULT = 2
-            };
-
+            enum class ArithmeticOperator : std::uint8_t { ADD = 0, SUB = 1, MULT = 2 };
 
             /******************* Forward declarations of all the classes ******************/
             template<typename VariableType>
@@ -69,39 +63,33 @@ namespace nil {
             class expression {
             public:
                 // Theese typedefs are useful for usage in marshalling, for support of actor version.
-                typedef term<VariableType> term_type;
-                typedef pow_operation<VariableType> pow_operation_type;
-                typedef binary_arithmetic_operation<VariableType> binary_arithmetic_operation_type;
                 typedef VariableType variable_type;
-                typedef typename VariableType::assignment_type assignment_type;
+                typedef term<variable_type> term_type;
+                typedef pow_operation<variable_type> pow_operation_type;
+                typedef binary_arithmetic_operation<variable_type> binary_arithmetic_operation_type;
+                typedef typename variable_type::assignment_type assignment_type;
 
                 // We intentionally don't add variable_type and assignment_type here,
                 // They must be converted to term<VariableType> before being used.
-                typedef boost::variant<
-                    boost::recursive_wrapper<term<VariableType>>,
-                    boost::recursive_wrapper<pow_operation<VariableType>>,
-                    boost::recursive_wrapper<binary_arithmetic_operation<VariableType>>
-                    > expression_type;
+                typedef boost::variant<boost::recursive_wrapper<term<variable_type>>,
+                                       boost::recursive_wrapper<pow_operation<variable_type>>,
+                                       boost::recursive_wrapper<binary_arithmetic_operation<variable_type>>>
+                    expression_type;
 
-                expression()
-                    : expr(term<VariableType>(assignment_type::zero())) {
+                expression() : expr(term<variable_type>(assignment_type::zero())) {
                     update_hash();
                 }
 
-                expression(const term<VariableType> &expr)
-                  : expr(expr) {
+                expression(const term<variable_type>& expr) : expr(expr) {
                     update_hash();
                 }
-                expression(const pow_operation<VariableType> &expr)
-                  : expr(expr) {
+                expression(const pow_operation<variable_type>& expr) : expr(expr) {
                     update_hash();
                 }
-                expression(const binary_arithmetic_operation<VariableType> &expr)
-                  : expr(expr) {
+                expression(const binary_arithmetic_operation<variable_type>& expr) : expr(expr) {
                     update_hash();
                 }
-                expression(const VariableType &var)
-                  : expr(term<VariableType>(var)) {
+                expression(const variable_type& var) : expr(term<variable_type>(var)) {
                     update_hash();
                 }
 
@@ -109,37 +97,35 @@ namespace nil {
                 // if it can be converted to 'assignment_type'.
                 // This will include integral types and number<cpp_int_backend<...>>
                 template<class NumberType>
-                expression(const NumberType &coeff)
-                  : expr(term<VariableType>((assignment_type)coeff)) {
+                expression(const NumberType& coeff) : expr(term<variable_type>((assignment_type)coeff)) {
                     update_hash();
                 }
 
-                expression(const expression<VariableType>& other) = default;
-                expression(expression<VariableType>&& other) = default;
-                expression<VariableType>& operator=(const expression<VariableType>& other) = default;
-                expression<VariableType>& operator=(expression<VariableType>&& other) = default;
+                expression(const expression<variable_type>& other) = default;
+                expression(expression<variable_type>&& other) = default;
+                expression<variable_type>& operator=(const expression<variable_type>& other) = default;
+                expression<variable_type>& operator=(expression<variable_type>&& other) = default;
 
-                expression<VariableType> pow(const std::size_t power) const;
-                expression<VariableType> operator-() const;
+                expression<variable_type> pow(const std::size_t power) const;
+                expression<variable_type> operator-() const;
 
                 // Operations between 2 expressions. Everything else is implicitly converted
                 // to expression class.
-                expression<VariableType>& operator+=(const expression<VariableType>& other);
-                expression<VariableType>& operator-=(const expression<VariableType>& other);
-                expression<VariableType>& operator*=(const expression<VariableType>& other);
+                expression<variable_type>& operator+=(const expression<variable_type>& other);
+                expression<variable_type>& operator-=(const expression<variable_type>& other);
+                expression<variable_type>& operator*=(const expression<variable_type>& other);
 
-                expression<VariableType> operator+(const expression<VariableType>& other) const;
-                expression<VariableType> operator-(const expression<VariableType>& other) const;
-                expression<VariableType> operator*(const expression<VariableType>& other) const;
-
+                expression<variable_type> operator+(const expression<variable_type>& other) const;
+                expression<variable_type> operator-(const expression<variable_type>& other) const;
+                expression<variable_type> operator*(const expression<variable_type>& other) const;
 
                 bool is_empty() const {
-                    return *this == term<VariableType>(assignment_type::zero());
+                    return *this == term<variable_type>(assignment_type::zero());
                 }
 
                 // Used for testing purposes. Checks for EXACT EQUALITY ONLY, no isomorphism!!!
-                bool operator==(const expression<VariableType>& other) const;
-                bool operator!=(const expression<VariableType>& other) const;
+                bool operator==(const expression<variable_type>& other) const;
+                bool operator!=(const expression<variable_type>& other) const;
 
                 const expression_type& get_expr() const {
                     return expr;
@@ -154,20 +140,20 @@ namespace nil {
                 void update_hash() {
                     switch (expr.which()) {
                         case 0:
-                            hash = boost::get<term<VariableType>>(expr).get_hash();
+                            hash = boost::get<term<variable_type>>(expr).get_hash();
                             break;
                         case 1:
-                            hash = boost::get<pow_operation<VariableType>>(expr).get_hash();
+                            hash = boost::get<pow_operation<variable_type>>(expr).get_hash();
                             break;
                         case 2:
-                            hash = boost::get<binary_arithmetic_operation<VariableType>>(expr).get_hash();
+                            hash = boost::get<binary_arithmetic_operation<variable_type>>(expr).get_hash();
                             break;
                     }
                 }
 
             private:
-                // This is private, and we need to be very careful to make sure we recompute the hash value every time this
-                // is changed through a non-const function.
+                // This is private, and we need to be very careful to make sure we recompute the hash value every time
+                // this is changed through a non-const function.
                 expression_type expr;
 
                 // We will store the hash value. This is faster that computing it
@@ -175,23 +161,22 @@ namespace nil {
                 std::size_t hash;
             };
 
-
             /**
              * A Non-Linear term represents a formal expression of the form
              * "coeff * w^{wire_index_1}_{rotation_1} * ... * w^{wire_index_k}_{rotation_k}", where
              * the values of w^{wire_index_1}_{rotation_1} can repeat.
              */
             template<typename VariableType>
-            class term  {
+            class term {
             public:
                 typedef VariableType variable_type;
-                typedef typename VariableType::assignment_type assignment_type;
+                typedef typename variable_type::assignment_type assignment_type;
 
                 term() : coeff(assignment_type::zero()) {
                     update_hash();
                 }
 
-                term(const VariableType &var) : coeff(assignment_type::one()) {
+                term(const variable_type& var) : coeff(assignment_type::one()) {
                     vars.push_back(var);
                     update_hash();
                 }
@@ -200,29 +185,22 @@ namespace nil {
                 // if it can be converted to 'assignment_type'.
                 // This will include integral types and number<cpp_int_backend<...>>
                 template<class NumberType>
-                term(const NumberType &field_val) : coeff(field_val) {
+                term(const NumberType& field_val) : coeff(field_val) {
                     update_hash();
                 }
 
-                term(const std::vector<VariableType> &vars,
-                     const assignment_type &coeff)
-                    : vars(vars)
-                    , coeff(coeff)
-                {
+                term(const std::vector<variable_type>& vars, const assignment_type& coeff) : vars(vars), coeff(coeff) {
                     update_hash();
                 }
 
-                term(const std::vector<VariableType> &vars)
-                    : vars(vars)
-                    , coeff(assignment_type::one())
-                {
+                term(const std::vector<variable_type>& vars) : vars(vars), coeff(assignment_type::one()) {
                     update_hash();
                 }
 
-                term(const term<VariableType>& other) = default;
-                term(term<VariableType>&& other) = default;
-                term<VariableType>& operator=(const term<VariableType>& other) = default;
-                term<VariableType>& operator=(term<VariableType>&& other) = default;
+                term(const term<variable_type>& other) = default;
+                term(term<variable_type>&& other) = default;
+                term<variable_type>& operator=(const term<variable_type>& other) = default;
+                term<variable_type>& operator=(term<variable_type>&& other) = default;
 
                 bool is_zero() const {
                     return coeff == assignment_type::zero();
@@ -230,15 +208,15 @@ namespace nil {
 
                 // This operator will also allow multiplication with VariableType and assignment_type
                 // via an implicit conversion to term.
-                term<VariableType> operator*(const term<VariableType> &other) const;
-                expression<VariableType> operator+(const term<VariableType> &other) const;
-                expression<VariableType> operator-(const term<VariableType> &other) const;
+                term<variable_type> operator*(const term<variable_type>& other) const;
+                expression<variable_type> operator+(const term<variable_type>& other) const;
+                expression<variable_type> operator-(const term<variable_type>& other) const;
 
-                expression<VariableType> pow(const std::size_t power) const;
+                expression<variable_type> pow(const std::size_t power) const;
                 term operator-() const;
 
-                bool operator==(const term<VariableType>& other) const;
-                bool operator!=(const term<VariableType>& other) const;
+                bool operator==(const term<variable_type>& other) const;
+                bool operator!=(const term<variable_type>& other) const;
 
                 // Used for debugging, to be able to see what's inside the term.
                 std::string to_string() const;
@@ -252,13 +230,13 @@ namespace nil {
                 }
 
                 void update_hash() {
-                    std::hash<VariableType> vars_hasher;
-                    std::hash<typename VariableType::assignment_type> coeff_hasher;
+                    std::hash<variable_type> vars_hasher;
+                    std::hash<typename variable_type::assignment_type> coeff_hasher;
 
                     std::size_t result = coeff_hasher(coeff);
                     auto vars_sorted = vars;
                     sort(vars_sorted.begin(), vars_sorted.end());
-                    for (const auto& var: vars_sorted) {
+                    for (const auto& var : vars_sorted) {
                         boost::hash_combine(result, vars_hasher(var));
                     }
                     hash = result;
@@ -273,8 +251,8 @@ namespace nil {
                 }
 
             private:
-                // This is private, and we need to be very careful to make sure we recompute the hash value every time this
-                // is changed through a non-const function.
+                // This is private, and we need to be very careful to make sure we recompute the hash value every time
+                // this is changed through a non-const function.
                 std::vector<variable_type> vars;
                 assignment_type coeff;
 
@@ -284,27 +262,24 @@ namespace nil {
             };
 
             template<typename VariableType>
-            class pow_operation
-            {
+            class pow_operation {
             public:
                 typedef VariableType variable_type;
 
-                pow_operation(const expression<VariableType>& expr, int power)
-                    : expr(expr)
-                    , power(power) {
+                pow_operation(const expression<variable_type>& expr, int power) : expr(expr), power(power) {
                     update_hash();
                 }
 
-                pow_operation(const pow_operation<VariableType>& other) = default;
-                pow_operation(pow_operation<VariableType>&& other) = default;
-                pow_operation<VariableType>& operator=(const pow_operation<VariableType>& other) = default;
-                pow_operation<VariableType>& operator=(pow_operation<VariableType>&& other) = default;
+                pow_operation(const pow_operation<variable_type>& other) = default;
+                pow_operation(pow_operation<variable_type>&& other) = default;
+                pow_operation<variable_type>& operator=(const pow_operation<variable_type>& other) = default;
+                pow_operation<variable_type>& operator=(pow_operation<variable_type>&& other) = default;
 
                 // Used for testing purposes, and hashmaps. Checks for EXACT EQUALITY ONLY, no isomorphism!!!
-                bool operator==(const pow_operation<VariableType>& other) const;
-                bool operator!=(const pow_operation<VariableType>& other) const;
+                bool operator==(const pow_operation<variable_type>& other) const;
+                bool operator!=(const pow_operation<variable_type>& other) const;
 
-                const expression<VariableType>& get_expr() const {
+                const expression<variable_type>& get_expr() const {
                     return expr;
                 }
 
@@ -323,9 +298,9 @@ namespace nil {
                 }
 
             private:
-                // This is private, and we need to be very careful to make sure we recompute the hash value every time this
-                // is changed through a non-const function.
-                expression<VariableType> expr;
+                // This is private, and we need to be very careful to make sure we recompute the hash value every time
+                // this is changed through a non-const function.
+                expression<variable_type> expr;
                 int power;
 
                 // We will store the hash value. This is faster that computing it
@@ -334,54 +309,48 @@ namespace nil {
             };
 
             // One of +, -, *, / operations. We build an expression tree using this class.
-            template<typename VariableType>
-            class binary_arithmetic_operation
-            {
+            template<typename variable_type>
+            class binary_arithmetic_operation {
             public:
-                using ArithmeticOperatorType = ArithmeticOperator;
+                using arithmetic_operator_type = ArithmeticOperator;
 
-                binary_arithmetic_operation(
-                        const expression<VariableType>& expr_left,
-                        const expression<VariableType>& expr_right,
-                        ArithmeticOperator op)
-                    : expr_left(expr_left)
-                    , expr_right(expr_right)
-                    , op(op) {
+                binary_arithmetic_operation(const expression<variable_type>& expr_left,
+                                            const expression<variable_type>& expr_right,
+                                            arithmetic_operator_type op) :
+                    expr_left(expr_left), expr_right(expr_right), op(op) {
                     update_hash();
                 }
 
-                binary_arithmetic_operation(
-                    const binary_arithmetic_operation<VariableType>& other) = default;
-                binary_arithmetic_operation(
-                    binary_arithmetic_operation<VariableType>&& other) = default;
-                binary_arithmetic_operation<VariableType>& operator=(
-                    const binary_arithmetic_operation<VariableType>& other) = default;
-                binary_arithmetic_operation<VariableType>& operator=(
-                    binary_arithmetic_operation<VariableType>&& other) = default;
+                binary_arithmetic_operation(const binary_arithmetic_operation<variable_type>& other) = default;
+                binary_arithmetic_operation(binary_arithmetic_operation<variable_type>&& other) = default;
+                binary_arithmetic_operation<variable_type>&
+                    operator=(const binary_arithmetic_operation<variable_type>& other) = default;
+                binary_arithmetic_operation<variable_type>&
+                    operator=(binary_arithmetic_operation<variable_type>&& other) = default;
 
                 // Used for testing purposes and hashmaps. Checks for EXACT EQUALITY ONLY, no isomorphism!!!
-                bool operator==(const binary_arithmetic_operation<VariableType>& other) const;
-                bool operator!=(const binary_arithmetic_operation<VariableType>& other) const;
+                bool operator==(const binary_arithmetic_operation<variable_type>& other) const;
+                bool operator!=(const binary_arithmetic_operation<variable_type>& other) const;
 
                 // Use for testing.
                 std::string get_operator_string() const {
                     switch (op) {
-                        case ArithmeticOperator::ADD:
+                        case arithmetic_operator_type::ADD:
                             return "+";
-                        case ArithmeticOperator::SUB:
+                        case arithmetic_operator_type::SUB:
                             return "-";
-                        case ArithmeticOperator::MULT:
+                        case arithmetic_operator_type::MULT:
                             return "*";
                         default:
                             __builtin_unreachable();
                     }
                 }
 
-                const expression<VariableType>& get_expr_left() const {
+                const expression<variable_type>& get_expr_left() const {
                     return expr_left;
                 }
 
-                const expression<VariableType>& get_expr_right() const {
+                const expression<variable_type>& get_expr_right() const {
                     return expr_right;
                 }
 
@@ -401,176 +370,183 @@ namespace nil {
                 }
 
             private:
-                // This is private, and we need to be very careful to make sure we recompute the hash value every time this
-                // is changed through a non-const function.
-                expression<VariableType> expr_left;
-                expression<VariableType> expr_right;
-                ArithmeticOperator op;
+                // This is private, and we need to be very careful to make sure we recompute the hash value every time
+                // this is changed through a non-const function.
+                expression<variable_type> expr_left;
+                expression<variable_type> expr_right;
+                arithmetic_operator_type op;
 
                 // We will store the hash value. This is faster that computing it
                 // whenever it's needed, because we need to iterate over subexpressions to compute it.
                 std::size_t hash;
-
             };
 
             /*********** Member function bodies for class 'term' *******************************/
-            template<typename VariableType>
-            term<VariableType> term<VariableType>::operator*(const term<VariableType> &other) const {
+            template<typename variable_type>
+            term<variable_type> term<variable_type>::operator*(const term<variable_type>& other) const {
                 if (this->is_zero() || other.is_zero())
-                    return term<VariableType>();
+                    return term<variable_type>();
 
-                term<VariableType> result(this->vars);
+                term<variable_type> result(this->vars);
                 std::copy(other.vars.begin(), other.vars.end(), std::back_inserter(result.vars));
                 result.coeff = other.coeff * this->coeff;
                 result.update_hash();
                 return result;
             }
 
-            template<typename VariableType>
-            expression<VariableType> term<VariableType>::operator+(const term<VariableType> &other) const {
+            template<typename variable_type>
+            expression<variable_type> term<variable_type>::operator+(const term<variable_type>& other) const {
 
-                return expression<VariableType>(*this) + other;
+                return expression<variable_type>(*this) + other;
             }
 
-            template<typename VariableType>
-            expression<VariableType> term<VariableType>::operator-(const term<VariableType> &other) const {
-                return expression<VariableType>(*this) - other;
+            template<typename variable_type>
+            expression<variable_type> term<variable_type>::operator-(const term<variable_type>& other) const {
+                return expression<variable_type>(*this) - other;
             }
 
-            template<typename VariableType>
-            expression<VariableType> term<VariableType>::pow(const std::size_t power) const {
-                return pow_operation<VariableType>(*this, power);
+            template<typename variable_type>
+            expression<variable_type> term<variable_type>::pow(const std::size_t power) const {
+                return pow_operation<variable_type>(*this, power);
             }
 
-            template<typename VariableType>
-            term<VariableType> term<VariableType>::operator-() const {
-                return term<VariableType>(this->vars, -this->coeff);
+            template<typename variable_type>
+            term<variable_type> term<variable_type>::operator-() const {
+                return term<variable_type>(this->vars, -this->coeff);
             }
 
             /*********** Member function bodies for class 'expression' *******************************/
 
-            template<typename VariableType>
-            expression<VariableType> expression<VariableType>::pow(const std::size_t power) const {
-                return pow_operation<VariableType>(*this, power);
+            template<typename variable_type>
+            expression<variable_type> expression<variable_type>::pow(const std::size_t power) const {
+                return pow_operation<variable_type>(*this, power);
             }
 
-            template<typename VariableType>
-            expression<VariableType> expression<VariableType>::operator-() const {
-                return term<VariableType>(assignment_type::zero()) - (*this);
+            template<typename variable_type>
+            expression<variable_type> expression<variable_type>::operator-() const {
+                return term<variable_type>(assignment_type::zero()) - (*this);
             }
 
-            template<typename VariableType>
-            expression<VariableType>& expression<VariableType>::operator+=(
-                    const expression<VariableType>& other) {
+            template<typename variable_type>
+            expression<variable_type>& expression<variable_type>::operator+=(const expression<variable_type>& other) {
                 if (this->is_empty())
                     *this = other;
                 else if (!other.is_empty()) {
-                    expr = binary_arithmetic_operation<VariableType>(*this, other, ArithmeticOperator::ADD);
+                    expr = binary_arithmetic_operation<variable_type>(*this, other, ArithmeticOperator::ADD);
                 }
                 update_hash();
                 return *this;
             }
 
-            template<typename VariableType>
-            expression<VariableType>& expression<VariableType>::operator-=(
-                    const expression<VariableType>& other) {
-                expr = binary_arithmetic_operation<VariableType>(*this, other, ArithmeticOperator::SUB);
+            template<typename variable_type>
+            expression<variable_type>& expression<variable_type>::operator-=(const expression<variable_type>& other) {
+                expr = binary_arithmetic_operation<variable_type>(*this, other, ArithmeticOperator::SUB);
                 update_hash();
                 return *this;
             }
 
-            template<typename VariableType>
-            expression<VariableType>& expression<VariableType>::operator*=(
-                    const expression<VariableType>& other) {
+            template<typename variable_type>
+            expression<variable_type>& expression<variable_type>::operator*=(const expression<variable_type>& other) {
                 if (this->is_empty() || other.is_empty()) {
-                    *this = expression<VariableType>();
+                    *this = expression<variable_type>();
                 } else {
-                    expr = binary_arithmetic_operation<VariableType>(*this, other, ArithmeticOperator::MULT);
+                    expr = binary_arithmetic_operation<variable_type>(*this, other, ArithmeticOperator::MULT);
                 }
                 update_hash();
                 return *this;
             }
 
-            template<typename VariableType>
-            expression<VariableType> expression<VariableType>::operator+(
-                    const expression<VariableType>& other) const {
+            template<typename variable_type>
+            expression<variable_type>
+                expression<variable_type>::operator+(const expression<variable_type>& other) const {
                 if (this->is_empty())
                     return other;
                 if (other.is_empty())
                     return *this;
-                return binary_arithmetic_operation<VariableType>(
-                    *this, other, ArithmeticOperator::ADD);
+                return binary_arithmetic_operation<variable_type>(*this, other, ArithmeticOperator::ADD);
             }
 
-            template<typename VariableType>
-            expression<VariableType> expression<VariableType>::operator-(
-                    const expression<VariableType>& other) const {
-                return binary_arithmetic_operation<VariableType>(*this, other, ArithmeticOperator::SUB);
+            template<typename variable_type>
+            expression<variable_type>
+                expression<variable_type>::operator-(const expression<variable_type>& other) const {
+                return binary_arithmetic_operation<variable_type>(*this, other, ArithmeticOperator::SUB);
             }
 
-            template<typename VariableType>
-            expression<VariableType> expression<VariableType>::operator*(
-                    const expression<VariableType>& other) const {
+            template<typename variable_type>
+            expression<variable_type>
+                expression<variable_type>::operator*(const expression<variable_type>& other) const {
                 if (this->is_empty() || other.is_empty())
-                    return expression<VariableType>();
+                    return expression<variable_type>();
 
-                return binary_arithmetic_operation<VariableType>(*this, other, ArithmeticOperator::MULT);
+                return binary_arithmetic_operation<variable_type>(*this, other, ArithmeticOperator::MULT);
             }
 
             /***** Operators for [VariableType or assignment_type or int] +-* term. **********************/
-            template<typename VariableType, typename LeftType,
-                     typename = std::enable_if_t<std::is_same<LeftType, VariableType>::value || std::is_same<LeftType, typename VariableType::assignment_type>::value || std::is_integral<LeftType>::value>>
-            term<VariableType> operator*(
-                    const LeftType &left,
-                    const term<VariableType> &t) {
-                return term<VariableType>(left) * t;
+            template<
+                typename variable_type,
+                typename LeftType,
+                typename = std::enable_if_t<std::is_same<LeftType, variable_type>::value ||
+                                            std::is_same<LeftType, typename variable_type::assignment_type>::value ||
+                                            std::is_integral<LeftType>::value>>
+            term<variable_type> operator*(const LeftType& left, const term<variable_type>& t) {
+                return term<variable_type>(left) * t;
             }
 
-            template<typename VariableType, typename LeftType,
-                     typename = std::enable_if_t<std::is_same<LeftType, VariableType>::value || std::is_same<LeftType, typename VariableType::assignment_type>::value || std::is_integral<LeftType>::value>>
-            expression<VariableType> operator+(
-                    const LeftType &left,
-                    const term<VariableType> &t) {
-                return term<VariableType>(left) + t;
+            template<
+                typename variable_type,
+                typename LeftType,
+                typename = std::enable_if_t<std::is_same<LeftType, variable_type>::value ||
+                                            std::is_same<LeftType, typename variable_type::assignment_type>::value ||
+                                            std::is_integral<LeftType>::value>>
+            expression<variable_type> operator+(const LeftType& left, const term<variable_type>& t) {
+                return term<variable_type>(left) + t;
             }
 
-            template<typename VariableType, typename LeftType,
-                     typename = std::enable_if_t<std::is_same<LeftType, VariableType>::value || std::is_same<LeftType, typename VariableType::assignment_type>::value || std::is_integral<LeftType>::value>>
-            expression<VariableType> operator-(
-                    const LeftType &left,
-                    const term<VariableType> &t) {
-                return term<VariableType>(left) - t;
+            template<
+                typename variable_type,
+                typename LeftType,
+                typename = std::enable_if_t<std::is_same<LeftType, variable_type>::value ||
+                                            std::is_same<LeftType, typename variable_type::assignment_type>::value ||
+                                            std::is_integral<LeftType>::value>>
+            expression<variable_type> operator-(const LeftType& left, const term<variable_type>& t) {
+                return term<variable_type>(left) - t;
             }
 
             // Operators for [VariableType or assignment_type or int] +-* expression.
-            template<typename VariableType, typename LeftType,
-                     typename = std::enable_if_t<std::is_same<LeftType, VariableType>::value || std::is_same<LeftType, typename VariableType::assignment_type>::value || std::is_same<LeftType, term<VariableType>>::value || std::is_integral<LeftType>::value>>
-            expression<VariableType> operator*(
-                    const LeftType &left,
-                    const expression<VariableType> &exp) {
-                return expression<VariableType>(left) * exp;
+            template<typename variable_type,
+                     typename LeftType,
+                     typename = std::enable_if_t<
+                         std::is_same<LeftType, variable_type>::value ||
+                         std::is_same<LeftType, typename variable_type::assignment_type>::value ||
+                         std::is_same<LeftType, term<variable_type>>::value || std::is_integral<LeftType>::value>>
+            expression<variable_type> operator*(const LeftType& left, const expression<variable_type>& exp) {
+                return expression<variable_type>(left) * exp;
             }
 
-            template<typename VariableType, typename LeftType,
-                     typename = std::enable_if_t<std::is_same<LeftType, VariableType>::value || std::is_same<LeftType, typename VariableType::assignment_type>::value || std::is_same<LeftType, term<VariableType>>::value || std::is_integral<LeftType>::value>>
-            expression<VariableType> operator+(
-                    const LeftType &left,
-                    const expression<VariableType> &exp) {
-                return expression<VariableType>(left) + exp;
+            template<typename variable_type,
+                     typename LeftType,
+                     typename = std::enable_if_t<
+                         std::is_same<LeftType, variable_type>::value ||
+                         std::is_same<LeftType, typename variable_type::assignment_type>::value ||
+                         std::is_same<LeftType, term<variable_type>>::value || std::is_integral<LeftType>::value>>
+            expression<variable_type> operator+(const LeftType& left, const expression<variable_type>& exp) {
+                return expression<variable_type>(left) + exp;
             }
 
-            template<typename VariableType, typename LeftType,
-                     typename = std::enable_if_t<std::is_same<LeftType, VariableType>::value || std::is_same<LeftType, typename VariableType::assignment_type>::value || std::is_same<LeftType, term<VariableType>>::value || std::is_integral<LeftType>::value>>
-            expression<VariableType> operator-(
-                    const LeftType &left,
-                    const expression<VariableType> &exp) {
-                return expression<VariableType>(left) - exp;
+            template<typename variable_type,
+                     typename LeftType,
+                     typename = std::enable_if_t<
+                         std::is_same<LeftType, variable_type>::value ||
+                         std::is_same<LeftType, typename variable_type::assignment_type>::value ||
+                         std::is_same<LeftType, term<variable_type>>::value || std::is_integral<LeftType>::value>>
+            expression<variable_type> operator-(const LeftType& left, const expression<variable_type>& exp) {
+                return expression<variable_type>(left) - exp;
             }
 
-            template<typename VariableType>
-            std::unordered_map<VariableType, int> term<VariableType>::to_unordered_map() const {
-                std::unordered_map<VariableType, int> vars_map;
-                for (const auto& var: vars) {
+            template<typename variable_type>
+            std::unordered_map<variable_type, int> term<variable_type>::to_unordered_map() const {
+                std::unordered_map<variable_type, int> vars_map;
+                for (const auto& var : vars) {
                     auto iter = vars_map.find(var);
                     if (iter != vars_map.end()) {
                         iter->second++;
@@ -581,8 +557,8 @@ namespace nil {
                 return vars_map;
             }
 
-            template<typename VariableType>
-            bool term<VariableType>::operator==(const term<VariableType>& other) const {
+            template<typename variable_type>
+            bool term<variable_type>::operator==(const term<variable_type>& other) const {
                 if (this->coeff != other.coeff) {
                     return false;
                 }
@@ -592,7 +568,7 @@ namespace nil {
                 // Put both vars and other->vars into a hashmap, and check if
                 // everything is equal.
                 auto vars_map = this->to_unordered_map();
-                for (const auto& var: other.vars) {
+                for (const auto& var : other.vars) {
                     auto iter = vars_map.find(var);
                     if (iter != vars_map.end()) {
                         iter->second--;
@@ -600,7 +576,7 @@ namespace nil {
                         return false;
                     }
                 }
-                for (const auto& entry: vars_map) {
+                for (const auto& entry : vars_map) {
                     if (entry.second != 0)
                         return false;
                 }
@@ -608,14 +584,14 @@ namespace nil {
             }
 
             // Used for testing purposes and hashmaps.
-            template<typename VariableType>
-            bool term<VariableType>::operator!=(const term<VariableType>& other) const {
+            template<typename variable_type>
+            bool term<variable_type>::operator!=(const term<variable_type>& other) const {
                 return !(*this == other);
             }
 
-            template<typename VariableType>
-            void print_coefficient(std::ostream& os, const term<VariableType>& term) {
-                if (term.get_coeff() == -VariableType::assignment_type::one())
+            template<typename variable_type>
+            void print_coefficient(std::ostream& os, const term<variable_type>& term) {
+                if (term.get_coeff() == -variable_type::assignment_type::one())
                     os << "(-1)";
                 else
                     os << term.get_coeff();
@@ -623,8 +599,8 @@ namespace nil {
 
             // Used in the unit tests, so we can use BOOST_CHECK_EQUALS, and see
             // the values of terms, when the check fails.
-            template<typename VariableType>
-            std::ostream& operator<<(std::ostream& os, const term<VariableType>& term) {
+            template<typename variable_type>
+            std::ostream& operator<<(std::ostream& os, const term<variable_type>& term) {
                 if (!term.get_coeff().is_one()) {
                     print_coefficient(os, term);
                     if (term.get_vars().size() != 0) {
@@ -645,89 +621,82 @@ namespace nil {
 
             // Used in the unit tests, so we can use BOOST_CHECK_EQUALS, and see
             // the values of terms, when the check fails.
-            template<typename VariableType>
-            std::ostream& operator<<(std::ostream& os, const pow_operation<VariableType>& power) {
+            template<typename variable_type>
+            std::ostream& operator<<(std::ostream& os, const pow_operation<variable_type>& power) {
                 os << "(" << power.get_expr() << " ^ " << power.get_power() << ")";
                 return os;
             }
 
             // Used in the unit tests, so we can use BOOST_CHECK_EQUALS, and see
             // the values of terms, when the check fails.
-            template<typename VariableType>
-            std::ostream& operator<<(std::ostream& os, const binary_arithmetic_operation<VariableType>& bin_op) {
+            template<typename variable_type>
+            std::ostream& operator<<(std::ostream& os, const binary_arithmetic_operation<variable_type>& bin_op) {
                 os << "(" << bin_op.get_expr_left() << " " << bin_op.get_operator_string() << " "
-                    << bin_op.get_expr_right() << ")";
+                   << bin_op.get_expr_right() << ")";
                 return os;
             }
 
             // Used in the unit tests, so we can use BOOST_CHECK_EQUALS, and see
             // the values of terms, when the check fails.
-            template<typename VariableType>
-            std::ostream& operator<<(std::ostream& os, const expression<VariableType>& expr) {
+            template<typename variable_type>
+            std::ostream& operator<<(std::ostream& os, const expression<variable_type>& expr) {
                 os << expr.get_expr();
                 return os;
             }
 
             // Used for testing purposes and hashmaps. Checks for EXACT EQUALITY ONLY, no isomorphism!!!
-            template<typename VariableType>
-            bool pow_operation<VariableType>::operator==(
-                    const pow_operation<VariableType>& other) const {
+            template<typename variable_type>
+            bool pow_operation<variable_type>::operator==(const pow_operation<variable_type>& other) const {
                 return this->power == other.get_power() && this->expr == other.get_expr();
             }
 
             // Used for testing purposes.
-            template<typename VariableType>
-            bool pow_operation<VariableType>::operator!=(
-                    const pow_operation<VariableType>& other) const {
+            template<typename variable_type>
+            bool pow_operation<variable_type>::operator!=(const pow_operation<variable_type>& other) const {
                 return !(*this == other);
             }
 
             // Used for testing purposes and hashmaps. Checks for EXACT EQUALITY ONLY, no isomorphism!!!
-            template<typename VariableType>
-            bool binary_arithmetic_operation<VariableType>::operator==(
-                    const binary_arithmetic_operation<VariableType>& other) const {
-                return this->op == other.get_op() &&
-                       this->expr_left == other.get_expr_left() &&
+            template<typename variable_type>
+            bool binary_arithmetic_operation<variable_type>::operator==(
+                const binary_arithmetic_operation<variable_type>& other) const {
+                return this->op == other.get_op() && this->expr_left == other.get_expr_left() &&
                        this->expr_right == other.get_expr_right();
             }
 
             // Used for testing purposes. Checks for EXACT EQUALITY ONLY, no isomorphism!!!
-            template<typename VariableType>
-            bool binary_arithmetic_operation<VariableType>::operator!=(
-                    const binary_arithmetic_operation<VariableType>& other) const {
+            template<typename variable_type>
+            bool binary_arithmetic_operation<variable_type>::operator!=(
+                const binary_arithmetic_operation<variable_type>& other) const {
                 return !(*this == other);
             }
 
             // Used for testing purposes and hashmaps. Checks for EXACT EQUALITY ONLY, no isomorphism!!!
-            template<typename VariableType>
-            bool expression<VariableType>::operator==(const expression<VariableType>& other) const {
+            template<typename variable_type>
+            bool expression<variable_type>::operator==(const expression<variable_type>& other) const {
                 return this->expr == other.get_expr();
             }
 
             // Used for testing purposes and hashmaps. Checks for EXACT EQUALITY ONLY, no isomorphism!!!
-            template<typename VariableType>
-            bool expression<VariableType>::operator!=(const expression<VariableType>& other) const {
+            template<typename variable_type>
+            bool expression<variable_type>::operator!=(const expression<variable_type>& other) const {
                 return this->expr != other.get_expr();
             }
         }    // namespace math
     }    // namespace crypto3
 }    // namespace nil
 
-template <typename VariableType>
-struct std::hash<nil::crypto3::math::term<VariableType>>
-{
-    std::size_t operator()(const nil::crypto3::math::term<VariableType>& term) const
-    {
+template<typename variable_type>
+struct std::hash<nil::crypto3::math::term<variable_type>> {
+    std::size_t operator()(const nil::crypto3::math::term<variable_type>& term) const {
         // Hash is always pre-computed and store in the term itself.
         return term.get_hash();
     }
 };
 
-template <typename VariableType>
-struct std::hash<nil::crypto3::math::expression<VariableType>>
-{
-    std::size_t operator()(const nil::crypto3::math::expression<VariableType>& expr) const
-    {
+template<typename variable_type>
+struct std::hash<nil::crypto3::math::expression<variable_type>> {
+    std::size_t operator()(const nil::crypto3::math::expression<variable_type>& expr) const {
         // Hash is always pre-computed and store in the expression itself.
         return expr.get_hash();
     }

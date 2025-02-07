@@ -62,7 +62,6 @@ namespace nil {
     namespace crypto3 {
         namespace zk {
             namespace snark {
-
                 using namespace algebra;
 
                 template<typename CurveType, proving_mode Mode = proving_mode::basic>
@@ -87,7 +86,6 @@ namespace nil {
 
                     static inline processed_verification_key_type
                         process(const verification_key_type &verification_key) {
-
                         processed_verification_key_type processed_verification_key;
                         processed_verification_key.vk_alpha_g1_beta_g2 = verification_key.alpha_g1_beta_g2;
                         processed_verification_key.vk_gamma_g2_precomp =
@@ -150,7 +148,6 @@ namespace nil {
                     static inline bool process(const processed_verification_key_type &processed_verification_key,
                                                const primary_input_type &primary_input,
                                                const proof_type &proof) {
-
                         assert(processed_verification_key.gamma_ABC_g1.domain_size() >= primary_input.size());
 
                         const container::accumulation_vector<g1_type> accumulated_IC =
@@ -204,7 +201,6 @@ namespace nil {
                     static inline bool process(const verification_key_type &verification_key,
                                                const primary_input_type &primary_input,
                                                const proof_type &proof) {
-
                         return process(r1cs_gg_ppzksnark_process_verification_key<CurveType>::process(verification_key),
                                        primary_input, proof);
                     }
@@ -300,8 +296,8 @@ namespace nil {
                 //     }
                 // };
             }    // namespace snark
-        }        // namespace zk
-    }            // namespace crypto3
+        }    // namespace zk
+    }    // namespace crypto3
 }    // namespace nil
 
 #endif    // CRYPTO3_ZK_R1CS_GG_PPZKSNARK_BASIC_VERIFIER_HPP

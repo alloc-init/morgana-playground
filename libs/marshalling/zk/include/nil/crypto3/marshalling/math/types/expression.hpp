@@ -223,7 +223,7 @@ namespace nil {
                     const typename expression<nil::marshalling::field_type<Endianness>,
                                                           ExpressionType>::type &filled_expr) {
 
-                    using ArithmeticOperatorType = typename ExpressionType::binary_arithmetic_operation_type::ArithmeticOperatorType;
+                    using arithmetic_operator_type = typename ExpressionType::binary_arithmetic_operation_type::ArithmeticOperatorType;
                     math::flat_expression<ExpressionType> flat_expr;
 
                     // Get the terms.
@@ -244,7 +244,7 @@ namespace nil {
                     const auto& bin_ops = std::get<2>(filled_expr.value()).value();
                     for (std::size_t i = 0; i < bin_ops.size(); i++) {
                         flat_expr.binary_operations.emplace_back(
-                            make_binary_operation<Endianness, ArithmeticOperatorType>(bin_ops.at(i)));
+                            make_binary_operation<Endianness, arithmetic_operator_type>(bin_ops.at(i)));
                     }
 
                     flat_expr.root_type = static_cast<math::flat_node_type>(std::get<3>(filled_expr.value()).value());

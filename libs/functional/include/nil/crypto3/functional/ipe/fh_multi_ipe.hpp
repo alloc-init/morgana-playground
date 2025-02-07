@@ -58,22 +58,19 @@ namespace nil {
     namespace crypto3 {
         namespace functional {
             /**
-            * cfe_fh_multi_ipe contains the shared choice for parameters on which
-            * the functionality of the scheme depend.
-            * @param SecLevel The parameter defines the security assumption of the scheme,
-            * so called K-Lin assumption, where K is the specified sec_level
-            * @param Clients Number of clients participating in the scheme
-            * @param CiphertextSize Length of the vectors that each client will encrypt
-            * @param BoundX Bound on the inputs of the vectors that will be encrypted
-            * @param BoundY Bound on the inputs of the inner product vectors for which the functional keys will be generated
-            * .
-            */
-            template<typename CurveType,
-                     std::size_t K,
-                     std::size_t Clients,
-                     std::size_t CiphertextSize,
-                     std::size_t BoundX,
-                     std::size_t BoundY>
+             * fh_multi_ipe contains the shared choice for parameters on which
+             * the functionality of the scheme depend.
+             * @param SecLevel The parameter defines the security assumption of the scheme,
+             * so called K-Lin assumption, where K is the specified sec_level
+             * @param Clients Number of clients participating in the scheme
+             * @param CiphertextSize Length of the vectors that each client will encrypt
+             * @param BoundX Bound on the inputs of the vectors that will be encrypted
+             * @param BoundY Bound on the inputs of the inner product vectors for which the functional keys will be
+             * generated
+             * .
+             */
+            template<typename CurveType, std::size_t K, std::size_t Clients, std::size_t CiphertextSize,
+                     std::size_t BoundX, std::size_t BoundY>
             struct fh_multi_ipe {
                 constexpr static const std::size_t sec_level = K;
                 constexpr static const std::size_t clients = Clients;
@@ -88,7 +85,7 @@ namespace nil {
 
                 constexpr static const std::size_t ciphertext_size = CiphertextSize;
                 typedef std::array<typename curve_type::template g1_type<>, 2 * ciphertext_size + 2 * sec_level + 1>
-                schedule_type;
+                    schedule_type;
 
                 constexpr static const std::size_t plaintext_size = BoundX * base_field_value_type::modulus_bits;
                 typedef std::array<base_field_value_type, BoundX> plaintext_type;
@@ -97,19 +94,14 @@ namespace nil {
                 typedef typename curve_type::gt_type::value_type digest_type;
 
                 constexpr static const typename algebra::fields::arithmetic_params<base_field_type>::integral_type
-                group_order = algebra::fields::arithmetic_params<base_field_type>::group_order;
+                    group_order = algebra::fields::arithmetic_params<base_field_type>::group_order;
 
                 static_assert(BoundX * BoundY * ciphertext_size * Clients < group_order);
             };
 
-            template<typename CurveType,
-                     std::size_t K,
-                     std::size_t Clients,
-                     std::size_t CiphertextSize,
-                     std::size_t BoundX,
-                     std::size_t BoundY>
-            struct functional_key<fh_multi_ipe<CurveType, K, Clients, CiphertextSize, BoundX,
-                        BoundY>> {
+            template<typename CurveType, std::size_t K, std::size_t Clients, std::size_t CiphertextSize,
+                     std::size_t BoundX, std::size_t BoundY>
+            struct functional_key<fh_multi_ipe<CurveType, K, Clients, CiphertextSize, BoundX, BoundY>> {
                 typedef fh_multi_ipe<CurveType, K, Clients, CiphertextSize, BoundX, BoundY> scheme_type;
 
                 typedef CurveType curve_type;
@@ -133,21 +125,16 @@ namespace nil {
                 }
 
                 algebra::matrix<typename curve_type::template g2_type<>, Clients,
-                    2 * ciphertext_size + 2 * sec_level + 1> m;
+                                2 * ciphertext_size + 2 * sec_level + 1>
+                    m;
             };
-        }
+        }    // namespace functional
 
         namespace pubkey {
-            template<typename CurveType,
-                     std::size_t K,
-                     std::size_t Clients,
-                     std::size_t CiphertextSize,
-                     std::size_t BoundX,
-                     std::size_t BoundY>
-            struct public_key<functional::fh_multi_ipe<CurveType, K, Clients, CiphertextSize, BoundX,
-                        BoundY>> {
-                typedef functional::fh_multi_ipe<CurveType, K, Clients, CiphertextSize, BoundX, BoundY>
-                scheme_type;
+            template<typename CurveType, std::size_t K, std::size_t Clients, std::size_t CiphertextSize,
+                     std::size_t BoundX, std::size_t BoundY>
+            struct public_key<functional::fh_multi_ipe<CurveType, K, Clients, CiphertextSize, BoundX, BoundY>> {
+                typedef functional::fh_multi_ipe<CurveType, K, Clients, CiphertextSize, BoundX, BoundY> scheme_type;
 
                 constexpr static const std::size_t sec_level = K;
                 constexpr static const std::size_t clients = Clients;
@@ -159,7 +146,7 @@ namespace nil {
                 typedef typename field_type::value_type field_value_type;
 
                 constexpr static const std::size_t ciphertext_size = scheme_type::ciphertext_size;
-                typedef typename scheme_type::schedule_type schedule_type;
+                typedef typename scheme_type::schedule_type ciphertext_type;
 
                 constexpr static const std::size_t plaintext_size = scheme_type::plaintext_size;
                 typedef typename scheme_type::plaintext_type plaintext_type;
@@ -167,35 +154,38 @@ namespace nil {
                 constexpr static const std::size_t digest_bits = scheme_type::digest_bits;
                 typedef typename scheme_type::digest_type digest_type;
 
-                typedef algebra::matrix<field_type,
-                    ciphertext_size + sec_level + 1, 2 * ciphertext_size + 2 * sec_level + 1> client_key_type;
+                typedef algebra::matrix<field_type, ciphertext_size + sec_level + 1,
+                                        2 * ciphertext_size + 2 * sec_level + 1>
+                    client_key_type;
 
-                template<typename DistributionType = boost::random::uniform_int_distribution<typename
-                             field_type::integral_type>,
+                template<typename DistributionType =
+                             boost::random::uniform_int_distribution<typename field_type::integral_type>,
                          typename UniformRandomBitGenerator = boost::random::random_device>
-                public_key(const field_value_type &mu = algebra::random_element<field_type, DistributionType>(
-                    UniformRandomBitGenerator())) : pkey(algebra::final_exponentiation<CurveType>(
-                    pair(algebra::fields::detail::fp2_extension_params<
-                             field_type>::arithmetic_generator, algebra::fields::arithmetic_params<
-                             field_type>::arithmetic_generator)).pow(mu)) {
-                    // TODO: a G2 generator is supposed to be ECP2_CURVE_NAME generator and possibly is not correct in here
+                public_key(const field_value_type &mu =
+                               algebra::random_element<field_type, DistributionType>(UniformRandomBitGenerator())) :
+                    pkey(algebra::final_exponentiation<CurveType>(
+                             pair(algebra::fields::detail::fp2_extension_params<field_type>::arithmetic_generator,
+                                  algebra::fields::arithmetic_params<field_type>::arithmetic_generator))
+                             .pow(mu)) {
+                    // TODO: a G2 generator is supposed to be ECP2_CURVE_NAME generator and possibly is not correct in
+                    // here
                 }
 
                 /**
-                * Accepts the encrypted vectors and functional encryption key. It returns the
-                * inner product of x and y, i.e. <x_1,y_1> + ... + <x_m, y_m> where x_i is i-th
-                * encrypted vector and y_i is i-th inner product vector (i-th row of y).
-                * If decryption failed, an error is returned.
-                *
-                * @param res The result of the decryption (the value will be stored here)
-                * @param ciphers An array of the ciphertexts
-                * @param fe_key A pointer to the functional encryption key
-                * @return Error code
-                */
-                digest_type decrypt(const std::array<schedule_type, Clients> &ciphers,
+                 * Accepts the encrypted vectors and functional encryption key. It returns the
+                 * inner product of x and y, i.e. <x_1,y_1> + ... + <x_m, y_m> where x_i is i-th
+                 * encrypted vector and y_i is i-th inner product vector (i-th row of y).
+                 * If decryption failed, an error is returned.
+                 *
+                 * @param res The result of the decryption (the value will be stored here)
+                 * @param ciphers An array of the ciphertexts
+                 * @param fe_key A pointer to the functional encryption key
+                 * @return Error code
+                 */
+                digest_type decrypt(const std::array<ciphertext_type, Clients> &ciphers,
                                     const functional::functional_key<scheme_type> &fe_key) {
-                    typename curve_type::gt_type::value_type sum =
-                            typename curve_type::gt_type::value_type::one(), paired;
+                    typename curve_type::gt_type::value_type sum = typename curve_type::gt_type::value_type::one(),
+                                                             paired;
 
                     for (size_t i = 0; i < Clients; i++) {
                         for (size_t j = 0; j < 2 * ciphertext_size + 2 * sec_level + 1; j++) {
@@ -205,28 +195,21 @@ namespace nil {
                         }
                     }
 
-                    return algebra::baby_giant_dlog<field_type>(sum, pkey,
-                                                                BoundY * BoundX * Clients * ciphertext_size);
+                    return algebra::baby_giant_dlog<field_type>(sum, pkey, BoundY * BoundX * Clients * ciphertext_size);
                 }
 
                 typename curve_type::gt_type::value_type pkey;
             };
 
             /**
-                 * cfe_fh_multi_ipe_sec_key represents a master secret key in fh_multi_ipe scheme.
-                 */
-            template<typename CurveType,
-                     std::size_t K,
-                     std::size_t Clients,
-                     std::size_t CiphertextSize,
-                     std::size_t BoundX,
-                     std::size_t BoundY>
-            struct private_key<functional::fh_multi_ipe<CurveType, K, Clients, CiphertextSize, BoundX,
-                        BoundY>>
-                    : public public_key<functional::fh_multi_ipe<CurveType, K, Clients, CiphertextSize,
-                        BoundX, BoundY>> {
-                typedef typename public_key<functional::fh_multi_ipe<CurveType, K, Clients, CiphertextSize,
-                    BoundX, BoundY>>::scheme_type scheme_type;
+             * fh_multi_ipe_sec_key represents a master secret key in fh_multi_ipe scheme.
+             */
+            template<typename CurveType, std::size_t K, std::size_t Clients, std::size_t CiphertextSize,
+                     std::size_t BoundX, std::size_t BoundY>
+            struct private_key<functional::fh_multi_ipe<CurveType, K, Clients, CiphertextSize, BoundX, BoundY>>
+                : public public_key<functional::fh_multi_ipe<CurveType, K, Clients, CiphertextSize, BoundX, BoundY>> {
+                typedef typename public_key<functional::fh_multi_ipe<CurveType, K, Clients, CiphertextSize, BoundX,
+                                                                     BoundY>>::scheme_type scheme_type;
 
                 typedef CurveType curve_type;
 
@@ -245,28 +228,28 @@ namespace nil {
 
                 constexpr static const auto group_order = scheme_type::group_order;
 
-                typedef algebra::matrix<field_type,
-                    ciphertext_size + sec_level + 1, 2 * ciphertext_size + 2 * sec_level + 1> client_key_type;
+                typedef algebra::matrix<field_type, ciphertext_size + sec_level + 1,
+                                        2 * ciphertext_size + 2 * sec_level + 1>
+                    client_key_type;
 
                 /**
-                * Generates a master secret key and a public key for the scheme. It returns an
-                * error if generating one of the parts of the secret key failed.
-                *
-                * @param sec_key A pointer to a cfe_fh_multi_ipe_sec_key struct (the
-                * master secret key will be stored here)
-                * @param pub_key A pointer to a FH12_BN256 struct (the public key will
-                * be stored here)
-                * @param c A pointer to an instance of the scheme (*initialized* cfe_fh_multi_ipe struct)
-                * @return Error code
-                */
-                template<typename DistributionType = boost::random::uniform_int_distribution<typename
-                             field_type::integral_type>,
+                 * Generates a master secret key and a public key for the scheme. It returns an
+                 * error if generating one of the parts of the secret key failed.
+                 *
+                 * @param sec_key A pointer to a fh_multi_ipe_sec_key struct (the
+                 * master secret key will be stored here)
+                 * @param pub_key A pointer to a FH12_BN256 struct (the public key will
+                 * be stored here)
+                 * @param c A pointer to an instance of the scheme (*initialized* fh_multi_ipe struct)
+                 * @return Error code
+                 */
+                template<typename DistributionType =
+                             boost::random::uniform_int_distribution<typename field_type::integral_type>,
                          typename UniformRandomBitGenerator = boost::random::random_device>
-                private_key(const field_value_type &mu = algebra::random_element<field_type, DistributionType>(
-                    UniformRandomBitGenerator()))
-                    : public_key<functional::fh_multi_ipe<CurveType, sec_level, Clients, ciphertext_size, BoundX,
-                        BoundY>>(
-                        mu) {
+                private_key(const field_value_type &mu =
+                                algebra::random_element<field_type, DistributionType>(UniformRandomBitGenerator())) :
+                    public_key<
+                        functional::fh_multi_ipe<CurveType, sec_level, Clients, ciphertext_size, BoundX, BoundY>>(mu) {
                     algebra::matrix<client_key_type, Clients, Clients> B, B_star;
 
                     for (size_t i = 0; i < Clients; i++) {
@@ -290,17 +273,17 @@ namespace nil {
                 }
 
                 /**
-                * The function is called by a client that encrypts input vector x with
-                * the provided part master secret key. It returns a ciphertext struct.
-                * If encryption failed, an error is returned.
-                *
-                * @param cipher A pointer to an initialized cfe_vec_G1 struct
-                * (the resulting ciphertext will be stored here)
-                * @param x A pointer to the plaintext vector
-                * @param part_sec_key A pointer to a matrix representing a part
-                * of the master secret key (i-th client gets i-th matrix in array B_hat)
-                * @return Error code
-                */
+                 * The function is called by a client that encrypts input vector x with
+                 * the provided part master secret key. It returns a ciphertext struct.
+                 * If encryption failed, an error is returned.
+                 *
+                 * @param cipher A pointer to an initialized vec_G1 struct
+                 * (the resulting ciphertext will be stored here)
+                 * @param x A pointer to the plaintext vector
+                 * @param part_sec_key A pointer to a matrix representing a part
+                 * of the master secret key (i-th client gets i-th matrix in array B_hat)
+                 * @return Error code
+                 */
                 schedule_type encrypt(const plaintext_type &x, const client_key_type &part_sec_key) {
                     field_value_type s = field_value_type::zero();
                     std::array<field_value_type, sec_level> phi;
@@ -313,7 +296,7 @@ namespace nil {
                     boost::random::mt19937 gen;
                     boost::random::uniform_int_distribution<> dist(0, group_order);
 
-                    for (const auto &v: phi) {
+                    for (const auto &v : phi) {
                         v = dist(gen);
                     }
 
@@ -337,23 +320,23 @@ namespace nil {
                  * Takes a master secret key and input matrix y, and derives the functional
                  * encryption key. In case the key could not be derived, it returns an error.
                  *
-                 * @param fe_key A pointer to a cfe_mat_G2 struct (the functional
+                 * @param fe_key A pointer to a mat_G2 struct (the functional
                  * encryption key will be stored here)
                  * @param y A pointer to the inner product matrix
                  * @return Error code
                  */
-                template<typename MatrixType, typename = typename std::enable_if<std::is_same<typename
-                             MatrixType::value_type, typename curve_type::gt_type::value_type>::value>::type>
+                template<typename MatrixType,
+                         typename = typename std::enable_if<std::is_same<
+                             typename MatrixType::value_type, typename curve_type::gt_type::value_type>::value>::type>
                 functional::functional_key<scheme_type> derive(const MatrixType &y) {
                     field_value_type s = field_value_type::zero();
 
-                    MatrixType gamma(sec_level, Clients), key_mat(Clients, 2 * ciphertext_size +
-                                                                           2 * sec_level + 1);
+                    MatrixType gamma(sec_level, Clients), key_mat(Clients, 2 * ciphertext_size + 2 * sec_level + 1);
                     key_mat.fill(field_value_type::zero());
 
                     boost::random::mt19937 gen;
 
-                    for (const auto &v: gamma) {
+                    for (const auto &v : gamma) {
                         v = algebra::random_element<field_type, boost::random::uniform_int_distribution<>>(gen) %
                             group_order;
                     }
@@ -384,15 +367,14 @@ namespace nil {
                 }
 
             protected:
-                // random_OB is a helping function used in cfe_fh_multi_ipe_generate_keys.
+                // random_OB is a helping function used in fh_multi_ipe_generate_keys.
                 template<typename FieldType, template<typename T> typename MatrixType>
                 void random_OB(MatrixType<typename FieldType::value_type> &B,
                                MatrixType<typename FieldType::value_type> &B_star,
                                const typename FieldType::value_type &mu,
                                const typename FieldType::value_type &p) {
-                    std::fill(B.begin(), B.end(), []() -> typename FieldType::value_type {
-                        return algebra::random_element<FieldType>();
-                    });
+                    std::fill(B.begin(), B.end(),
+                              []() -> typename FieldType::value_type { return algebra::random_element<FieldType>(); });
 
                     B_star = algebra::transpose(algebra::inverse(B));
                     B_star = B_star * mu;
@@ -402,8 +384,8 @@ namespace nil {
                 algebra::matrix<client_key_type, Clients, Clients> B_hat;
                 algebra::matrix<client_key_type, Clients, Clients> B_star_hat;
             };
-        }
-    }
-}
+        }    // namespace pubkey
+    }    // namespace crypto3
+}    // namespace nil
 
 #endif

@@ -57,24 +57,24 @@ namespace nil {
                  *
                  * A R1CS constraint is used to construct a R1CS constraint system (see below).
                  */
-                template<typename FieldType, typename VariableType = math::linear_variable<FieldType>>
+                template<typename FieldType, typename variable_type = math::linear_variable<FieldType>>
                 struct r1cs_constraint {
                     typedef FieldType field_type;
 
-                    math::linear_combination<VariableType> a, b, c;
+                    math::linear_combination<variable_type> a, b, c;
 
                     r1cs_constraint() = default;
 
-                    r1cs_constraint(const math::linear_combination<VariableType> &a,
-                                    const math::linear_combination<VariableType> &b,
-                                    const math::linear_combination<VariableType> &c) :
+                    r1cs_constraint(const math::linear_combination<variable_type> &a,
+                                    const math::linear_combination<variable_type> &b,
+                                    const math::linear_combination<variable_type> &c) :
                         a(a),
                         b(b), c(c) {
                     }
 
-                    r1cs_constraint(const std::initializer_list<math::linear_combination<VariableType>> &A,
-                                    const std::initializer_list<math::linear_combination<VariableType>> &B,
-                                    const std::initializer_list<math::linear_combination<VariableType>> &C) {
+                    r1cs_constraint(const std::initializer_list<math::linear_combination<variable_type>> &A,
+                                    const std::initializer_list<math::linear_combination<variable_type>> &B,
+                                    const std::initializer_list<math::linear_combination<variable_type>> &C) {
                         for (auto lc_A : A) {
                             a.terms.insert(a.terms.end(), lc_A.terms.begin(), lc_A.terms.end());
                         }

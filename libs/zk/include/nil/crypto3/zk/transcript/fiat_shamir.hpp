@@ -253,13 +253,13 @@ namespace nil {
                     typename hash_type::digest_type state;
                 };
 
-                // Specialize for Nil Posseidon.
+                // Specialize for Nil Poseidon.
                 template<typename HashType>
                 struct fiat_shamir_heuristic_sequential<
                             HashType,
-                            typename std::enable_if_t<
+                            typename std::enable_if<
                                 nil::crypto3::hashes::is_specialization_of<nil::crypto3::hashes::poseidon,
-                                    HashType>::value>> {
+                                    HashType>::value>::type> {
                     //   After refactoring an attempt to remove this Nil Poseidon specialization was made.
                     // The difference between challenge() for other hashes and for Nil Poseidon is
                     // how the second challenge is produced. For the first call things are the same:

@@ -36,11 +36,7 @@ namespace nil {
     namespace crypto3 {
         namespace math {
 
-            enum class flat_node_type : std::uint8_t {
-                TERM = 0,
-                POWER = 1,
-                BINARY_ARITHMETIC = 2
-            };
+            enum class flat_node_type : std::uint8_t { TERM = 0, POWER = 1, BINARY_ARITHMETIC = 2 };
 
             struct flat_pow_operation {
                 int power;
@@ -75,7 +71,7 @@ namespace nil {
             template<typename ExpressionType>
             class flat_expression {
             public:
-                using VariableType = typename ExpressionType::variable_type;
+                using variable_type = typename ExpressionType::variable_type;
                 using term_type = typename ExpressionType::term_type;
                 using pow_operation_type = typename ExpressionType::pow_operation_type;
                 using binary_arithmetic_operation_type = typename ExpressionType::binary_arithmetic_operation_type;
@@ -85,16 +81,13 @@ namespace nil {
                     return to_expression(root_type, root_index);
                 }
 
-                ExpressionType to_expression(
-                        flat_node_type type, int node_index) {
+                ExpressionType to_expression(flat_node_type type, int node_index) {
                     switch (type) {
                         case flat_node_type::TERM:
                             return terms[node_index];
                         case flat_node_type::POWER: {
                             const auto& pow_op = pow_operations[node_index];
-                            return pow_operation_type(
-                                to_expression(pow_op.type, pow_op.child_index),
-                                pow_op.power);
+                            return pow_operation_type(to_expression(pow_op.type, pow_op.child_index), pow_op.power);
                         }
                         case flat_node_type::BINARY_ARITHMETIC: {
                             const auto& bin_op = binary_operations[node_index];
@@ -110,7 +103,9 @@ namespace nil {
 
                 std::vector<term_type> terms;
                 std::vector<flat_pow_operation> pow_operations;
-                std::vector<flat_binary_arithmetic_operation<typename binary_arithmetic_operation_type::ArithmeticOperatorType>> binary_operations;
+                std::vector<flat_binary_arithmetic_operation<
+                    typename binary_arithmetic_operation_type::arithmetic_operator_type>>
+                    binary_operations;
 
                 // Type of the base expression.
                 flat_node_type root_type;
@@ -118,14 +113,13 @@ namespace nil {
                 // Index in corresponding array.
                 // if type == TERM, then this is index in array 'terms'.
                 std::uint32_t root_index;
-
             };
 
             // Class for creating a flat_expression from expression.
             template<typename ExpressionType>
             class expression_flattener : public boost::static_visitor<void> {
             public:
-                using VariableType = typename ExpressionType::variable_type;
+                using variable_type = typename ExpressionType::variable_type;
                 using term_type = typename ExpressionType::term_type;
                 using pow_operation_type = typename ExpressionType::pow_operation_type;
                 using binary_arithmetic_operation_type = typename ExpressionType::binary_arithmetic_operation_type;
@@ -154,7 +148,8 @@ namespace nil {
                 }
 
                 void operator()(const binary_arithmetic_operation_type& op) {
-                    flat_binary_arithmetic_operation<typename binary_arithmetic_operation_type::ArithmeticOperatorType> flat_op;
+                    flat_binary_arithmetic_operation<typename binary_arithmetic_operation_type::arithmetic_operator_type>
+                        flat_op;
                     flat_op.op = op.get_op();
 
                     boost::apply_visitor(*this, op.get_expr_left().get_expr());
@@ -175,8 +170,8 @@ namespace nil {
                 flat_expression<ExpressionType> result;
             };
 
-        }        // namespace math
-    }            // namespace crypto3
+        }    // namespace math
+    }    // namespace crypto3
 }    // namespace nil
 
 #endif    // CRYPTO3_MARSHALLING_ZK_MATH_FLAT_EXPRESSION_HPP

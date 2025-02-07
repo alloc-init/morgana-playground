@@ -31,7 +31,8 @@ namespace nil {
 
                     using word_type = typename policy_type::word_type;
                     using state_type = typename policy_type::state_type;
-                    using block_type = typename policy_type::block_type; // `block` is used to fit other code (e.g. accumulator)
+                    using block_type = typename policy_type::block_type;
+                    // `block` is used to fit other code (e.g. accumulator)
                     using digest_type = typename policy_type::digest_type;
 
                     constexpr static const std::size_t state_words = policy_type::state_words;
@@ -81,7 +82,8 @@ namespace nil {
                         state_count_++;
                     }
 
-                    const word_type squeeze() { // type differs from canonical sponge, it should be block_type
+                    const word_type squeeze() {
+                        // type differs from canonical sponge, it should be block_type
                         permute();
                         return state_[0];
                     }
@@ -99,9 +101,9 @@ namespace nil {
                     state_type state_;
                     std::size_t state_count_;
                 };
-            }    // namespace detail
-        }        // namespace hashes
-    }            // namespace crypto3
-}    // namespace nil
+            } // namespace detail
+        } // namespace hashes
+    } // namespace crypto3
+} // namespace nil
 
 #endif    // CRYPTO3_HASH_NIL_POSEIDON_SPONGE_HPP
