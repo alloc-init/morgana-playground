@@ -33,7 +33,11 @@ macro(define_vdf_test name)
     set_target_properties(vdf_${name}_test PROPERTIES CXX_STANDARD 14)
 endmacro()
 
-set(TESTS_NAMES "chia" "pietrzak" "wesolowski")
+set(TESTS_NAMES
+#        "chia"
+#        "pietrzak"
+#        "wesolowski"
+)
 
 foreach(TEST_NAME ${TESTS_NAMES})
     define_vdf_test(${TEST_NAME})

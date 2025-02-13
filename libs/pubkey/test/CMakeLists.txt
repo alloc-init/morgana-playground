@@ -4,7 +4,7 @@ cm_find_package(${CMAKE_WORKSPACE_NAME}_marshalling)
 cm_find_package(${CMAKE_WORKSPACE_NAME}_random)
 
 cm_test_link_libraries(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME}
-        marshalling::crypto3_zk
+        crypto3::zk
 
         ${CMAKE_WORKSPACE_NAME}::pkpad
         ${CMAKE_WORKSPACE_NAME}::random

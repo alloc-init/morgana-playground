@@ -67,16 +67,18 @@ root
 
 - [clang](https://clang.llvm.org/) (>= 11.0)/GCC (>= 10.0)/MSVC (>= 14.20)
 - [cmake](https://cmake.org) (>= 3.6)
-- [boost](https://boost.org) (>= 1.76)
+- [boost](https://boost.org) (>= 1.87)
+- [cmake_modules](https://github.com/BoostCMake/cmake_modules) (57639741ecf018835deb97a04db2200241d7fbd3)
 
 ### Clone & Build
 
 ```
 git clone --recurse-submodules https://github.com/alloc-init/crypto3.git 
 cd crypto3 && mkdir build && cd build
-cmake ..
+cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DBUILD_WITH_BOOST_STATIC_LIBS=FALSE -DBUILD_TESTS=TRUE -DCMAKE_ENABLE_TESTS=TRUE -DCMAKE_CXX_STANDARD=20 ..
 make tests
 ```
+note that you might need to set `-DCMAKE_CXX_COMPILER` to point to an up-to-date clang and `-DBOOST_ROOT` with  `-DBoost_NO_SYSTEM_PATHS=ON` to point to correct version of boost.
 
 ## Nix support
 

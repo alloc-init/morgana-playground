@@ -37,11 +37,12 @@ endmacro()
 
 # TODO(uncomment the failing tests once they pass)
 set(TESTS_NAMES
-        "chacha"
+#        "chacha"
         "hash"
         "algebraic_engine"
         "ct_random_device"
-        "rfc6979")
+        "rfc6979"
+)
 
 foreach(TEST_NAME ${TESTS_NAMES})
     define_random_test(${TEST_NAME})

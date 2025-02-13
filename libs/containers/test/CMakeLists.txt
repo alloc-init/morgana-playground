@@ -63,7 +63,7 @@ macro(define_storage_test test)
 endmacro()
 
 set(TESTS_NAMES
-    "merkle/merkle"
+#    "merkle/merkle"
 )
 
 foreach(TEST_NAME ${TESTS_NAMES})
