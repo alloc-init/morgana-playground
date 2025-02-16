@@ -165,8 +165,8 @@ int main(int argc, char *argv[]) {
     marshalling_type_input marshalling_type_in;
     std::array<std::uint16_t, 4> inp_seed_blank = {{0x12, 0x34, 0x56, 0x78}};
     input_seed_type &inp_seed = marshalling_type_in.value();
-    for (auto it = inp_seed_blank.begin(); it != inp_seed_blank.end(); ++it) {
-        inp_seed.push_back(typename input_seed_type::value_type(*it));
+    for (unsigned short & it : inp_seed_blank) {
+        inp_seed.push_back(typename input_seed_type::value_type(it));
     }
 
     std::cout << "From big vector to:" << std::endl;

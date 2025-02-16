@@ -48,8 +48,7 @@ namespace nil {
             namespace detail {
                 template<typename FieldType>
                 void iterate(typename FieldType::value_type &x, typename FieldType::value_type &a,
-                             typename FieldType::value_type &b,
-                             const typename FieldType::value_type &h) {
+                             typename FieldType::value_type &b, const typename FieldType::value_type &h) {
                     if (x % 3 == 0) {
                         x = (x * x) % FieldType::modulus;
                         a = (a * 2) % FieldType::modulus;
@@ -62,34 +61,33 @@ namespace nil {
                         b = (b + 1) % FieldType::modulus;
                     }
                 }
-            }
+            }    // namespace detail
 
             /**
-                 * @brief Baby-step giant-step method for computing the discrete logarithm in
-                 * the Zp group.
-                 *
-                 * It searches for a solution <= bound. If bound argument is nil,
-                 * the bound is automatically set to p-1.
-                 * The function returns x, where h = g^x mod p. If the solution was not found
-                 * within the provided bound, it returns an error.
-                 *
-                 * @param res Discrete logarithm (the result value placeholder)
-                 * @param h Element
-                 * @param g Generator
-                 * @param p Modulus
-                 * @param order Order
-                 * @param bound Bound for solution
-                 * @return Error code
-                 */
+             * @brief Baby-step giant-step method for computing the discrete logarithm in
+             * the Zp group.
+             *
+             * It searches for a solution <= bound. If bound argument is nil,
+             * the bound is automatically set to p-1.
+             * The function returns x, where h = g^x mod p. If the solution was not found
+             * within the provided bound, it returns an error.
+             *
+             * @param res Discrete logarithm (the result value placeholder)
+             * @param h Element
+             * @param g Generator
+             * @param p Modulus
+             * @param order Order
+             * @param bound Bound for solution
+             * @return Error code
+             */
             template<typename FieldType>
-            typename FieldType::value_type baby_giant_dlog(
-                const typename FieldType::value_type &h,
-                const typename FieldType::value_type &g,
-                const typename FieldType::value_type &bound = 0) {
+            typename FieldType::value_type baby_giant_dlog(const typename FieldType::value_type &h,
+                                                           const typename FieldType::value_type &g,
+                                                           const typename FieldType::value_type &bound = 0) {
                 using value_type = typename FieldType::value_type;
 
                 // Access modulus and generator from FieldType
-                const value_type &p = FieldType::modulus; // Modulus
+                const value_type &p = FieldType::modulus;    // Modulus
 
                 // Check if p is prime
                 if (!boost::multiprecision::miller_rabin_test(p, 25)) {
@@ -97,9 +95,8 @@ namespace nil {
                 }
 
                 // Calculate m = ceil(sqrt(bound or p - 1))
-                value_type m = bound != 0 ?
-                                   boost::multiprecision::sqrt(bound) + 1 :
-                                   boost::multiprecision::sqrt(p - 1) + 1;
+                value_type m =
+                    bound != 0 ? boost::multiprecision::sqrt(bound) + 1 : boost::multiprecision::sqrt(p - 1) + 1;
 
                 value_type x = 1;
 
@@ -109,7 +106,7 @@ namespace nil {
                 // Baby-step: Compute T[g^j mod p] = j for j in [0, m)
                 for (value_type j = 0; j < m; ++j) {
                     T[x] = j;
-                    x = (x * g) % p; // x = g^j mod p
+                    x = (x * g) % p;    // x = g^j mod p
                 }
 
                 // Compute z = g^(-m) mod p
@@ -117,44 +114,43 @@ namespace nil {
                 z = boost::multiprecision::powm(z, m, p);
 
                 // Giant-step: Check for h * g^(-i*m) mod p in T
-                x = h; // Start with h
+                x = h;    // Start with h
                 for (value_type i = 0; i < m; ++i) {
                     auto it = T.find(x);
                     if (it != T.end()) {
                         // Found: Compute result
-                        return (i * m + it->second) % (p - 1); // Implicit modular arithmetic
+                        return (i * m + it->second) % (p - 1);    // Implicit modular arithmetic
                     }
-                    x = (x * z) % p; // x = h * g^(-i*m) mod p
+                    x = (x * z) % p;    // x = h * g^(-i*m) mod p
                 }
 
-                return -2; // Logarithm not found
+                return -2;    // Logarithm not found
             }
 
             template<typename FieldType>
-            typename FieldType::value_type inline baby_giant_dlog(
-                const typename FieldType::value_type &h,
-                const typename FieldType::value_type &bound = 0) {
+            typename FieldType::value_type inline baby_giant_dlog(const typename FieldType::value_type &h,
+                                                                  const typename FieldType::value_type &bound = 0) {
                 return baby_giant_dlog<FieldType>(h, fields::arithmetic_params<FieldType>::arithmetic_generator, bound);
             }
 
             /**
-                 * @brief Baby-step giant-step method for computing the discrete logarithm in
-                 * the Zp group finding also negative solutions.
-                 *
-                 * It searches for a solution (-bound, bound). If bound argument is nil,
-                 * the bound is automatically set to p-1 and it works identically than
-                 * function baby_step_giant_step.
-                 * The function returns x, where h = g^x mod p. If the solution was not found
-                 * within the provided bound, it returns an error.
-                 *
-                 * @param res Discrete logarithm (the result value placeholder)
-                 * @param h Element
-                 * @param g Generator
-                 * @param p Modulus
-                 * @param _order Order
-                 * @param bound Bound for solution
-                 * @return Error code
-                 */
+             * @brief Baby-step giant-step method for computing the discrete logarithm in
+             * the Zp group finding also negative solutions.
+             *
+             * It searches for a solution (-bound, bound). If bound argument is nil,
+             * the bound is automatically set to p-1 and it works identically than
+             * function baby_step_giant_step.
+             * The function returns x, where h = g^x mod p. If the solution was not found
+             * within the provided bound, it returns an error.
+             *
+             * @param res Discrete logarithm (the result value placeholder)
+             * @param h Element
+             * @param g Generator
+             * @param p Modulus
+             * @param _order Order
+             * @param bound Bound for solution
+             * @return Error code
+             */
             template<typename FieldType>
             typename FieldType::value_type baby_giant_dlog_with_neg(const typename FieldType::value_type &h,
                                                                     const typename FieldType::value_type bound = 0) {
@@ -175,37 +171,37 @@ namespace nil {
                 // Attempt to compute the discrete logarithm with the inverse generator
                 res = baby_giant_dlog<FieldType>(res, h, bound);
                 if (res != -2 && res != -1) {
-                    res = (p - res) % p; // Negate the result (equivalent to -res mod p)
+                    res = (p - res) % p;    // Negate the result (equivalent to -res mod p)
                 }
 
                 return res;
             }
 
             /**
-                 * @brief Baby-step giant-step method for computing the discrete logarithm in
-                 * the pairing group FP12_BN254 finding also negative solutions.
-                 *
-                 * It searches for a solution (-bound, bound). The function returns x, where
-                 * h = g^x in the group. If the solution was not found within the provided
-                 * bound, it returns an error.
-                 *
-                 * @param res Discrete logarithm (the result value placeholder)
-                 * @param h Element
-                 * @param g Generator
-                 * @param bound Bound for solution
-                 * @return Error code
-                 */
+             * @brief Baby-step giant-step method for computing the discrete logarithm in
+             * the pairing group FP12_BN254 finding also negative solutions.
+             *
+             * It searches for a solution (-bound, bound). The function returns x, where
+             * h = g^x in the group. If the solution was not found within the provided
+             * bound, it returns an error.
+             *
+             * @param res Discrete logarithm (the result value placeholder)
+             * @param h Element
+             * @param g Generator
+             * @param bound Bound for solution
+             * @return Error code
+             */
             template<typename FieldType>
             typename FieldType::value_type baby_giant_dlog_with_neg(const typename FieldType::value_type &h,
                                                                     const boost::multiprecision::cpp_int &bound) {
                 using value_type = typename FieldType::value_type;
                 using HashTable = std::unordered_map<value_type, boost::multiprecision::cpp_int>;
 
-                value_type one = FieldType::value_type::one(); // Multiplicative identity
+                value_type one = FieldType::value_type::one();    // Multiplicative identity
 
                 // Check if h is the identity element
                 if (h == one) {
-                    return FieldType::value_type::zero(); // Set result to 0
+                    return FieldType::value_type::zero();    // Set result to 0
                 }
 
                 typename value_type::integral_type m = boost::multiprecision::sqrt(bound) + 1;
@@ -218,7 +214,7 @@ namespace nil {
                 // Baby-step: Compute T[x] = i for i in [0, m)
                 for (typename value_type::integral_type i = 0; i <= m; ++i) {
                     T[x] = i;
-                    x = x * algebra::fields::arithmetic_params<FieldType>::arithmetic_generator; // x = x * g
+                    x = x * algebra::fields::arithmetic_params<FieldType>::arithmetic_generator;    // x = x * g
                 }
 
                 // Precompute z = g^(-m)
@@ -226,20 +222,20 @@ namespace nil {
                 z = z ^ m;
 
                 // Giant-step: Simultaneously check positive and negative values
-                value_type x_neg = h.inverse(); // x_neg = h^(-1)
+                value_type x_neg = h.inverse();    // x_neg = h^(-1)
 
-                x = h; // Start with h
+                x = h;    // Start with h
                 for (typename value_type::integral_type i = 0; i <= m; ++i) {
                     // Check x
                     auto it = T.find(x);
                     if (it != T.end()) {
-                        return i * m + it->second; // Compute result
+                        return i * m + it->second;    // Compute result
                     }
 
                     // Check x_neg
                     it = T.find(x_neg);
                     if (it != T.end()) {
-                        return -(i * m + it->second); // Compute negative result
+                        return -(i * m + it->second);    // Compute negative result
                     }
 
                     // Update x and x_neg
@@ -251,26 +247,26 @@ namespace nil {
             }
 
             /**
-            * @brief  Pollard's rho algorithm - simple, non-parallel version.
-            *
-            * @param res Discrete logarithm (the result value placeholder)
-            * @param h Element
-            * @param g Generator
-            * @param p Modulus
-            * @param n Order
-            * @return Error code
-            */
+             * @brief  Pollard's rho algorithm - simple, non-parallel version.
+             *
+             * @param res Discrete logarithm (the result value placeholder)
+             * @param h Element
+             * @param g Generator
+             * @param p Modulus
+             * @param n Order
+             * @return Error code
+             */
             template<typename FieldType>
             typename FieldType::value_type pollard_rho_dlog(const typename FieldType::value_type &h) {
                 using value_type = typename FieldType::value_type;
 
-                value_type x1 = value_type::one(); // x1 = 1
-                value_type a1 = value_type::zero(); // a1 = 0
-                value_type b1 = value_type::zero(); // b1 = 0
+                value_type x1 = value_type::one();     // x1 = 1
+                value_type a1 = value_type::zero();    // a1 = 0
+                value_type b1 = value_type::zero();    // b1 = 0
 
-                value_type x2 = value_type::one(); // x2 = 1
-                value_type a2 = value_type::zero(); // a2 = 0
-                value_type b2 = value_type::zero(); // b2 = 0
+                value_type x2 = value_type::one();     // x2 = 1
+                value_type a2 = value_type::zero();    // a2 = 0
+                value_type b2 = value_type::zero();    // b2 = 0
 
                 uint64_t iterations = uint64_t(1) << 32;
 
@@ -284,16 +280,16 @@ namespace nil {
 
                     // Check for collision
                     if (x1 == x2) {
-                        value_type r = (b2 - b1) % FieldType::modulus; // b2 - b1 mod n
-                        value_type t = (a1 - a2) % FieldType::modulus; // a1 - a2 mod n
+                        value_type r = (b2 - b1) % FieldType::modulus;    // b2 - b1 mod n
+                        value_type t = (a1 - a2) % FieldType::modulus;    // a1 - a2 mod n
 
                         if (r == FieldType::value_type(0)) {
-                            break; // Failure: r = 0
+                            break;    // Failure: r = 0
                         }
 
                         // Compute gcd(r, modulus)
-                        typename value_type::integral_type gcd_r_modulus = boost::multiprecision::gcd(
-                            r, FieldType::modulus);
+                        typename value_type::integral_type gcd_r_modulus =
+                            boost::multiprecision::gcd(r, FieldType::modulus);
 
                         if (gcd_r_modulus == 1) {
                             // Invert r and compute the result
@@ -319,8 +315,8 @@ namespace nil {
 
                 return -1;
             }
-        }
-    }
-}
+        }    // namespace algebra
+    }    // namespace crypto3
+}    // namespace nil
 
 #endif

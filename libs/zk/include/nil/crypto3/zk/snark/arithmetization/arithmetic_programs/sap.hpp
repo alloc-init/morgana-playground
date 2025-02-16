@@ -91,8 +91,7 @@ namespace nil {
                         const std::size_t num_inputs,
                         const std::vector<std::map<std::size_t, typename FieldType::value_type>> &A_in_Lagrange_basis,
                         const std::vector<std::map<std::size_t, typename FieldType::value_type>> &C_in_Lagrange_basis) :
-                        num_variables(num_variables),
-                        degree(degree), num_inputs(num_inputs), domain(domain),
+                        num_variables(num_variables), degree(degree), num_inputs(num_inputs), domain(domain),
                         A_in_Lagrange_basis(A_in_Lagrange_basis), C_in_Lagrange_basis(C_in_Lagrange_basis) {
                     }
 
@@ -103,8 +102,7 @@ namespace nil {
                         const std::size_t num_inputs,
                         std::vector<std::map<std::size_t, typename FieldType::value_type>> &&A_in_Lagrange_basis,
                         std::vector<std::map<std::size_t, typename FieldType::value_type>> &&C_in_Lagrange_basis) :
-                        num_variables(num_variables),
-                        degree(degree), num_inputs(num_inputs), domain(domain),
+                        num_variables(num_variables), degree(degree), num_inputs(num_inputs), domain(domain),
                         A_in_Lagrange_basis(std::move(A_in_Lagrange_basis)),
                         C_in_Lagrange_basis(std::move(C_in_Lagrange_basis)) {
                     }
@@ -193,8 +191,8 @@ namespace nil {
                                             const std::vector<typename FieldType::value_type> &Ct,
                                             const std::vector<typename FieldType::value_type> &Ht,
                                             const typename FieldType::value_type &Zt) :
-                        num_variables(num_variables),
-                        degree(degree), num_inputs(num_inputs), domain(domain), t(t), At(At), Ct(Ct), Ht(Ht), Zt(Zt) {
+                        num_variables(num_variables), degree(degree), num_inputs(num_inputs), domain(domain), t(t),
+                        At(At), Ct(Ct), Ht(Ht), Zt(Zt) {
                     }
 
                     sap_instance_evaluation(const std::shared_ptr<evaluation_domain<FieldType>> &domain,
@@ -206,9 +204,8 @@ namespace nil {
                                             std::vector<typename FieldType::value_type> &&Ct,
                                             std::vector<typename FieldType::value_type> &&Ht,
                                             const typename FieldType::value_type &Zt) :
-                        num_variables(num_variables),
-                        degree(degree), num_inputs(num_inputs), domain(domain), t(t), At(std::move(At)),
-                        Ct(std::move(Ct)), Ht(std::move(Ht)), Zt(Zt) {
+                        num_variables(num_variables), degree(degree), num_inputs(num_inputs), domain(domain), t(t),
+                        At(std::move(At)), Ct(std::move(Ct)), Ht(std::move(Ht)), Zt(Zt) {
                     }
 
                     sap_instance_evaluation(const sap_instance_evaluation<FieldType> &other) = default;
@@ -299,8 +296,7 @@ namespace nil {
                                 const typename FieldType::value_type &d2,
                                 const std::vector<typename FieldType::value_type> &coefficients_for_ACs,
                                 const std::vector<typename FieldType::value_type> &coefficients_for_H) :
-                        num_variables(num_variables),
-                        degree(degree), num_inputs(num_inputs), d1(d1), d2(d2),
+                        num_variables(num_variables), degree(degree), num_inputs(num_inputs), d1(d1), d2(d2),
                         coefficients_for_ACs(coefficients_for_ACs), coefficients_for_H(coefficients_for_H) {
                     }
 
@@ -311,8 +307,7 @@ namespace nil {
                                 const typename FieldType::value_type &d2,
                                 const std::vector<typename FieldType::value_type> &coefficients_for_ACs,
                                 std::vector<typename FieldType::value_type> &&coefficients_for_H) :
-                        num_variables(num_variables),
-                        degree(degree), num_inputs(num_inputs), d1(d1), d2(d2),
+                        num_variables(num_variables), degree(degree), num_inputs(num_inputs), d1(d1), d2(d2),
                         coefficients_for_ACs(coefficients_for_ACs), coefficients_for_H(std::move(coefficients_for_H)) {
                     }
 
@@ -322,8 +317,8 @@ namespace nil {
                     sap_witness &operator=(sap_witness<FieldType> &&other) = default;
                 };
             }    // namespace snark
-        }        // namespace zk
-    }            // namespace crypto3
+        }    // namespace zk
+    }    // namespace crypto3
 }    // namespace nil
 
 #endif    // CRYPTO3_SAP_HPP

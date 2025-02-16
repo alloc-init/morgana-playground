@@ -28,6 +28,7 @@
 #include <vector>
 
 #include <nil/crypto3/hash/detail/keccak/keccak_policy.hpp>
+
 #include <nil/crypto3/detail/inject.hpp>
 #include <nil/crypto3/detail/unbounded_shift.hpp>
 

@@ -40,10 +40,10 @@ namespace nil {
     namespace crypto3 {
         namespace hashes {
             template<typename FieldType,
-                    typename HashType,
-                    std::size_t K = 128,
-                    uniformity_count UniformityCount = uniformity_count::uniform_count,
-                    expand_msg_variant ExpandMsgVariant = expand_msg_variant::rfc_xmd>
+                     typename HashType,
+                     std::size_t K = 128,
+                     uniformity_count UniformityCount = uniformity_count::uniform_count,
+                     expand_msg_variant ExpandMsgVariant = expand_msg_variant::rfc_xmd>
             struct h2f_default_params {
                 constexpr static uniformity_count uniformity_count = UniformityCount;
                 constexpr static expand_msg_variant expand_msg_variant = ExpandMsgVariant;
@@ -66,8 +66,9 @@ namespace nil {
              * @tparam GroupType
              * @tparam Params
              */
-            template<typename FieldType, typename HashType = sha2<256>,
-                    typename ParamsType = h2f_default_params<FieldType, HashType>>
+            template<typename FieldType,
+                     typename HashType = sha2<256>,
+                     typename ParamsType = h2f_default_params<FieldType, HashType>>
             struct h2f {
                 typedef h2f_suite<FieldType, HashType, ParamsType::k> suite_type;
                 static constexpr uniformity_count uniformity_count = ParamsType::uniformity_count;
@@ -91,8 +92,9 @@ namespace nil {
                 constexpr static std::size_t len_in_bytes = count * m * L;
 
                 typedef typename std::conditional<(expand_msg_variant::rfc_xmd == expand_msg_variant),
-                        detail::expand_message_xmd<k, len_in_bytes, hash_type>,
-                        detail::expand_message_xof<k, len_in_bytes, hash_type> >::type expand_message_type;
+                                                  detail::expand_message_xmd<k, len_in_bytes, hash_type>,
+                                                  detail::expand_message_xof<k, len_in_bytes, hash_type>>::type
+                    expand_message_type;
                 static_assert(!std::is_void<expand_message_type>::value, "Undefined expand_message_type.");
 
                 typedef std::array<field_value_type, count> result_type;
@@ -106,7 +108,8 @@ namespace nil {
                     typedef void type;
                 };
 
-                constexpr static detail::stream_processor_type stream_processor = detail::stream_processor_type::raw_delegating;
+                constexpr static detail::stream_processor_type stream_processor =
+                    detail::stream_processor_type::raw_delegating;
                 using accumulator_tag = accumulators::tag::forwarding_hash<h2f<FieldType, HashType, ParamsType>>;
 
                 static inline void init_accumulator(accumulator_type &acc) {
@@ -128,7 +131,7 @@ namespace nil {
                 static inline result_type process(accumulator_type &acc) {
 
                     typename expand_message_type::result_type uniform_bytes =
-                            expand_message_type::process(acc, ParamsType::dst);
+                        expand_message_type::process(acc, ParamsType::dst);
                     std::array<modular_type, m> coordinates;
                     std::array<field_value_type, count> result;
                     for (std::size_t i = 0; i < count; i++) {
@@ -142,10 +145,9 @@ namespace nil {
                                       std::cbegin(uniform_bytes) + elm_offset + L,
                                       std::back_inserter(imported_octets));
                             nil::marshalling::status_type status;
-                            boost::multiprecision::number<boost::multiprecision::cpp_int_modular_backend<
-                                    L * CHAR_BIT>> tmp =
-                                    nil::marshalling::pack<nil::marshalling::option::big_endian>(imported_octets,
-                                                                                                 status);
+                            boost::multiprecision::number<boost::multiprecision::cpp_int_modular_backend<L * CHAR_BIT>>
+                                tmp = nil::marshalling::pack<nil::marshalling::option::big_endian>(imported_octets,
+                                                                                                   status);
                             coordinates[j] = modular_type(typename modular_type::backend_type(tmp.backend()));
                         }
                         result[i] = coordinates[0];
@@ -158,7 +160,7 @@ namespace nil {
                 static inline result_type process(accumulator_type &acc) {
 
                     typename expand_message_type::result_type uniform_bytes =
-                            expand_message_type::process(acc, ParamsType::dst);
+                        expand_message_type::process(acc, ParamsType::dst);
                     std::array<modular_type, m> coordinates;
                     std::array<field_value_type, count> result;
                     for (std::size_t i = 0; i < count; i++) {
@@ -172,10 +174,9 @@ namespace nil {
                                       std::cbegin(uniform_bytes) + elm_offset + L,
                                       std::back_inserter(imported_octets));
                             nil::marshalling::status_type status;
-                            boost::multiprecision::number<boost::multiprecision::cpp_int_modular_backend<
-                                    L * CHAR_BIT>> tmp =
-                                    nil::marshalling::pack<nil::marshalling::option::big_endian>(imported_octets,
-                                                                                                 status);
+                            boost::multiprecision::number<boost::multiprecision::cpp_int_modular_backend<L * CHAR_BIT>>
+                                tmp = nil::marshalling::pack<nil::marshalling::option::big_endian>(imported_octets,
+                                                                                                   status);
                             coordinates[j] = modular_type(typename modular_type::backend_type(tmp.backend()));
                         }
                         result[i] = field_value_type(coordinates[0], coordinates[1]);
@@ -184,7 +185,7 @@ namespace nil {
                 }
             };
         }    // namespace hashes
-    }        // namespace crypto3
+    }    // namespace crypto3
 }    // namespace nil
 
 #endif    // CRYPTO3_HASH_H2F_HPP

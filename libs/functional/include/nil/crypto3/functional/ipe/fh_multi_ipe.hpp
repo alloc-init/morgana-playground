@@ -83,8 +83,8 @@ namespace nil {
                 typedef typename curve_type::base_field_type base_field_type;
                 typedef typename base_field_type::value_type base_field_value_type;
 
-                constexpr static const std::size_t ciphertext_size = CiphertextSize;
-                typedef std::array<typename curve_type::template g1_type<>, 2 * ciphertext_size + 2 * sec_level + 1>
+                constexpr static const std::size_t schedule_size = CiphertextSize;
+                typedef std::array<typename curve_type::template g1_type<>, 2 * schedule_size + 2 * sec_level + 1>
                     schedule_type;
 
                 constexpr static const std::size_t plaintext_size = BoundX * base_field_value_type::modulus_bits;
@@ -96,7 +96,7 @@ namespace nil {
                 constexpr static const typename algebra::fields::arithmetic_params<base_field_type>::integral_type
                     group_order = algebra::fields::arithmetic_params<base_field_type>::group_order;
 
-                static_assert(BoundX * BoundY * ciphertext_size * Clients < group_order);
+                static_assert(BoundX * BoundY * schedule_size * Clients < group_order);
             };
 
             template<typename CurveType, std::size_t K, std::size_t Clients, std::size_t CiphertextSize,
@@ -111,7 +111,7 @@ namespace nil {
                 constexpr static const std::size_t clients = scheme_type::clients;
                 constexpr static const std::size_t Q = BoundY;
 
-                constexpr static const std::size_t ciphertext_size = scheme_type::ciphertext_size;
+                constexpr static const std::size_t schedule_size = scheme_type::schedule_size;
                 typedef typename scheme_type::schedule_type schedule_type;
 
                 constexpr static const std::size_t plaintext_size = scheme_type::plaintext_size;
@@ -124,8 +124,7 @@ namespace nil {
                     m.fill(typename curve_type::template g2_type<>::value_type::zero());
                 }
 
-                algebra::matrix<typename curve_type::template g2_type<>, Clients,
-                                2 * ciphertext_size + 2 * sec_level + 1>
+                algebra::matrix<typename curve_type::template g2_type<>, Clients, 2 * schedule_size + 2 * sec_level + 1>
                     m;
             };
         }    // namespace functional
@@ -145,7 +144,7 @@ namespace nil {
                 typedef typename curve_type::base_field_type field_type;
                 typedef typename field_type::value_type field_value_type;
 
-                constexpr static const std::size_t ciphertext_size = scheme_type::ciphertext_size;
+                constexpr static const std::size_t schedule_size = scheme_type::schedule_size;
                 typedef typename scheme_type::schedule_type ciphertext_type;
 
                 constexpr static const std::size_t plaintext_size = scheme_type::plaintext_size;
@@ -154,8 +153,8 @@ namespace nil {
                 constexpr static const std::size_t digest_bits = scheme_type::digest_bits;
                 typedef typename scheme_type::digest_type digest_type;
 
-                typedef algebra::matrix<field_type, ciphertext_size + sec_level + 1,
-                                        2 * ciphertext_size + 2 * sec_level + 1>
+                typedef algebra::matrix<field_type, schedule_size + sec_level + 1,
+                                        2 * schedule_size + 2 * sec_level + 1>
                     client_key_type;
 
                 template<typename DistributionType =
@@ -188,14 +187,14 @@ namespace nil {
                                                              paired;
 
                     for (size_t i = 0; i < Clients; i++) {
-                        for (size_t j = 0; j < 2 * ciphertext_size + 2 * sec_level + 1; j++) {
+                        for (size_t j = 0; j < 2 * schedule_size + 2 * sec_level + 1; j++) {
                             paired = algebra::pair<curve_type>(fe_key.m[i][j], ciphers[i][j]);
                             paired = algebra::final_exponentiation<CurveType>(paired);
                             sum *= paired;
                         }
                     }
 
-                    return algebra::baby_giant_dlog<field_type>(sum, pkey, BoundY * BoundX * Clients * ciphertext_size);
+                    return algebra::baby_giant_dlog<field_type>(sum, pkey, BoundY * BoundX * Clients * schedule_size);
                 }
 
                 typename curve_type::gt_type::value_type pkey;
@@ -220,7 +219,7 @@ namespace nil {
                 constexpr static const std::size_t clients = Clients;
                 constexpr static const std::size_t Q = BoundY;
 
-                constexpr static const std::size_t ciphertext_size = scheme_type::ciphertext_size;
+                constexpr static const std::size_t schedule_size = scheme_type::schedule_size;
                 typedef typename scheme_type::schedule_type schedule_type;
 
                 constexpr static const std::size_t plaintext_size = scheme_type::plaintext_size;
@@ -228,8 +227,8 @@ namespace nil {
 
                 constexpr static const auto group_order = scheme_type::group_order;
 
-                typedef algebra::matrix<field_type, ciphertext_size + sec_level + 1,
-                                        2 * ciphertext_size + 2 * sec_level + 1>
+                typedef algebra::matrix<field_type, schedule_size + sec_level + 1,
+                                        2 * schedule_size + 2 * sec_level + 1>
                     client_key_type;
 
                 /**
@@ -248,25 +247,25 @@ namespace nil {
                          typename UniformRandomBitGenerator = boost::random::random_device>
                 private_key(const field_value_type &mu =
                                 algebra::random_element<field_type, DistributionType>(UniformRandomBitGenerator())) :
-                    public_key<
-                        functional::fh_multi_ipe<CurveType, sec_level, Clients, ciphertext_size, BoundX, BoundY>>(mu) {
+                    public_key<functional::fh_multi_ipe<CurveType, sec_level, Clients, schedule_size, BoundX, BoundY>>(
+                        mu) {
                     algebra::matrix<client_key_type, Clients, Clients> B, B_star;
 
                     for (size_t i = 0; i < Clients; i++) {
                         random_OB(B[i], B_star[i], mu, group_order);
 
-                        for (size_t j = 0; j < ciphertext_size + sec_level + 1; j++) {
-                            if (j < ciphertext_size) {
+                        for (size_t j = 0; j < schedule_size + sec_level + 1; j++) {
+                            if (j < schedule_size) {
                                 B_hat[i][j] = B[i][j];
                                 B_star_hat[i][j] = B_star[i][j];
-                            } else if (j == ciphertext_size) {
-                                B_hat[i][j] = B[i][j + ciphertext_size];
-                                B_star_hat[i][j] = B_star[i][j + ciphertext_size];
-                            } else if (j < ciphertext_size + sec_level) {
-                                B_hat[i][j] = B[i][j - 1 + ciphertext_size + sec_level];
-                                B_star_hat[i][j] = B_star[i][j + ciphertext_size];
+                            } else if (j == schedule_size) {
+                                B_hat[i][j] = B[i][j + schedule_size];
+                                B_star_hat[i][j] = B_star[i][j + schedule_size];
+                            } else if (j < schedule_size + sec_level) {
+                                B_hat[i][j] = B[i][j - 1 + schedule_size + sec_level];
+                                B_star_hat[i][j] = B_star[i][j + schedule_size];
                             } else {
-                                B_hat[i][j] = B[i][j - 1 + ciphertext_size + sec_level];
+                                B_hat[i][j] = B[i][j - 1 + schedule_size + sec_level];
                             }
                         }
                     }
@@ -287,8 +286,8 @@ namespace nil {
                 schedule_type encrypt(const plaintext_type &x, const client_key_type &part_sec_key) {
                     field_value_type s = field_value_type::zero();
                     std::array<field_value_type, sec_level> phi;
-                    std::array<field_value_type, 2 * ciphertext_size + 2 * sec_level + 1> key_vec;
-                    std::array<field_value_type, 2 * ciphertext_size + 2 * sec_level + 1> tmp_vec;
+                    std::array<field_value_type, 2 * schedule_size + 2 * sec_level + 1> key_vec;
+                    std::array<field_value_type, 2 * schedule_size + 2 * sec_level + 1> tmp_vec;
 
                     key_vec.fill(field_value_type::zero());
                     tmp_vec.fill(field_value_type::zero());
@@ -300,13 +299,13 @@ namespace nil {
                         v = dist(gen);
                     }
 
-                    for (size_t j = 0; j < ciphertext_size + sec_level + 1; j++) {
-                        if (j < ciphertext_size) {
+                    for (size_t j = 0; j < schedule_size + sec_level + 1; j++) {
+                        if (j < schedule_size) {
                             s = x[j];
-                        } else if (j == ciphertext_size) {
+                        } else if (j == schedule_size) {
                             s = field_value_type::one();
                         } else {
-                            s = phi[j - ciphertext_size - 1];
+                            s = phi[j - schedule_size - 1];
                         }
 
                         tmp_vec = part_sec_key.B_hat[j] * s;
@@ -331,7 +330,7 @@ namespace nil {
                 functional::functional_key<scheme_type> derive(const MatrixType &y) {
                     field_value_type s = field_value_type::zero();
 
-                    MatrixType gamma(sec_level, Clients), key_mat(Clients, 2 * ciphertext_size + 2 * sec_level + 1);
+                    MatrixType gamma(sec_level, Clients), key_mat(Clients, 2 * schedule_size + 2 * sec_level + 1);
                     key_mat.fill(field_value_type::zero());
 
                     boost::random::mt19937 gen;
@@ -347,14 +346,14 @@ namespace nil {
                     }
                     gamma[0][Clients - 1] = -gamma[0][Clients - 1];
 
-                    std::vector<field_value_type> tmp_vec(2 * ciphertext_size + 2 * sec_level + 1);
+                    std::vector<field_value_type> tmp_vec(2 * schedule_size + 2 * sec_level + 1);
 
                     for (size_t i = 0; i < Clients; i++) {
-                        for (size_t j = 0; j < ciphertext_size + sec_level; j++) {
-                            if (j < ciphertext_size) {
+                        for (size_t j = 0; j < schedule_size + sec_level; j++) {
+                            if (j < schedule_size) {
                                 s = y[i][j];
                             } else {
-                                s = gamma[j - ciphertext_size][i];
+                                s = gamma[j - schedule_size][i];
                             }
 
                             tmp_vec = B_star_hat * s;

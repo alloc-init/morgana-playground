@@ -58,8 +58,8 @@ namespace nil {
                     policy_type::permute(state);
                 }
             };
-        }        // namespace hashes
-    }            // namespace crypto3
+        }    // namespace hashes
+    }    // namespace crypto3
 }    // namespace nil
 
-#endif // CRYPTO3_HASH_REINFORCED_COCNRETE_HPP
+#endif    // CRYPTO3_HASH_REINFORCED_COCNRETE_HPP

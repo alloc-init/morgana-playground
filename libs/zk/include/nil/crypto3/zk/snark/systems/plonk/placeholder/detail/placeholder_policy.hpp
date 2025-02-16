@@ -60,13 +60,13 @@ namespace nil {
 
                         typedef plonk_assignment_table<FieldType> variable_assignment_type;
 
-                        typedef detail::plonk_evaluation_map<plonk_variable<typename FieldType::value_type>> evaluation_map;
-
+                        typedef detail::plonk_evaluation_map<plonk_variable<typename FieldType::value_type>>
+                            evaluation_map;
                     };
                 }    // namespace detail
-            }        // namespace snark
-        }            // namespace zk
-    }                // namespace crypto3
+            }    // namespace snark
+        }    // namespace zk
+    }    // namespace crypto3
 }    // namespace nil
 
 #endif    // CRYPTO3_PLONK_PLACEHOLDER_TYPES_POLICY_HPP
