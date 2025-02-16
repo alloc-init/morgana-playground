@@ -31,9 +31,6 @@
 #include <nil/crypto3/algebra/fields/params.hpp>
 #include <nil/crypto3/algebra/fields/field.hpp>
 
-
-
-
 namespace nil {
     namespace crypto3 {
         namespace algebra {
@@ -43,7 +40,7 @@ namespace nil {
                 struct maxprime;
 
                 template<>
-                struct maxprime<64> : public field<64>{
+                struct maxprime<64> : public field<64> {
                     typedef field<64> policy_type;
 
                     constexpr static const std::size_t modulus_bits = policy_type::modulus_bits;
@@ -54,13 +51,12 @@ namespace nil {
                     constexpr static const std::size_t number_bits = policy_type::number_bits;
 
                     constexpr static const integral_type modulus =
-                        0xFFFFFFFFFFFFFFC5_cppui_modular64; // 18446744073709551557
+                        0xFFFFFFFFFFFFFFC5_cppui_modular64;    // 18446744073709551557
                     typedef typename policy_type::modular_backend modular_backend;
                     constexpr static const modular_params_type modulus_params = modulus.backend();
-                    typedef boost::multiprecision::number<
-                        boost::multiprecision::backends::modular_adaptor<
-                            modular_backend,
-                            boost::multiprecision::backends::modular_params_ct<modular_backend, modulus_params>>>
+                    typedef boost::multiprecision::number<boost::multiprecision::backends::modular_adaptor<
+                        modular_backend,
+                        boost::multiprecision::backends::modular_params_ct<modular_backend, modulus_params>>>
                         modular_type;
 
                     typedef typename detail::element_fp<params<maxprime<64>>> value_type;
@@ -68,9 +64,9 @@ namespace nil {
                     constexpr static const std::size_t value_bits = modulus_bits;
                     constexpr static const std::size_t arity = 1;
                 };
-              }    // namespace fields
-        }        // namespace algebra
-    }            // namespace crypto3
+            }    // namespace fields
+        }    // namespace algebra
+    }    // namespace crypto3
 }    // namespace nil
 
-#endif 
+#endif

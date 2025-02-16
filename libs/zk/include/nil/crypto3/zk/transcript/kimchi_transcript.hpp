@@ -34,8 +34,8 @@ namespace nil {
                 integral_type pack(std::vector<uint64_t> limbs_lsb) {
                     nil::marshalling::status_type status;
                     std::size_t byte_size =
-                            boost::multiprecision::backends::max_precision<typename integral_type::backend_type>::value /
-                            CHAR_BIT;
+                        boost::multiprecision::backends::max_precision<typename integral_type::backend_type>::value /
+                        CHAR_BIT;
                     std::size_t size = byte_size / sizeof(uint64_t) + (byte_size % sizeof(uint64_t) ? 1 : 0);
                     limbs_lsb.resize(size);
                     std::reverse(limbs_lsb.begin(), limbs_lsb.end());
@@ -49,8 +49,8 @@ namespace nil {
                 std::vector<std::uint64_t> unpack(value_type &value) {
                     nil::marshalling::status_type status;
                     integral_type scalar_value = integral_type(value.data);
-                    std::vector<std::uint64_t> limbs_lsb = nil::marshalling::pack<nil::marshalling::option::big_endian>(
-                            scalar_value, status);
+                    std::vector<std::uint64_t> limbs_lsb =
+                        nil::marshalling::pack<nil::marshalling::option::big_endian>(scalar_value, status);
 
                     std::reverse(limbs_lsb.begin(), limbs_lsb.end());
                     limbs_lsb.resize(CHALLENGE_LENGTH_IN_LIMBS);
@@ -74,7 +74,6 @@ namespace nil {
 
                     typename nil::crypto3::hashes::detail::poseidon_sponge_construction_custom<policy_type> sponge;
                     std::vector<limb_type> last_squeezed;
-
                 };
 
                 template<typename CurveType>
@@ -89,7 +88,8 @@ namespace nil {
                     typename nil::crypto3::hashes::detail::poseidon_sponge_construction_custom<policy_type> sponge;
                     typedef snark::ScalarChallenge<scalar_field_type> scalar_challenge_type;
 
-                    constexpr static const int CHALLENGE_LENGTH_IN_LIMBS = BaseSponge<CurveType>::CHALLENGE_LENGTH_IN_LIMBS;
+                    constexpr static const int CHALLENGE_LENGTH_IN_LIMBS =
+                        BaseSponge<CurveType>::CHALLENGE_LENGTH_IN_LIMBS;
                     constexpr static const int HIGH_ENTROPY_LIMBS = BaseSponge<CurveType>::HIGH_ENTROPY_LIMBS;
 
                     typename scalar_field_type::value_type squeeze(std::size_t num_limbs) {
@@ -101,12 +101,12 @@ namespace nil {
                             this->last_squeezed = remaining;
 
                             return typename scalar_field_type::value_type(
-                                    pack<typename scalar_field_type::integral_type>(limbs));
+                                pack<typename scalar_field_type::integral_type>(limbs));
                         } else {
                             auto sq = this->sponge.squeeze();
                             nil::marshalling::status_type status;
-                            std::vector<limb_type> x = unpack<typename scalar_field_type::value_type, typename scalar_field_type::integral_type>(
-                                    sq);
+                            std::vector<limb_type> x = unpack<typename scalar_field_type::value_type,
+                                                              typename scalar_field_type::integral_type>(sq);
 
                             for (int i = 0; i < HIGH_ENTROPY_LIMBS; ++i) {
                                 this->last_squeezed.push_back(x[i]);
@@ -125,53 +125,51 @@ namespace nil {
                         return scalar_challenge_type(squeeze(CHALLENGE_LENGTH_IN_LIMBS));
                     }
 
-                    void absorb_evaluations(std::vector<typename scalar_field_type::value_type> &p,
-                                            snark::proof_evaluation_type<std::vector<typename scalar_field_type::value_type>> &e) {
+                    void absorb_evaluations(
+                        std::vector<typename scalar_field_type::value_type> &p,
+                        snark::proof_evaluation_type<std::vector<typename scalar_field_type::value_type>> &e) {
                         this->last_squeezed.clear();
-                        for (const typename scalar_field_type::value_type &v: p) {
+                        for (const typename scalar_field_type::value_type &v : p) {
                             this->sponge.absorb(v);
                         }
 
                         std::vector<std::vector<typename scalar_field_type::value_type>> points = {
-                                e.z,
-                                e.generic_selector,
-                                e.poseidon_selector
-                        };
-                        for (const auto &v: e.z) {
+                            e.z, e.generic_selector, e.poseidon_selector};
+                        for (const auto &v : e.z) {
                             this->sponge.absorb(v);
                         }
 
-                        for (const auto &v: e.generic_selector) {
+                        for (const auto &v : e.generic_selector) {
                             this->sponge.absorb(v);
                         }
 
-                        for (const auto &v: e.poseidon_selector) {
+                        for (const auto &v : e.poseidon_selector) {
                             this->sponge.absorb(v);
                         }
 
-                        for (auto &w_iter: e.w) {
-                            for (const auto &v: w_iter) {
+                        for (auto &w_iter : e.w) {
+                            for (const auto &v : w_iter) {
                                 this->sponge.absorb(v);
                             }
                         }
 
-                        for (auto &s_iter: e.s) {
-                            for (const auto &v: s_iter) {
+                        for (auto &s_iter : e.s) {
+                            for (const auto &v : s_iter) {
                                 this->sponge.absorb(v);
                             }
                         }
 
                         if (e.lookup_is_used) {
-                            for (auto &s: e.lookup.sorted) {
-                                for (const auto &v: s) {
+                            for (auto &s : e.lookup.sorted) {
+                                for (const auto &v : s) {
                                     this->sponge.absorb(v);
                                 }
                             }
 
-                            for (const auto &v: e.lookup.aggreg) {
+                            for (const auto &v : e.lookup.aggreg) {
                                 this->sponge.absorb(v);
                             }
-                            for (const auto &v: e.lookup.table) {
+                            for (const auto &v : e.lookup.table) {
                                 this->sponge.absorb(v);
                             }
 
@@ -192,7 +190,8 @@ namespace nil {
                     typedef typename BaseSponge<CurveType>::limb_type limb_type;
                     typedef typename BaseSponge<CurveType>::scalar_challenge_type scalar_challenge_type;
 
-                    constexpr static const int CHALLENGE_LENGTH_IN_LIMBS = BaseSponge<CurveType>::CHALLENGE_LENGTH_IN_LIMBS;
+                    constexpr static const int CHALLENGE_LENGTH_IN_LIMBS =
+                        BaseSponge<CurveType>::CHALLENGE_LENGTH_IN_LIMBS;
                     constexpr static const int HIGH_ENTROPY_LIMBS = BaseSponge<CurveType>::HIGH_ENTROPY_LIMBS;
 
                     std::vector<limb_type> squeeze_limbs(std::size_t num_limbs) {
@@ -207,7 +206,8 @@ namespace nil {
                             auto sq = this->sponge.squeeze();
                             nil::marshalling::status_type status;
 
-                            std::vector<limb_type> x = unpack<typename base_field_type::value_type, typename base_field_type::integral_type>(
+                            std::vector<limb_type> x =
+                                unpack<typename base_field_type::value_type, typename base_field_type::integral_type>(
                                     sq);
 
                             for (int i = 0; i < HIGH_ENTROPY_LIMBS; ++i) {
@@ -228,13 +228,13 @@ namespace nil {
                         nil::marshalling::status_type status;
                         auto first_value = pack<typename scalar_field_type::integral_type>(limbs);
                         typename scalar_field_type::value_type res = typename scalar_field_type::value_type(
-                                pack<typename scalar_field_type::integral_type>(limbs));
+                            pack<typename scalar_field_type::integral_type>(limbs));
                         return res;
                     }
 
                     void absorb_g(std::vector<typename group_type::value_type> &gs) {
                         this->last_squeezed.clear();
-                        for (auto &g: gs) {
+                        for (auto &g : gs) {
                             absorb_g(g);
                         }
                     }
@@ -252,29 +252,28 @@ namespace nil {
                             this->last_squeezed.clear();
 
                         if (scalar_field_type::modulus < base_field_type::modulus) {
-                            typename base_field_type::value_type casted_to_base_value = typename base_field_type::value_type(
-                                    typename base_field_type::integral_type(f.data));
+                            typename base_field_type::value_type casted_to_base_value =
+                                typename base_field_type::value_type(typename base_field_type::integral_type(f.data));
                             this->sponge.absorb(casted_to_base_value);
                         } else {
                             nil::marshalling::status_type status;
                             typename scalar_field_type::integral_type scalar_f(f.data);
-                            std::vector<bool> bits = nil::marshalling::pack<nil::marshalling::option::big_endian>(
-                                    scalar_f, status);
+                            std::vector<bool> bits =
+                                nil::marshalling::pack<nil::marshalling::option::big_endian>(scalar_f, status);
                             std::vector<bool> shifted_bits(bits.size(), false);
 
                             std::copy(bits.begin(), bits.end() - 1, shifted_bits.begin() + 1);
 
-                            typename base_field_type::integral_type low_bit = bits.back() ?
-                                                                              typename base_field_type::integral_type(1)
-                                                                                          : typename base_field_type::integral_type(
-                                            0);
-                            typename base_field_type::integral_type high_bits = nil::marshalling::pack<nil::marshalling::option::big_endian>(
-                                    shifted_bits, status);
+                            typename base_field_type::integral_type low_bit =
+                                bits.back() ? typename base_field_type::integral_type(1) :
+                                              typename base_field_type::integral_type(0);
+                            typename base_field_type::integral_type high_bits =
+                                nil::marshalling::pack<nil::marshalling::option::big_endian>(shifted_bits, status);
 
-                            typename base_field_type::value_type high_bits_field = typename base_field_type::value_type(
-                                    high_bits);
-                            typename base_field_type::value_type low_bit_field = typename base_field_type::value_type(
-                                    low_bit);
+                            typename base_field_type::value_type high_bits_field =
+                                typename base_field_type::value_type(high_bits);
+                            typename base_field_type::value_type low_bit_field =
+                                typename base_field_type::value_type(low_bit);
 
                             this->sponge.absorb(high_bits_field);
                             this->sponge.absorb(low_bit_field);
@@ -284,7 +283,7 @@ namespace nil {
                     void absorb_fr(const std::vector<typename scalar_field_type::value_type> &fs) {
                         this->last_squeezed.clear();
 
-                        for (auto f: fs) {
+                        for (auto f : fs) {
                             absorb_fr(f);
                         }
                     }
@@ -302,18 +301,18 @@ namespace nil {
                     }
 
                     typename scalar_field_type::value_type
-                    squeeze_challenge(typename scalar_field_type::value_type endo_r) {
+                        squeeze_challenge(typename scalar_field_type::value_type endo_r) {
                         return squeeze_prechallenge().to_field(endo_r);
                     }
 
                     typename scalar_field_type::value_type digest() {
                         return typename scalar_field_type::value_type(
-                                typename scalar_field_type::integral_type(this->squeeze_field().data));
+                            typename scalar_field_type::integral_type(this->squeeze_field().data));
                     }
                 };
-            }
-        }
-    }
-}
+            }    // namespace transcript
+        }    // namespace zk
+    }    // namespace crypto3
+}    // namespace nil
 
 #endif

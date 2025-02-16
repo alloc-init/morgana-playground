@@ -64,8 +64,8 @@ namespace nil {
              * @tparam GroupType
              * @tparam Params
              */
-            template<typename GroupType, typename HashType = sha2<256>, typename ParamsType = h2c_default_params<
-                         GroupType, HashType>>
+            template<typename GroupType, typename HashType = sha2<256>,
+                     typename ParamsType = h2c_default_params<GroupType, HashType>>
             struct h2c {
                 typedef h2c_suite<GroupType> suite_type;
 
@@ -93,7 +93,7 @@ namespace nil {
                 };
 
                 constexpr static detail::stream_processor_type stream_processor =
-                        detail::stream_processor_type::raw_delegating;
+                    detail::stream_processor_type::raw_delegating;
                 using accumulator_tag = accumulators::tag::forwarding_hash<h2c<GroupType, HashType, ParamsType>>;
 
                 static inline void init_accumulator(accumulator_type &acc) {
@@ -114,8 +114,8 @@ namespace nil {
                     return detail::ep_map<group_type, ParamsType::uniformity_count>(hash_type::process(acc));
                 }
             };
-        } // namespace hashes
-    } // namespace crypto3
-} // namespace nil
+        }    // namespace hashes
+    }    // namespace crypto3
+}    // namespace nil
 
 #endif    // CRYPTO3_HASH_H2C_HPP

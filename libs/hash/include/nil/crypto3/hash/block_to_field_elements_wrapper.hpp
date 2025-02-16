@@ -38,12 +38,14 @@ namespace nil {
             public:
                 static_assert(std::numeric_limits<typename Container::value_type>::is_specialized);
 
-                block_to_field_elements_wrapper(const Container &container)
-                        : block_to_field_elements_wrapper(container.begin(), container.end()) {}
+                block_to_field_elements_wrapper(const Container &container) :
+                    block_to_field_elements_wrapper(container.begin(), container.end()) {
+                }
 
                 block_to_field_elements_wrapper(typename Container::const_iterator begin,
-                                                typename Container::const_iterator end)
-                        : input_container_begin_(begin), input_container_end_(end) {}
+                                                typename Container::const_iterator end) :
+                    input_container_begin_(begin), input_container_end_(end) {
+                }
 
                 class conversing_iterator {
                 public:
@@ -55,8 +57,9 @@ namespace nil {
                     using difference_type = std::ptrdiff_t;
 
                     conversing_iterator(typename Container::const_iterator begin,
-                                        typename Container::const_iterator end)
-                            : input_container_l_(begin), input_container_r_(end) {}
+                                        typename Container::const_iterator end) :
+                        input_container_l_(begin), input_container_r_(end) {
+                    }
 
                     self_type operator++() {
                         advance_container_iter();
@@ -84,11 +87,11 @@ namespace nil {
 
                 protected:
                     static constexpr std::size_t input_value_bits_ =
-                            std::numeric_limits<typename Container::value_type>::digits
-                            + std::numeric_limits<typename Container::value_type>::is_signed;
+                        std::numeric_limits<typename Container::value_type>::digits +
+                        std::numeric_limits<typename Container::value_type>::is_signed;
                     static constexpr std::size_t container_elements_per_field_element_ =
-                            FieldType::modulus_bits / input_value_bits_ +
-                            ((FieldType::modulus_bits % input_value_bits_) ? OverflowOnPurpose : 0);
+                        FieldType::modulus_bits / input_value_bits_ +
+                        ((FieldType::modulus_bits % input_value_bits_) ? OverflowOnPurpose : 0);
 
                 private:
                     friend class block_to_field_elements_wrapper;
@@ -105,16 +108,18 @@ namespace nil {
                         field_element_ = value_type::zero();
                         auto tmp_iter = input_container_l_;
                         for (std::size_t i = 0;
-                             i < container_elements_per_field_element_ && tmp_iter != input_container_r_; ++i) {
-                            field_element_.data <<= input_value_bits_; // TODO: add shift operators to field values
+                             i < container_elements_per_field_element_ && tmp_iter != input_container_r_;
+                             ++i) {
+                            field_element_.data <<= input_value_bits_;    // TODO: add shift operators to field values
                             field_element_ += uint64_t(*tmp_iter++);
                         }
                         element_filled_ = true;
                     }
 
                     void advance_container_iter() {
-                        for (std::size_t i = 0; i < container_elements_per_field_element_ &&
-                                                input_container_l_ != input_container_r_; ++i) {
+                        for (std::size_t i = 0;
+                             i < container_elements_per_field_element_ && input_container_l_ != input_container_r_;
+                             ++i) {
                             input_container_l_++;
                         }
                         element_filled_ = false;
@@ -135,8 +140,8 @@ namespace nil {
 
                 std::size_t size() const {
                     const std::size_t size = std::distance(input_container_begin_, input_container_end_);
-                    return (size + conversing_iterator::container_elements_per_field_element_ - 1)
-                           / conversing_iterator::container_elements_per_field_element_;
+                    return (size + conversing_iterator::container_elements_per_field_element_ - 1) /
+                           conversing_iterator::container_elements_per_field_element_;
                 }
 
             private:
@@ -144,8 +149,10 @@ namespace nil {
                 typename Container::const_iterator input_container_end_;
             };
 
-            template<typename Output, typename Container, bool OverflowOnPurpose,
-                    bool = algebra::is_field_element<Output>::value>
+            template<typename Output,
+                     typename Container,
+                     bool OverflowOnPurpose,
+                     bool = algebra::is_field_element<Output>::value>
             struct conditional_block_to_field_elements_wrapper_helper {
                 using type = Container;
             };
@@ -156,8 +163,8 @@ namespace nil {
             };
 
             template<typename Output, typename Container, bool OverflowOnPurpose = false>
-            using conditional_block_to_field_elements_wrapper = typename conditional_block_to_field_elements_wrapper_helper<Output, Container, OverflowOnPurpose>::type;
-
+            using conditional_block_to_field_elements_wrapper =
+                typename conditional_block_to_field_elements_wrapper_helper<Output, Container, OverflowOnPurpose>::type;
 
         }    // namespace hashes
     }    // namespace crypto3

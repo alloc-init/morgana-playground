@@ -6,7 +6,7 @@ cm_test_link_libraries(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME}
         ${CMAKE_WORKSPACE_NAME}::pkpad
         ${CMAKE_WORKSPACE_NAME}::random
 
-        marshalling::${CMAKE_WORKSPACE_NAME}_zk
+        "$<BOOL:${CRYPTO3_PUBKEY_ELGAMAL}:marshalling::${CMAKE_WORKSPACE_NAME}_zk>"
 
         Boost::unit_test_framework)
 
@@ -34,10 +34,11 @@ set(TESTS_NAMES
         "bls"
         "secret_sharing"
         "eddsa"
-        "schnorr"
-        # This test is failing, return once fixed.
-        #    "elgamal_verifiable"
-)
+        "schnorr")
+
+if(CRYPTO3_PUBKEY_ELGAMAL)
+#    list(APPEND TESTS_NAMES elgamal_verifiable)
+endif()
 
 foreach(TEST_NAME ${TESTS_NAMES})
     define_pubkey_test(${TEST_NAME})

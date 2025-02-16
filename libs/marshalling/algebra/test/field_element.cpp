@@ -60,13 +60,12 @@ void test_field_element(T val) {
 
     std::size_t units_bits = 8;
     using unit_type = unsigned char;
-    using field_element_type = types::field_element<nil::marshalling::field_type<Endianness>,
-        T>;
+    using field_element_type = types::field_element<nil::marshalling::field_type<Endianness>, T>;
 
     static_assert(nil::crypto3::algebra::is_field_element<T>::value);
     static_assert(nil::marshalling::is_field_element<field_element_type>::value);
     static_assert(nil::marshalling::is_compatible<T>::value);
-    
+
     using inferenced_type = typename nil::marshalling::is_compatible<T>::template type<Endianness>;
 
     static_assert(std::is_same<inferenced_type, field_element_type>::value);

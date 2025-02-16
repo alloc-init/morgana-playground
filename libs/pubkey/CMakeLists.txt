@@ -36,13 +36,12 @@ include(CMSetupVersion)
 
 list(APPEND ${CURRENT_PROJECT_NAME}_LIBRARIES
         ${CMAKE_WORKSPACE_NAME}::algebra
-        ${CMAKE_WORKSPACE_NAME}::random
-        # TODO: add conditional link of zk depending on ElGamal
-        ${CMAKE_WORKSPACE_NAME}::zk)
+        ${CMAKE_WORKSPACE_NAME}::random)
 
 option(CRYPTO3_PUBKEY_BLS "Build with BLS public key scheme support" TRUE)
 option(CRYPTO3_PUBKEY_ECDSA "Build with ECDSA public key scheme support" TRUE)
 option(CRYPTO3_PUBKEY_EDDSA "Build with EDDSA public key scheme support" TRUE)
+option(CRYPTO3_PUBKEY_ELGAMAL "Build with Verifiable ElGamal public key scheme support" TRUE)
 option(CRYPTO3_PUBKEY_SHAMIR "Build with Shamir secret sharing scheme support" TRUE)
 option(CRYPTO3_PUBKEY_FELDMAN "Build with Feldman secret sharing scheme support" TRUE)
 option(CRYPTO3_PUBKEY_PEDERSEN "Build with Pedersen secret sharing scheme support" TRUE)
@@ -58,6 +57,10 @@ endif()
 
 if(CRYPTO3_PUBKEY_EDDSA)
     add_definitions(-D${CMAKE_UPPER_WORKSPACE_NAME}_HAS_EDDSA)
+endif()
+
+if(CRYPTO3_PUBKEY_ELGAMAL)
+    list(APPEND ${CURRENT_PROJECT_NAME}_LIBRARIES ${CMAKE_WORKSPACE_NAME}::zk)
 endif()
 
 cm_setup_version(VERSION 0.1.0 PREFIX ${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME})
