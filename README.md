@@ -67,7 +67,8 @@ root
 
 - [clang](https://clang.llvm.org/) (>= 11.0)/GCC (>= 10.0)/MSVC (>= 14.20)
 - [cmake](https://cmake.org) (>= 3.6)
-- [boost](https://boost.org) (>= 1.76)
+- [boost](https://boost.org) (>= 1.87)
+- [cmake_modules](https://github.com/BoostCMake/cmake_modules) (57639741ecf018835deb97a04db2200241d7fbd3)
 
 ### Clone & Build
 
@@ -78,10 +79,11 @@ cmake ..
 make tests
 ```
 
+> Note that you might need to set `-DCMAKE_CXX_COMPILER` to point to an up-to-date clang and `-DBOOST_ROOT` with  `-DBoost_NO_SYSTEM_PATHS=ON` to point to correct version of boost.
+
 ## Nix support
 
-This repository provides Nix flake, so once you have installed Nix with flake support, you can use single command to
-fetch all the dependencies and build:
+This repository provides Nix flake, so once you have installed Nix with flake support, you can use single command to fetch all the dependencies and build:
 
 ```bash
 nix build

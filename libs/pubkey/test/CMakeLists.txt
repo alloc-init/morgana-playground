@@ -1,13 +1,12 @@
 include(CMTest)
 
-cm_find_package(${CMAKE_WORKSPACE_NAME}_marshalling)
 cm_find_package(${CMAKE_WORKSPACE_NAME}_random)
 
 cm_test_link_libraries(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME}
-        marshalling::crypto3_zk
-
         ${CMAKE_WORKSPACE_NAME}::pkpad
         ${CMAKE_WORKSPACE_NAME}::random
+
+        marshalling::${CMAKE_WORKSPACE_NAME}_zk
 
         Boost::unit_test_framework)
 
@@ -21,9 +20,7 @@ macro(define_pubkey_test name)
 
             ${Boost_INCLUDE_DIRS})
 
-
     set_target_properties(pubkey_${name}_test PROPERTIES CXX_STANDARD 17)
-
 
     if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
         target_compile_options(pubkey_${name}_test PRIVATE "-fconstexpr-steps=2147483647" "-ftemplate-backtrace-limit=0")

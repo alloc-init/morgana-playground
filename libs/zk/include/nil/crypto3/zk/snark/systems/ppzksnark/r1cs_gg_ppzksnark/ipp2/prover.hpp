@@ -612,7 +612,7 @@ namespace nil {
                                             wkey_r_inv, r_vec.begin(), r_vec.end());
 
                     // debug assert
-                    BOOST_ASSERT(com_ab == typename commitments::kzg_ipp2<CurveType>::pair(
+                    BOOST_ASSERT(com_ab == commitments::kzg_ipp2<CurveType>::pair(
                             srs.vkey, wkey_r_inv, a.begin(), a.end(), b_r.begin(), b_r.end()));
 
                     return {com_ab, com_c, ip_ab, agg_c, proof};

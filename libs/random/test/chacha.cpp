@@ -27,6 +27,7 @@
 #include <string>
 #include <tuple>
 #include <unordered_map>
+#include <ctime>
 
 #include <boost/test/unit_test.hpp>
 

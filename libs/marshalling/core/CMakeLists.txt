@@ -1,8 +1,8 @@
 include(CMConfig)
 include(CMSetupVersion)
 
-cm_workspace(crypto3)
-cm_project(marshalling-core WORKSPACE_NAME ${CMAKE_WORKSPACE_NAME} LANGUAGES C CXX)
+cm_workspace(marshalling)
+cm_project(core WORKSPACE_NAME ${CMAKE_WORKSPACE_NAME} LANGUAGES C CXX)
 
 include(CMDeploy)
 include(FindPkgConfig)
@@ -16,20 +16,20 @@ cm_setup_version(VERSION 0.1.0 PREFIX ${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_
 add_library(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME} INTERFACE)
 
 set_target_properties(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME} PROPERTIES
-                      EXPORT_NAME ${CURRENT_PROJECT_NAME})
+        EXPORT_NAME ${CURRENT_PROJECT_NAME})
 
 target_include_directories(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME} INTERFACE
-                           $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-                           $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>
 
-                           $<$<BOOL:${Boost_FOUND}>:${Boost_INCLUDE_DIRS}>)
+        $<$<BOOL:${Boost_FOUND}>:${Boost_INCLUDE_DIRS}>)
 
 target_link_libraries(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME} INTERFACE
-                      Boost::container)
+        Boost::container)
 
 cm_deploy(TARGETS ${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME}
-          INCLUDE include
-          NAMESPACE ${CMAKE_WORKSPACE_NAME}::)
+        INCLUDE include
+        NAMESPACE ${CMAKE_WORKSPACE_NAME}::)
 
 include(CMTest)
 cm_add_test_subdirectory(test)
@@ -40,9 +40,9 @@ endif()
 
 if((CMAKE_COMPILER_IS_GNUCC) OR ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang"))
     set(extra_flags_list -Wall -Wextra -Wcast-align -Wcast-qual
-        -Wctor-dtor-privacy -Wmissing-include-dirs -Woverloaded-virtual
-        -Wredundant-decls -Wshadow -Wundef -Wunused -Wno-unknown-pragmas
-        -fdiagnostics-show-option)
+            -Wctor-dtor-privacy -Wmissing-include-dirs -Woverloaded-virtual
+            -Wredundant-decls -Wshadow -Wundef -Wunused -Wno-unknown-pragmas
+            -fdiagnostics-show-option)
 
     if(CMAKE_COMPILER_IS_GNUCC)
         list(APPEND extra_flags_list -Wnoexcept -Wlogical-op -Wstrict-null-sentinel)
@@ -104,8 +104,8 @@ if(DOXYGEN_FOUND)
     file(WRITE "${output_file}" "${modified_config_text}")
 
     add_custom_target("doc_${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME}"
-                      COMMAND ${DOXYGEN_EXECUTABLE} ${output_file}
-                      COMMAND ${CMAKE_COMMAND} -DDOC_OUTPUT_DIR="${doc_output_dir}" -P
-                      ${CMAKE_SOURCE_DIR}/cmake/DocCleanupScript.cmake
-                      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+            COMMAND ${DOXYGEN_EXECUTABLE} ${output_file}
+            COMMAND ${CMAKE_COMMAND} -DDOC_OUTPUT_DIR="${doc_output_dir}" -P
+            ${CMAKE_SOURCE_DIR}/cmake/DocCleanupScript.cmake
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 endif()

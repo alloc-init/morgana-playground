@@ -54,10 +54,10 @@ set(TESTS_NAMES
         "merkle_proof"
         "accumulation_vector"
         "sparse_vector"
-#        "r1cs_gg_ppzksnark_primary_input"
-#        "r1cs_gg_ppzksnark_proof"
-#        "r1cs_gg_ppzksnark_verification_key"
-#        "r1cs_gg_ppzksnark"
+        #        "r1cs_gg_ppzksnark_primary_input"
+        #        "r1cs_gg_ppzksnark_proof"
+        #        "r1cs_gg_ppzksnark_verification_key"
+        #        "r1cs_gg_ppzksnark"
         "kzg_commitment"
         "fri_commitment"
         "lpc_commitment"
@@ -66,8 +66,8 @@ set(TESTS_NAMES
         "plonk_gates"
         "plonk_constraint_system"
         "plonk_assignment_table"
-#        "eddsa"
-        )
+        #        "eddsa"
+)
 
 foreach(TEST_NAME ${TESTS_NAMES})
     define_marshalling_test(${TEST_NAME})

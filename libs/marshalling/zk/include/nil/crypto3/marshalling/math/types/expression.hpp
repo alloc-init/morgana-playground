@@ -223,7 +223,7 @@ namespace nil {
                     const typename expression<nil::marshalling::field_type<Endianness>,
                                                           ExpressionType>::type &filled_expr) {
 
-                    using arithmetic_operator_type = typename ExpressionType::binary_arithmetic_operation_type::ArithmeticOperatorType;
+                    using arithmetic_operator_type = typename ExpressionType::binary_arithmetic_operation_type::arithmetic_operator_type;
                     math::flat_expression<ExpressionType> flat_expr;
 
                     // Get the terms.

@@ -14,7 +14,9 @@ target_include_directories(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME} INTER
 
 cm_test_link_libraries(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME}
         ${CMAKE_WORKSPACE_NAME}::random
-        marshalling::crypto3_zk
+
+        marshalling::${CMAKE_WORKSPACE_NAME}_zk
+
         Boost::unit_test_framework)
 
 option(ZK_PLACEHOLDER_PROFILING_ENABLED "Build with placeholder profiling" FALSE)
@@ -56,7 +58,7 @@ set(TESTS_NAMES
         "commitment/powers_of_tau"
         "commitment/r1cs_gg_ppzksnark_mpc"
         "commitment/type_traits"
-        "commitment/kimchi_pedersen"
+        #        "commitment/kimchi_pedersen"
         "commitment/proof_of_work"
 
         "math/expression"

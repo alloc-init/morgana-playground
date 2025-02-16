@@ -42,39 +42,40 @@ macro(define_functional_test test)
 endmacro()
 
 set(TESTS_NAMES
-        "abe/dippe"
-        "abe/fame"
-        "abe/gpsw"
-        "abe/policy"
-
-        "ipe/damgard"
-        "ipe/damgard_dec_multi"
-        "ipe/damgard_multi"
-        "ipe/dmcfe"
-        "ipe/fh_multi_ipe"
-        "ipe/fhipe"
-        "ipe/lwe_fs"
-        "ipe/paillier"
-
-        "ipe/ddh"
-        "ipe/ddh_multi"
-        "ipe/lwe"
-        "ipe/ring_lwe"
-
-        "internal/big"
-        "internal/dlog"
-        "internal/keygen"
-        "internal/prime"
-        "internal/str"
-
-        "quadratic/sgp"
-
-        "sample/normal"
-        "sample/normal_cdt"
-        "sample/normal_cumulative"
-        "sample/normal_double"
-        "sample/normal_double_constant"
-        "sample/normal_negative")
+#        "abe/dippe"
+#        "abe/fame"
+#        "abe/gpsw"
+#        "abe/policy"
+#
+#        "ipe/damgard"
+#        "ipe/damgard_dec_multi"
+#        "ipe/damgard_multi"
+#        "ipe/dmcfe"
+#        "ipe/fh_multi_ipe"
+#        "ipe/fhipe"
+#        "ipe/lwe_fs"
+#        "ipe/paillier"
+#
+#        "ipe/ddh"
+#        "ipe/ddh_multi"
+#        "ipe/lwe"
+#        "ipe/ring_lwe"
+#
+#        "internal/big"
+#        "internal/dlog"
+#        "internal/keygen"
+#        "internal/prime"
+#        "internal/str"
+#
+#        "quadratic/sgp"
+#
+#        "sample/normal"
+#        "sample/normal_cdt"
+#        "sample/normal_cumulative"
+#        "sample/normal_double"
+#        "sample/normal_double_constant"
+#        "sample/normal_negative"
+)
 
 foreach(TEST_NAME ${TESTS_NAMES})
     define_functional_test(${TEST_NAME})

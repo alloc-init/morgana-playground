@@ -12,28 +12,30 @@ include(CMDeploy)
 include(CMSetupVersion)
 
 macro(define_marshalling_example name)
-    add_executable(marshalling_${name}_example ${name}.cpp)
+    add_executable(${CMAKE_WORKSPACE_NAME}_${name}_example ${name}.cpp)
 
-    target_link_libraries(marshalling_${name}_example PRIVATE
+    target_link_libraries(${CMAKE_WORKSPACE_NAME}_${name}_example PRIVATE
 
             crypto3::multiprecision
             crypto3::algebra
             crypto3::zk
 
-            ${CMAKE_WORKSPACE_NAME}::marshalling-core
-            ${CMAKE_WORKSPACE_NAME}::marshalling-multiprecision
-            ${CMAKE_WORKSPACE_NAME}::marshalling-algebra
-            ${CMAKE_WORKSPACE_NAME}::marshalling-zk
+            ${CMAKE_WORKSPACE_NAME}::core
+            ${CMAKE_WORKSPACE_NAME}::crypto3_multiprecision
+            ${CMAKE_WORKSPACE_NAME}::crypto3_algebra
+            ${CMAKE_WORKSPACE_NAME}::crypto3_zk
 
             Boost::container)
 
-    target_include_directories(marshalling_${name}_example PRIVATE
+    target_include_directories(${CMAKE_WORKSPACE_NAME}_${name}_example PRIVATE
             "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
             "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>"
 
             ${Boost_INCLUDE_DIRS})
 
-    set_target_properties(marshalling_${name}_example PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED TRUE)
+    set_target_properties(${CMAKE_WORKSPACE_NAME}_${name}_example PROPERTIES
+            CXX_STANDARD 17
+            CXX_STANDARD_REQUIRED TRUE)
 endmacro()
 
 set(EXAMPLES_NAMES

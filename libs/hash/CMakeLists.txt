@@ -105,7 +105,7 @@ if(CRYPTO3_HASH_POSEIDON)
             ${CMAKE_WORKSPACE_NAME}::algebra
             ${CMAKE_WORKSPACE_NAME}::multiprecision
 
-            crypto3::marshalling-algebra)
+            marshalling::crypto3_algebra)
     if(${CMAKE_UPPER_WORKSPACE_NAME}_HASH_POSEIDON_COMPILE_TIME_CONSTANTS)
         add_definitions(-DCRYPTO3_HASH_POSEIDON_COMPILE_TIME)
     endif()
@@ -117,7 +117,7 @@ if(CRYPTO3_HASH_REINFORCED_CONCRETE)
             ${CMAKE_WORKSPACE_NAME}::algebra
             ${CMAKE_WORKSPACE_NAME}::multiprecision
 
-            crypto3::marshalling-algebra)
+            marshalling::crypto3_algebra)
 endif()
 
 if(CRYPTO3_HASH_PEDERSEN)
@@ -126,7 +126,7 @@ if(CRYPTO3_HASH_PEDERSEN)
             ${CMAKE_WORKSPACE_NAME}::algebra
             ${CMAKE_WORKSPACE_NAME}::multiprecision
 
-            crypto3::marshalling-algebra)
+            marshalling::crypto3_algebra)
 endif()
 
 cm_setup_version(VERSION 0.1.0 PREFIX ${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME})

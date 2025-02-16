@@ -101,8 +101,8 @@ template<typename Endianness, typename HashType, std::size_t Arity, std::size_t 
 void test_merkle_proof(std::size_t tree_depth) {
 
     using namespace nil::crypto3::marshalling;
-    using merkle_tree_type = nil::crypto3::containers::merkle_tree<Hash, Arity>;
-    using merkle_proof_type = nil::crypto3::containers::merkle_proof<Hash, Arity>;
+    using merkle_tree_type = nil::crypto3::containers::merkle_tree<HashType, Arity>;
+    using merkle_proof_type = nil::crypto3::containers::merkle_proof<HashType, Arity>;
     using merkle_proof_marshalling_type =
             types::merkle_proof<nil::marshalling::field_type<Endianness>, merkle_proof_type>;
 
@@ -111,20 +111,20 @@ void test_merkle_proof(std::size_t tree_depth) {
     auto data = generate_random_data<std::uint8_t, LeafSize>(leafs_number);
     merkle_tree_type tree;
 
-    if constexpr (nil::crypto3::algebra::is_field_element<typename Hash::word_type>::value) {
+    if constexpr (nil::crypto3::algebra::is_field_element<typename HashType::word_type>::value) {
         // Populate the vector with wrappers, one for each block
         std::vector<
             nil::crypto3::hashes::block_to_field_elements_wrapper<
-                typename Hash::word_type::field_type,
+                typename HashType::word_type::field_type,
                 std::array<std::uint8_t, LeafSize>
             >
         > wrappers;
         for (const auto& inner_containers : data) {
             wrappers.emplace_back(inner_containers);
         }
-        tree = nil::crypto3::containers::make_merkle_tree<Hash, Arity>(wrappers.begin(), wrappers.end());
+        tree = nil::crypto3::containers::make_merkle_tree<HashType, Arity>(wrappers.begin(), wrappers.end());
     } else {
-        tree = nil::crypto3::containers::make_merkle_tree<Hash, Arity>(data.begin(), data.end());
+        tree = nil::crypto3::containers::make_merkle_tree<HashType, Arity>(data.begin(), data.end());
     }
     std::size_t proof_idx = std::rand() % leafs_number;
     merkle_proof_type proof(tree, proof_idx);

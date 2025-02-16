@@ -27,12 +27,12 @@ include(CMTest)
 
 cm_test_link_libraries(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME}
 
-                       ${CMAKE_WORKSPACE_NAME}::algebra
-                       ${CMAKE_WORKSPACE_NAME}::hash
+        ${CMAKE_WORKSPACE_NAME}::algebra
+        ${CMAKE_WORKSPACE_NAME}::hash
 
-                       Boost::unit_test_framework
-                       Boost::random
-                   )
+        Boost::unit_test_framework
+        Boost::random
+)
 
 macro(define_storage_test test)
     get_filename_component(test_name ${test} NAME)
@@ -47,23 +47,23 @@ macro(define_storage_test test)
     cm_test(NAME ${target_name} SOURCES ${test}.cpp)
 
     target_include_directories(${target_name} PRIVATE
-                               "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-                               "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>"
+            "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+            "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>"
 
-                               ${Boost_INCLUDE_DIRS})
+            ${Boost_INCLUDE_DIRS})
 
     set_target_properties(${target_name} PROPERTIES CXX_STANDARD 17)
 
-     if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
         target_compile_options(${target_name} PRIVATE "-fconstexpr-steps=2147483647" "-ftemplate-backtrace-limit=0")
-    elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         target_compile_options(${target_name} PRIVATE "-fconstexpr-ops-limit=4294967295" "-ftemplate-backtrace-limit=0")
     endif()
 
 endmacro()
 
 set(TESTS_NAMES
-    "merkle/merkle"
+        "merkle/merkle"
 )
 
 foreach(TEST_NAME ${TESTS_NAMES})
