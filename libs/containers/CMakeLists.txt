@@ -55,11 +55,13 @@ target_include_directories(${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME} INTER
 
         ${Boost_INCLUDE_DIRS})
 
-cm_deploy(TARGETS ${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME} INCLUDE include NAMESPACE ${CMAKE_WORKSPACE_NAME}::)
+cm_deploy(TARGETS ${CMAKE_WORKSPACE_NAME}_${CURRENT_PROJECT_NAME}
+        INCLUDE include
+        NAMESPACE ${CMAKE_WORKSPACE_NAME}::)
 
 include(CMTest)
 cm_add_test_subdirectory(test)
 
-if (BUILD_EXAMPLES)
+if(BUILD_EXAMPLES)
     add_subdirectory(example)
-endif ()
+endif()

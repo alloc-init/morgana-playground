@@ -75,15 +75,15 @@ root
 ```
 git clone --recurse-submodules https://github.com/alloc-init/crypto3.git 
 cd crypto3 && mkdir build && cd build
-cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DBUILD_WITH_BOOST_STATIC_LIBS=FALSE -DBUILD_TESTS=TRUE -DCMAKE_ENABLE_TESTS=TRUE -DCMAKE_CXX_STANDARD=20 ..
+cmake ..
 make tests
 ```
-note that you might need to set `-DCMAKE_CXX_COMPILER` to point to an up-to-date clang and `-DBOOST_ROOT` with  `-DBoost_NO_SYSTEM_PATHS=ON` to point to correct version of boost.
+
+> Note that you might need to set `-DCMAKE_CXX_COMPILER` to point to an up-to-date clang and `-DBOOST_ROOT` with  `-DBoost_NO_SYSTEM_PATHS=ON` to point to correct version of boost.
 
 ## Nix support
 
-This repository provides Nix flake, so once you have installed Nix with flake support, you can use single command to
-fetch all the dependencies and build:
+This repository provides Nix flake, so once you have installed Nix with flake support, you can use single command to fetch all the dependencies and build:
 
 ```bash
 nix build
