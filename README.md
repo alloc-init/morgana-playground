@@ -1,7 +1,9 @@
 ## Installation instructions
 
 you will need BOOST installed
-in this command change `-DBOOST_ROOT=` parameter to your Boost installation location, and `-DCMAKE_CXX_COMPILER=` to your version of Clang
+in this command change `-DBOOST_ROOT=` parameter to your Boost installation location (tested on 1.87 version), and `-DCMAKE_CXX_COMPILER=` to your version of Clang
+
+currently, you also need cmaketools installed
 
 ```
 mkdir build && cd build
