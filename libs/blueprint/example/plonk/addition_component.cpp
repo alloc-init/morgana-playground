@@ -55,15 +55,16 @@ BOOST_AUTO_TEST_CASE(blueprint_plonk_addition_example) {
     constexpr std::size_t PublicInputColumns = 1;
     constexpr std::size_t ConstantColumns = 0;
     constexpr std::size_t SelectorColumns = 1;
-    using ArithmetizationParams =
-        zk::snark::plonk_arithmetization_params<WitnessColumns, PublicInputColumns, ConstantColumns, SelectorColumns>;
+    constexpr zk::snark::plonk_arithmetization_params ArithmetizationParams = { WitnessColumns, PublicInputColumns, ConstantColumns, SelectorColumns };
     using ArithmetizationType = zk::snark::plonk_constraint_system<BlueprintFieldType>;
     using hash_type = nil::crypto3::hashes::keccak_1600<256>;
     constexpr std::size_t Lambda = 40;
 
     using var = zk::snark::plonk_variable<typename BlueprintFieldType::value_type>;
 
-    using component_type = zk::components::addition<ArithmetizationType, 0, 1, 2>;
+    using component_type = nil::crypto3::blueprint::components::addition<ArithmetizationType, 0, 1, 2>;
+
+    constexpr component_type instance = component_type();
 
     // test_component set public input to the first rows of the public_input columns
     typename component_type::params_type params = {
@@ -76,7 +77,11 @@ BOOST_AUTO_TEST_CASE(blueprint_plonk_addition_example) {
 
     std::vector<typename BlueprintFieldType::value_type> public_input = {x, y, sum};
 
-    test_component<component_type, BlueprintFieldType, hash_type, Lambda>(params, public_input);
+    test_component<component_type, BlueprintFieldType, hash_type, Lambda>(
+        instance,
+        params,
+        public_input
+    );
 }
 
 BOOST_AUTO_TEST_SUITE_END()

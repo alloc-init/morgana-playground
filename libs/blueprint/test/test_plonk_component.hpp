@@ -66,6 +66,8 @@
 #include <utility>
 #include <map>
 
+using namespace nil;
+
 namespace nil {
     namespace blueprint {
         namespace components {
@@ -121,7 +123,7 @@ namespace nil {
                 const typename ComponentType::input_type &instance_input,
                 const std::uint32_t start_row_index) const override {
 
-                return blueprint::components::generate_assignments<BlueprintFieldType>(
+                return nil::blueprint::components::generate_assignments<BlueprintFieldType>(
                             component, assignment, instance_input, start_row_index);
             }
         };
@@ -161,11 +163,11 @@ namespace nil {
                                const plonk_test_assigner<ComponentType, BlueprintFieldType> &assigner,
                                typename ComponentType::input_type instance_input,
                                bool expected_to_pass,
-                               blueprint::connectedness_check_type connectedness_check,
+                               nil::blueprint::connectedness_check_type connectedness_check,
                                ComponentStaticInfoArgs... component_static_info_args) {
             using component_type = ComponentType;
-            blueprint::circuit<crypto3::zk::snark::plonk_constraint_system<BlueprintFieldType>> bp;
-            blueprint::assignment<crypto3::zk::snark::plonk_constraint_system<BlueprintFieldType>> assignment(desc);
+            nil::blueprint::circuit<crypto3::zk::snark::plonk_constraint_system<BlueprintFieldType>> bp;
+            nil::blueprint::assignment<crypto3::zk::snark::plonk_constraint_system<BlueprintFieldType>> assignment(desc);
 
             if constexpr( nil::blueprint::use_lookups<component_type>() ){
                 auto lookup_tables = component_instance.component_lookup_tables();
@@ -195,13 +197,13 @@ namespace nil {
                 }
             }
 
-            blueprint::components::generate_circuit<BlueprintFieldType>(
+            nil::blueprint::components::generate_circuit<BlueprintFieldType>(
                 component_instance, bp, assignment, instance_input, start_row);
             auto component_result = boost::get<typename component_type::result_type>(
                 assigner(component_instance, assignment, instance_input, start_row));
 
             // Stretched components do not have a manifest, as they are dynamically generated.
-            if constexpr (!blueprint::components::is_component_stretcher<
+            if constexpr (!nil::blueprint::components::is_component_stretcher<
                                     BlueprintFieldType, ComponentType>::value) {
                 BOOST_ASSERT_MSG(bp.num_gates() + bp.num_lookup_gates() ==
                                 component_type::get_gate_manifest(component_instance.witness_amount(),
@@ -213,7 +215,7 @@ namespace nil {
                 BOOST_ASSERT_MSG(assignment.rows_amount() - start_row == component_instance.rows_amount,
                                 "Component rows amount does not match actual rows amount.");
                 // Stretched components do not have a manifest, as they are dynamically generated.
-                if constexpr (!blueprint::components::is_component_stretcher<
+                if constexpr (!nil::blueprint::components::is_component_stretcher<
                                     BlueprintFieldType, ComponentType>::value) {
                     BOOST_ASSERT_MSG(assignment.rows_amount() - start_row ==
                                     component_type::get_rows_amount(component_instance.witness_amount(),
@@ -242,7 +244,7 @@ namespace nil {
                     instance_input.all_vars(),
                     component_result.all_vars(), start_row, rows_after_batching - start_row,
                     connectedness_check);
-                if (connectedness_check.t == blueprint::connectedness_check_type::type::NONE) {
+                if (connectedness_check.t == nil::blueprint::connectedness_check_type::type::NONE) {
                     std::cout << "WARNING: Connectedness check is disabled." << std::endl;
                 }
 
@@ -299,7 +301,7 @@ namespace nil {
             // assignment.export_table(std::cout);
             // bp.export_circuit(std::cout);
 
-            assert(blueprint::is_satisfied(bp, assignment) == expected_to_pass);
+            assert(nil::blueprint::is_satisfied(bp, assignment) == expected_to_pass);
             return std::make_tuple(desc, bp, assignment);
         }
 
@@ -312,12 +314,12 @@ namespace nil {
                                const PublicInputContainerType &public_input,
                                const FunctorResultCheck &result_check,
                                typename ComponentType::input_type instance_input,
-                               blueprint::connectedness_check_type connectedness_check,
+                               nil::blueprint::connectedness_check_type connectedness_check,
                                ComponentStaticInfoArgs... component_static_info_args) {
             using component_type = ComponentType;
 
-            blueprint::circuit<crypto3::zk::snark::plonk_constraint_system<BlueprintFieldType>> bp;
-            blueprint::assignment<crypto3::zk::snark::plonk_constraint_system<BlueprintFieldType>> assignment(desc);
+            nil::blueprint::circuit<crypto3::zk::snark::plonk_constraint_system<BlueprintFieldType>> bp;
+            nil::blueprint::assignment<crypto3::zk::snark::plonk_constraint_system<BlueprintFieldType>> assignment(desc);
 
             static boost::random::mt19937 gen;
             static boost::random::uniform_int_distribution<> dist(0, 100);
@@ -334,7 +336,7 @@ namespace nil {
             }
 
             auto component_result = boost::get<typename component_type::result_type>(
-                blueprint::components::generate_empty_assignments<BlueprintFieldType>(
+                nil::blueprint::components::generate_empty_assignments<BlueprintFieldType>(
                 component_instance, assignment, instance_input, start_row));
             // assignment.export_table(std::cout);
             // bp.export_circuit(std::cout);
@@ -357,8 +359,8 @@ namespace nil {
                            const PublicInputContainerType &public_input,
                            FunctorResultCheck result_check,
                            typename ComponentType::input_type instance_input,
-                           blueprint::connectedness_check_type connectedness_check =
-                            blueprint::connectedness_check_type::type::STRONG,
+                           nil::blueprint::connectedness_check_type connectedness_check =
+                            nil::blueprint::connectedness_check_type::type::STRONG,
                            ComponentStaticInfoArgs... component_static_info_args) {
             auto [desc, bp, assignments] =
                 prepare_empty_component<ComponentType, BlueprintFieldType, Hash, Lambda,
@@ -382,7 +384,7 @@ namespace nil {
                                 &assigner,
                             const typename ComponentType::input_type &instance_input,
                             bool expected_to_pass,
-                            blueprint::connectedness_check_type connectedness_check,
+                            nil::blueprint::connectedness_check_type connectedness_check,
                             ComponentStaticInfoArgs... component_static_info_args) {
             auto [desc, bp, assignments] =
                 prepare_component<ComponentType, BlueprintFieldType, Hash, Lambda,
@@ -448,8 +450,8 @@ namespace nil {
                            const PublicInputContainerType &public_input,
                            FunctorResultCheck result_check,
                            typename ComponentType::input_type instance_input,
-                           blueprint::connectedness_check_type connectedness_check =
-                            blueprint::connectedness_check_type::type::STRONG,
+                           nil::blueprint::connectedness_check_type connectedness_check =
+                            nil::blueprint::connectedness_check_type::type::STRONG,
                            ComponentStaticInfoArgs... component_static_info_args) {
             return test_component_inner<ComponentType, BlueprintFieldType, Hash, Lambda,
                                  PublicInputContainerType, FunctorResultCheck, false,
@@ -469,8 +471,8 @@ namespace nil {
                            const PublicInputContainerType &public_input,
                            FunctorResultCheck result_check,
                            typename ComponentType::input_type instance_input,
-                           blueprint::connectedness_check_type connectedness_check =
-                            blueprint::connectedness_check_type::type::STRONG,
+                           nil::blueprint::connectedness_check_type connectedness_check =
+                            nil::blueprint::connectedness_check_type::type::STRONG,
                            ComponentStaticInfoArgs... component_static_info_args) {
             return test_component_inner<ComponentType, BlueprintFieldType, Hash, Lambda,
                                  PublicInputContainerType, FunctorResultCheck, false, ComponentStaticInfoArgs...>(
@@ -490,8 +492,8 @@ namespace nil {
                             const PublicInputContainerType &public_input, FunctorResultCheck result_check,
                             const plonk_test_custom_assigner<ComponentType, BlueprintFieldType> &custom_assigner,
                             typename ComponentType::input_type instance_input,
-                            blueprint::connectedness_check_type connectedness_check =
-                                blueprint::connectedness_check_type::type::STRONG,
+                            nil::blueprint::connectedness_check_type connectedness_check =
+                                nil::blueprint::connectedness_check_type::type::STRONG,
                             ComponentStaticInfoArgs... component_static_info_args) {
 
                 return test_component_inner<ComponentType, BlueprintFieldType, Hash, Lambda,
@@ -511,8 +513,8 @@ namespace nil {
                             const PublicInputContainerType &public_input, FunctorResultCheck result_check,
                             const plonk_test_custom_assigner<ComponentType, BlueprintFieldType> &custom_assigner,
                             typename ComponentType::input_type instance_input,
-                            blueprint::connectedness_check_type connectedness_check =
-                                blueprint::connectedness_check_type::type::STRONG,
+                            nil::blueprint::connectedness_check_type connectedness_check =
+                                nil::blueprint::connectedness_check_type::type::STRONG,
                             ComponentStaticInfoArgs... component_static_info_args) {
 
                 return test_component_inner<ComponentType, BlueprintFieldType, Hash, Lambda,
@@ -531,8 +533,8 @@ namespace nil {
                             zk::snark::plonk_table_description<BlueprintFieldType> desc,
                             const PublicInputContainerType &public_input, FunctorResultCheck result_check,
                             typename ComponentType::input_type instance_input,
-                            blueprint::connectedness_check_type connectedness_check =
-                                blueprint::connectedness_check_type::type::STRONG,
+                            nil::blueprint::connectedness_check_type connectedness_check =
+                                nil::blueprint::connectedness_check_type::type::STRONG,
                             ComponentStaticInfoArgs... component_static_info_args) {
 
                 return test_component_inner<ComponentType, BlueprintFieldType, Hash, Lambda,
@@ -552,8 +554,8 @@ namespace nil {
                             zk::snark::plonk_table_description<BlueprintFieldType> desc,
                             const PublicInputContainerType &public_input, FunctorResultCheck result_check,
                             typename ComponentType::input_type instance_input,
-                            blueprint::connectedness_check_type connectedness_check =
-                                blueprint::connectedness_check_type::type::STRONG,
+                            nil::blueprint::connectedness_check_type connectedness_check =
+                                nil::blueprint::connectedness_check_type::type::STRONG,
                             ComponentStaticInfoArgs... component_static_info_args) {
 
                 return test_component_inner<ComponentType, BlueprintFieldType, Hash, Lambda,
@@ -584,7 +586,7 @@ namespace nil {
                      const typename ComponentType::input_type &instance_input,
                      const std::uint32_t start_row_index) {
                 typename ComponentType::result_type result =
-                    blueprint::components::generate_assignments<BlueprintFieldType>(
+                    nil::blueprint::components::generate_assignments<BlueprintFieldType>(
                         component, assignment, instance_input, start_row_index);
 
                 for (const auto &patch : patches) {

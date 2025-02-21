@@ -34,10 +34,13 @@
 #include <nil/marshalling/algorithms/pack.hpp>
 
 #include <nil/crypto3/zk/snark/arithmetization/plonk/constraint_system.hpp>
+#include <nil/crypto3/zk/snark/arithmetization/plonk/params.hpp>
 
 #include <nil/blueprint/blueprint/plonk/circuit.hpp>
 #include <nil/blueprint/blueprint/plonk/assignment.hpp>
 #include <nil/blueprint/component.hpp>
+
+using namespace nil::crypto3;
 
 namespace nil {
     namespace crypto3 {
@@ -63,14 +66,12 @@ namespace nil {
                          std::size_t W1,
                          std::size_t W2>
                 class addition<
-                    snark::plonk_constraint_system<BlueprintFieldType,
-                        ArithmetizationParams>,
+                    zk::snark::plonk_constraint_system<BlueprintFieldType>,
                     W0, W1, W2>{
 
-                    typedef snark::plonk_constraint_system<BlueprintFieldType,
-                        ArithmetizationParams> ArithmetizationType;
+                    typedef zk::snark::plonk_constraint_system<BlueprintFieldType> ArithmetizationType;
 
-                    using var = snark::plonk_variable<typename BlueprintFieldType::value_type>;
+                    using var = zk::snark::plonk_variable<typename BlueprintFieldType::value_type>;
 
                 public:
                     // Addition Component takes only one row in the table
@@ -107,7 +108,7 @@ namespace nil {
                     };
 
                     // Allocate rows in the table required for Addition Component
-                    static std::size_t allocate_rows (blueprint<ArithmetizationType> &bp,
+                    static std::size_t allocate_rows (nil::blueprint::blueprint<ArithmetizationType> &bp,
                         std::size_t components_amount = 1){
                         return bp.allocate_rows(rows_amount *
                             components_amount);
@@ -115,8 +116,8 @@ namespace nil {
 
                     // generate_circuit represents basic interface to put constraints on the table
                     static result_type generate_circuit(
-                        blueprint<ArithmetizationType> &bp,
-                        blueprint_assignment_table<ArithmetizationType> &assignment,
+                        nil::blueprint::blueprint<ArithmetizationType> &bp,
+                        nil::blueprint::assignment<ArithmetizationType> &assignment,
                         const params_type &params,
                         allocated_data_type &allocated_data,
                         std::size_t component_start_row) {
@@ -131,7 +132,7 @@ namespace nil {
                     }
 
                     static result_type generate_assignments(
-                            blueprint_assignment_table<ArithmetizationType>
+                            nil::blueprint::assignment<ArithmetizationType>
                                 &assignment,
                             const params_type &params,
                             std::size_t component_start_row) {
@@ -149,8 +150,8 @@ namespace nil {
 
                     private:
                     static void generate_gates(
-                        blueprint<ArithmetizationType> &bp,
-                        blueprint_assignment_table<ArithmetizationType> &assignment,
+                        nil::blueprint::blueprint<ArithmetizationType> &bp,
+                        nil::blueprint::assignment<ArithmetizationType> &assignment,
                         const params_type &params,
                         allocated_data_type &allocated_data,
                         const std::size_t start_row_index) {
@@ -180,8 +181,8 @@ namespace nil {
                     }
 
                     static void generate_copy_constraints(
-                            blueprint<ArithmetizationType> &bp,
-                            blueprint_assignment_table<ArithmetizationType> &assignment,
+                            nil::blueprint::blueprint<ArithmetizationType> &bp,
+                            nil::blueprint::assignment<ArithmetizationType> &assignment,
                             const params_type &params,
                             std::size_t component_start_row){
                         // recall that params contains variables which refers to the cells in the table
