@@ -36,10 +36,13 @@
 
 #include <nil/crypto3/algebra/curves/bls12.hpp>
 #include <nil/crypto3/algebra/curves/mnt4.hpp>
+#include <nil/crypto3/hash/keccak.hpp>
 
 #include <nil/crypto3/hash/sha2.hpp>
+#include <nil/crypto3/zk/transcript/fiat_shamir.hpp>
 
 #include "../src/OtherFile.hpp"
+#include "../src/proof_transcript.hpp"
 
 using namespace nil::crypto3;
 using namespace morgana::playground;
@@ -86,40 +89,58 @@ namespace boost {
     }        // namespace test_tools
 }    // namespace boost
 
-BOOST_AUTO_TEST_SUITE(conformity_tests)
 
-    BOOST_AUTO_TEST_CASE(mnt4_special_seed_test) {
-        using field_type = typename algebra::curves::mnt4<298>::scalar_field_type;
-        using field_value_type = typename field_type::value_type;
-        using hash_type = hashes::sha2<512>;
-        using rng_engine = random::hash<hashes::sha2<512>, field_value_type>;
 
-        rng_engine re(3);
-        BOOST_CHECK_EQUAL(
-                re(), field_value_type(
-                0x393e87004ad130e3fa1c13c3c0391ed914f84af59c580994d7b4f2f58de985b82586a40bc64_cppui_modular298));
+BOOST_AUTO_TEST_SUITE(morgana_playground)
+BOOST_AUTO_TEST_CASE(proof_transcript) {
+    using field_type = typename algebra::curves::mnt4<298>::scalar_field_type;
+    using field_value_type = typename field_type::value_type;
+    using group_type = typename nil::crypto3::algebra::curves::mnt4<298>::g1_type<>;
+    using group_value_type = typename group_type::value_type;
+    using f_generator_type = typename random::algebraic_random_device<field_type>;
+    using g_generator_type = typename random::algebraic_random_device<group_type>;
 
-        re.seed(14);
-        BOOST_CHECK_EQUAL(
-                re(), field_value_type(
-                0x366deb8c8eb00255ee349e493688dc65614403e41845b60968fe4705cf35881800f3404dc49_cppui_modular298));
-        std::cout << re << std::endl;
+    f_generator_type f_gen;
+    g_generator_type g_gen;
 
-        std::stringstream test_stream;
-        test_stream << 1440;
-        test_stream >> re;
-        BOOST_CHECK_EQUAL(
-                re(), field_value_type(
-                0x2ae56dde0c14786b087b3908a09e63b4077007b771cce4f9d3d82cc9d1bc01a8aab2eb15e26_cppui_modular298));
+    field_value_type p_1_fval = f_gen();
+    group_value_type p_2_gval = g_gen();
+    field_value_type p_3_cval;
+    field_value_type p_4_cval;
+    field_value_type p_5_fval = f_gen();
+    group_value_type p_6_gval = g_gen();
+    group_value_type p_7_gval = g_gen();
+    field_value_type p_8_cval;
 
-        BOOST_CHECK_EQUAL(
-                rng_engine(157968)(),
-                field_value_type(
-                        0x11e63ba9c5eefde9663db16d8338eb019b1deb6eefd8db63851e6210d3ca136e45a1afb82a0_cppui_modular298));
-        BOOST_CHECK_EQUAL(
-                rng_engine(148847)(),
-                field_value_type(
-                        0x299dd09eafb03aba12a3dbead40384f4d7d39e79174e1a8a905e99f815bdc710cca857ead32_cppui_modular298));
-    }
+    auto prover_transcript = transcript::start_prover(std::vector<uint8_t>{1, 2, 3});
+    prover_transcript.write(p_1_fval);
+    prover_transcript.write(p_2_gval);
+    p_3_cval = prover_transcript.challenge<field_type>();
+    p_4_cval = prover_transcript.challenge<field_type>();
+    prover_transcript.write(p_5_fval);
+    prover_transcript.write(p_6_gval);
+    prover_transcript.write(p_7_gval);
+    p_8_cval = prover_transcript.challenge<field_type>();
+    auto proof = prover_transcript.end();
 
+    auto verifier_transcript = transcript::start_verifier(std::vector<uint8_t>{1, 2, 3}, proof);
+    field_value_type v_1_fval = verifier_transcript.read<field_type>();
+    group_value_type v_2_gval = verifier_transcript.read<group_type>();
+    field_value_type v_3_cval = verifier_transcript.challenge<field_type>();
+    field_value_type v_4_cval = verifier_transcript.challenge<field_type>();
+    field_value_type v_5_fval = verifier_transcript.read<field_type>();
+    group_value_type v_6_gval = verifier_transcript.read<group_type>();
+    group_value_type v_7_gval = verifier_transcript.read<group_type>();
+    field_value_type v_8_cval = verifier_transcript.challenge<field_type>();
+    verifier_transcript.end();
+
+    BOOST_CHECK_EQUAL(v_1_fval, p_1_fval);
+    BOOST_CHECK_EQUAL(v_2_gval, p_2_gval);
+    BOOST_CHECK_EQUAL(v_3_cval, p_3_cval);
+    BOOST_CHECK_EQUAL(v_4_cval, p_4_cval);
+    BOOST_CHECK_EQUAL(v_5_fval, p_5_fval);
+    BOOST_CHECK_EQUAL(v_6_gval, p_6_gval);
+    BOOST_CHECK_EQUAL(v_7_gval, p_7_gval);
+    BOOST_CHECK_EQUAL(v_8_cval, p_8_cval);
+}
 BOOST_AUTO_TEST_SUITE_END()
