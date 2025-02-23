@@ -89,25 +89,28 @@ namespace boost {
     }        // namespace test_tools
 }    // namespace boost
 
-using field_type = typename algebra::curves::mnt4<298>::scalar_field_type;
-using field_value_type = typename field_type::value_type;
-using group_type = typename nil::crypto3::algebra::curves::mnt4<298>::g1_type<>;
-using group_value_type = typename group_type::value_type;
 
 
-void transcript_operation(
-    field_value_type &p_1_fval,
-    group_value_type &p_2_gval,
-    field_value_type &p_3_cval,
-    field_value_type &p_4_cval,
-    field_value_type &p_5_fval,
-    group_value_type &p_6_gval,
-    group_value_type &p_7_gval,
-    field_value_type &p_8_cval
-) {
-    auto start = std::chrono::system_clock::now();
-    std::time_t start_time = std::chrono::system_clock::to_time_t(start);
-    std::cout << "finished computation at " << std::ctime(&start_time) << std::endl;
+BOOST_AUTO_TEST_SUITE(morgana_playground)
+BOOST_AUTO_TEST_CASE(proof_transcript) {
+    using field_type = typename algebra::curves::mnt4<298>::scalar_field_type;
+    using field_value_type = typename field_type::value_type;
+    using group_type = typename nil::crypto3::algebra::curves::mnt4<298>::g1_type<>;
+    using group_value_type = typename group_type::value_type;
+    using f_generator_type = typename random::algebraic_random_device<field_type>;
+    using g_generator_type = typename random::algebraic_random_device<group_type>;
+
+    f_generator_type f_gen;
+    g_generator_type g_gen;
+
+    field_value_type p_1_fval = f_gen();
+    group_value_type p_2_gval = g_gen();
+    field_value_type p_3_cval;
+    field_value_type p_4_cval;
+    field_value_type p_5_fval = f_gen();
+    group_value_type p_6_gval = g_gen();
+    group_value_type p_7_gval = g_gen();
+    field_value_type p_8_cval;
 
     auto prover_transcript = transcript::start_prover(std::vector<uint8_t>{1, 2, 3});
     prover_transcript.write(p_1_fval);
@@ -121,13 +124,13 @@ void transcript_operation(
     auto proof = prover_transcript.end();
 
     auto verifier_transcript = transcript::start_verifier(std::vector<uint8_t>{1, 2, 3}, proof);
-    field_value_type v_1_fval = verifier_transcript.read<field_value_type>();
-    group_value_type v_2_gval = verifier_transcript.read<group_value_type>();
+    field_value_type v_1_fval = verifier_transcript.read<field_type>();
+    group_value_type v_2_gval = verifier_transcript.read<group_type>();
     field_value_type v_3_cval = verifier_transcript.challenge<field_type>();
     field_value_type v_4_cval = verifier_transcript.challenge<field_type>();
-    field_value_type v_5_fval = verifier_transcript.read<field_value_type>();
-    group_value_type v_6_gval = verifier_transcript.read<group_value_type>();
-    group_value_type v_7_gval = verifier_transcript.read<group_value_type>();
+    field_value_type v_5_fval = verifier_transcript.read<field_type>();
+    group_value_type v_6_gval = verifier_transcript.read<group_type>();
+    group_value_type v_7_gval = verifier_transcript.read<group_type>();
     field_value_type v_8_cval = verifier_transcript.challenge<field_type>();
     verifier_transcript.end();
 
@@ -139,48 +142,5 @@ void transcript_operation(
     BOOST_CHECK_EQUAL(v_6_gval, p_6_gval);
     BOOST_CHECK_EQUAL(v_7_gval, p_7_gval);
     BOOST_CHECK_EQUAL(v_8_cval, p_8_cval);
-    auto end = std::chrono::system_clock::now();
-    std::chrono::duration<double> elapsed_seconds = end-start;
-    std::time_t end_time = std::chrono::system_clock::to_time_t(end);
-    std::cout << "finished computation at " << std::ctime(&end_time)
-              << "elapsed time: " << elapsed_seconds.count() << "s"
-              << std::endl;
-}
-
-BOOST_AUTO_TEST_SUITE(morgana_playground)
-BOOST_AUTO_TEST_CASE(proof_transcript) {
-
-    auto start = std::chrono::system_clock::now();
-    std::time_t start_time = std::chrono::system_clock::to_time_t(start);
-    std::cout << "finished computation at " << std::ctime(&start_time) << std::endl;
-
-
-    field_value_type p_1_fval = nil::crypto3::algebra::random_element<field_type>();
-    group_value_type p_2_gval = nil::crypto3::algebra::random_element<group_type>();
-    field_value_type p_3_cval;
-    field_value_type p_4_cval;
-    field_value_type p_5_fval = nil::crypto3::algebra::random_element<field_type>();
-    group_value_type p_6_gval = nil::crypto3::algebra::random_element<group_type>();
-    group_value_type p_7_gval = nil::crypto3::algebra::random_element<group_type>();
-    field_value_type p_8_cval;
-
-    transcript_operation(
-        p_1_fval,
-        p_2_gval,
-        p_3_cval,
-        p_4_cval,
-        p_5_fval,
-        p_6_gval,
-        p_7_gval,
-        p_8_cval
-    );
-
-
-    auto end = std::chrono::system_clock::now();
-    std::chrono::duration<double> elapsed_seconds = end-start;
-    std::time_t end_time = std::chrono::system_clock::to_time_t(end);
-    std::cout << "finished computation at " << std::ctime(&end_time)
-              << "elapsed time: " << elapsed_seconds.count() << "s"
-              << std::endl;
 }
 BOOST_AUTO_TEST_SUITE_END()

@@ -155,12 +155,13 @@ namespace morgana {
                     return result;
                 }
 
-                template<FieldOrGroup T>
-                T read() {
-                    using marshalling_type = typename nil::marshalling::is_compatible<T>::template type<nil::marshalling::option::big_endian>;
+                template<HasFieldOrGroupValueType T>
+                typename T::value_type read() {
+                    using value_type = typename T::value_type;
+                    using marshalling_type = typename nil::marshalling::is_compatible<value_type>::template type<nil::marshalling::option::big_endian>;
                     auto marshalled = this->read_proof_raw(marshalling_type::length());
                     nil::marshalling::status_type status;
-                    T t = nil::marshalling::pack<nil::marshalling::option::big_endian>(marshalled, status);
+                    value_type t = nil::marshalling::pack<nil::marshalling::option::big_endian>(marshalled, status);
                     BOOST_ASSERT(status == nil::marshalling::status_type::success);
                     return t;
                 }
@@ -172,6 +173,12 @@ namespace morgana {
 
             template<typename Backend = zk::transcript::fiat_shamir_heuristic_sequential<hashes::keccak_1600<>>, ProofRange InputRange>
             ProofTranscript<Verifier, Backend> start_verifier(const InputRange &r, Proof proof) {
+                auto proof_transcript = ProofTranscript<Verifier, Backend>(r, std::move(proof));
+                return proof_transcript;
+            }
+
+            template<typename Backend = zk::transcript::fiat_shamir_heuristic_sequential<hashes::keccak_1600<>>, ProofRange InputRange>
+            ProofTranscript<Verifier, Backend> start_verifier(const InputRange &r, Proof &&proof) {
                 auto proof_transcript = ProofTranscript<Verifier, Backend>(r, std::move(proof));
                 return proof_transcript;
             }
